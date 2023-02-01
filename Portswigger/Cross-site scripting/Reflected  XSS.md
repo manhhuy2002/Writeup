@@ -10,7 +10,7 @@
 * [Lab 7: Reflected XSS with some SVG markup allowed](#lab-7-reflected-xss-with-some-svg-markup-allowed)
 * [Lab 8: Reflected XSS in canonical link tag](#lab-8-reflected-xss-in-caonical-link-tag)
 * [Lab 9: Reflected XSS into a JavaScript string with single quote and backslash escaped](#lab-9-reflected-xss-into-a-javascript-string-with-single-quote-and-backslash-escaped)
-* [Lab 10: Reflected XSS into a JavaScript string with angle brackets and double quotes HTML-encoded and single quotes escaped](#lab-10-reflected-xss-into-a javascript-string-with-angle-brackets-and-double-quotes-html-encoded-and-single-quotes-escaped)
+* [Lab 10: Reflected XSS into a JavaScript string with angle brackets and double quotes HTML-encoded and single quotes escaped](#lab-10-reflected-xss-into-a-javascript-string-with-angle-brackets-and-double-quotes-html-encoded-and-single-quotes-escaped)
 * [Lab 11:Reflected XSS with event handlers and href attributes blocked](#lab-11-reflected-xss-with-event-handlers-and-href-attributes-blocked)
 * [Lab 12: Reflected XSS in a JavaScript URL with some characters blocked](#lab-12-reflected-xss-in-a-javascript-url-with-some-characters-blocked)
 * [Lab 13: Reflected XSS with AngularJS sandbox escape without strings](#lab-13-reflected-xss-with-angularjs-sanbox-escape-without-strings)
