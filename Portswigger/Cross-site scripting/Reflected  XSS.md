@@ -19,6 +19,8 @@
 * [Lab 16: Reflected XSS protected by CSP, with CSP bypass](#lab-16-reflected-xss-protected-by-csp-with-csp-bypass)
 
 ## Lab 1: Reflected XSS into HTML context with nothing encoded
+
+
 ## Lab 2: Reflected XSS into attribute with angle brackets HTML-encoded
 ## Lab 3: Reflected XSS into a JavaScript string with angle brackets HTML encoded
 ## Lab 4: Reflected DOM XSS
