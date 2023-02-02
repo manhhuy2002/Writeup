@@ -26,11 +26,12 @@ This lab contains a simple reflected cross-site scripting vulnerability in the s
 To solve the lab, perform a cross-site scripting attack that calls the alert function. 
 
 ```
-Đây là dạng reflected xss cơ bản: 
-Dùng payload: 
+Đây là dạng reflected xss cơ bản. Dùng payload: 
 
+``
 <script>alert('xss')</script>
 
+```
 
 ![xss1](https://github.com/manhhuy2002/hello-world/blob/main/xss/1.jpg)
 
