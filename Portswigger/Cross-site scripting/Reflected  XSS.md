@@ -24,14 +24,11 @@
 This lab contains a simple reflected cross-site scripting vulnerability in the search functionality.
 
 To solve the lab, perform a cross-site scripting attack that calls the alert function. 
-
 ```
 Đây là dạng reflected xss cơ bản. Dùng payload: 
 
-```
-<script>alert('xss')</script>
+> <script>alert('xss')</script>
 
-```
 
 ![xss1](https://github.com/manhhuy2002/hello-world/blob/main/xss/1.jpg)
 
@@ -78,6 +75,13 @@ Mình truyền vào hàm ';eval(alert(1))// , để đóng giá trị var search
 ![](https://github.com/manhhuy2002/hello-world/blob/main/xss/5.jpg)
 
 ## Lab 4: Reflected DOM XSS
+
+ ```
+  This lab demonstrates a reflected DOM vulnerability. Reflected DOM vulnerabilities occur when the server-side application processes data from a request and echoes the data in the response. A script on the page then processes the reflected data in an unsafe way, ultimately writing it to a dangerous sink.
+
+To solve this lab, create an injection that calls the alert() function. 
+```
+
   
   
 ## Lab 5: Reflected XSS into HTML context with most tags and attributes blocked
