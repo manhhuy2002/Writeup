@@ -28,7 +28,7 @@ To solve the lab, perform a cross-site scripting attack that calls the alert fun
 ```
 Đây là dạng reflected xss cơ bản. Dùng payload: 
 
-``
+```
 <script>alert('xss')</script>
 
 ```
