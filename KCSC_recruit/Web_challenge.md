@@ -81,7 +81,8 @@ url: http://146.190.115.228:20109/
 
  >Flag: KCSC{T3T_TU1_3_T13P_Hmmmmmmmm}
 
-## Đề 3: XXD Cách 1:
+## Đề 3: XXD
+### Cách 1:
 ```
 url: http://146.190.115.228:13373/
 
@@ -157,7 +158,8 @@ Decode bas64 ta được kết quả là flag cần tìm:
 
 >Flag: KCSC{blind_xxD_xxO_xx]_xxe!!@#@}
  
- ## XXD Cách 2: 
+ ## XXD
+ ### Cách 2: 
  Tương tự như trên nhưng ở đây em dựng server lên để nhận flag về.
  Đầu tiên em dựng server bên phía máy mình bằng python ở trên kali:
  
