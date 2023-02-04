@@ -3,7 +3,7 @@
  ## Table of content Prog_Misc challenge:
 * [Đề 1: Xỏ](#Đề-1-xỏ)
 * [Đề 2: Gen Max Number](#Đề-2-gen-max-number)
-* [Đề 3: Splitting](đề-3-splitting)
+* [Đề 3: Splitting](#đề-3-splitting)
 
  ## Đề 1: Xỏ
  
