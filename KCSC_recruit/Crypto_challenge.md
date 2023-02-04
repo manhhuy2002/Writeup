@@ -1,10 +1,10 @@
 # Crypto challenge
 
 ## Table of contents:
-* [Đề 1: Tet is ya best](#de-1-tet-is-ya-best)
-* [Đề 2: Ezenc](#de-2-ezenc)
-* [Đề 3: Chuyến tàu vô tận ](#de-3-chuyen-tau-vo-tan)
-* [Đề 4: Waiting for you](#de-4-waiting-for-you)
+* [Đề 1: Tet is ya best](#Đề-1-tet-is-ya-best)
+* [Đề 2: Ezenc](#Đề-2-ezenc)
+* [Đề 3: Chuyến tàu vô tận ](#Đề-3-chuyến-tàu-vô-tận)
+* [Đề 4: Waiting for you](#Đề-4-waiting-for-you)
 
 ## Đề 1: Tet is ya best
 ```
