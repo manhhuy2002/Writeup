@@ -36,3 +36,46 @@ Sau khi tấn công để ý payload X = 241, trả về status 200 nên mình t
 ![lab2_02](https://github.com/manhhuy2002/hello-world/blob/main/ssrf/lab2_02.jpg)
 
 ## Lab 3: SSRF with blacklist-based input filter
+
+```
+ This lab has a stock check feature which fetches data from an internal system.
+
+To solve the lab, change the stock check URL to access the admin interface at http://localhost/admin and delete the user carlos.
+
+The developer has deployed two weak anti-SSRF defenses that you will need to bypass. 
+
+```
+
+- Ở bài này đã có filter, để ý tên bài thì đây là dạng filter blacklist, mình test thử thì thấy bài này đang filter localhost và admin.
+![lab3_01](https://github.com/manhhuy2002/hello-world/blob/main/ssrf/lab3_01.jpg)
+
+![lab3_02](https://github.com/manhhuy2002/hello-world/blob/main/ssrf/lab3_02.jpg)
+- Mục tiêu của bài này là phải bypass được 2 giá trị này với đường dẫn nội dung tương tự là http://localhost/admin
+- Vì phải bypass cả 2 giá trị này nên mình tìm cách bypass từng giá trị trước, localhost hay có dạng 127.0.0.1 thì có thể dùng ssrf bypass list cho localhost như sau:
+
+```
+http://127.1/
+http://0000::1:80/
+http://[::]:80/
+http://2130706433/
+http://whitelisted@127.0.0.1
+http://0x7f000001/
+http://017700000001
+http://0177.00.00.01
+
+```
+
+### Ném sang burp repeater chạy với đường dẫn: **http://127.1/** và đã bypass được localhost thành công, đến đây thì cần tiếp tục bypass admin là xong, ý tưởng là encode 1 chữ cái trong admin, thử với chữ a: thay bằng đường dẫn: **http://127.1/%61dmin** , send request nhưng server trả về lỗi blacklist: 
+
+![lab3_03](https://github.com/manhhuy2002/hello-world/blob/main/ssrf/lab3_03.jpg)
+
+- Có vẻ server đã tự decode nên ở đây mình encode thêm phát nữa xem sao, gửi**http://127.1/%25%36%31dmin** và server đã trả về kết quả:
+
+![lab3_04](https://github.com/manhhuy2002/hello-world/blob/main/ssrf/lab3_04.jpg)
+
+
+- Đến đây thay đường dẫn bằng **http://127.1/%25%36%31dmin/delete?username=carlos** là giải quyết được bài lab.
+
+
+
+> Reference link: https://twitter.com/LooseSecurity/status/1331270289733324805
