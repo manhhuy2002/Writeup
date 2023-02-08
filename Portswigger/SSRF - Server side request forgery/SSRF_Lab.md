@@ -171,18 +171,35 @@ The developer has deployed an anti-SSRF defense you will need to bypass.
 
 ```
 
-#### Ở tình huống bài lab này, ta đến với phương án được triển khai trên web là ***whitelist-based input filter***. Thử nhập đường dẫn **http://localhost/admin** , server phản hồi về: ***"External stock check host must be stock.weliketoshop.net"*** . 
-![]()
+#### Ở tình huống bài lab này, ta đến với phương án được triển khai trên web là ***whitelist-based input filter***. Thử nhập đường dẫn **http://localhost/admin** , server phản hồi về: ***"External stock check host must be stock.weliketoshop.net"***.
 
-#### Qua quá trình tìm hiểu thì ở đây chúng ta có thể khai thác bằng URL parsing:
+![](https://github.com/manhhuy2002/hello-world/blob/main/ssrf/lab6_01.jpg)
+
+```
+ Qua quá trình tìm hiểu thì ở đây chúng ta có thể khai thác bằng URL parsing:
 - Sử dụng kí tự “@” để đưa credential vào URL ngay phía trước hostname. Cụ thể ở đây là stock.weliketoshop.net. Ex: http://stock.weliketoshop.net@localhost :)
 - Sử dụng kí tự “#” để phân đoạn cái URL theo kiểu https://evil-host#expected-host.
 - Tận dụng DNS naming hierarchy để bố trí input yêu cầu của whitelist vào cái fully-qualified DNS name mà ta có thể kiểm soát theo kiểu https://expected-host.evil-host.
 - Sử dụng URL-encode characters để chọc ngoáy chức năng URL-parsing của hệ thống nhằm khai thác sự sai khác trong quá trình parsing của chỗ filter với phần xử lý request của backend.
 - Và kết hợp các phương pháp trên lại để bypass whitelist này.
 
+```
+#### Tiếp tục ở trên như theo bên phía server yêu cầu, phải có host **stock.weliketoshop.net**, dùng @stock.weliketoshop.net để chui qua whitelist-filter: ***http://localhost@stokc.weliketoshop.net*** :
+
+![](https://github.com/manhhuy2002/hello-world/blob/main/ssrf/lab6_02.jpg)
+
+#### Sau khi oke như trên thì mình cần phải tách chuỗi từ đoạn @ trở đi, lúc này sẽ sử dụng thêm kí tự # vào trước @ : http://localhost#@stock.weliketoshop.net, nhưng ngay lập tức server trả về lỗi như ban đầu:
+
+![](https://github.com/manhhuy2002/hello-world/blob/main/ssrf/lab6_03.jpg)
 
 
+#### Có vẻ như kí tự này cũng bị lọc, vậy thì thử encode như bài trước đó xemm sao, encode 2 lần thành: %25%32%33 , url lúc này sẽ là ***http://localhost%25%32%33@stock.weliketoshop.net***, và server trả về kết quả:
 
+![](https://github.com/manhhuy2002/hello-world/blob/main/ssrf/lab6_04.jpg)
 
+Như vậy mình đã bypass qua whitelist thành công, tiếp theo để vào trang admin chỉ việc thêm /admin vào (vì stock.weliketoshop.net đã bị cắt chuỗi ra khỏi) nên url bây giờ nhập vào là: ***http://localhost%25%32%33@stock.weliketoshop.net/admin***
+
+![](https://github.com/manhhuy2002/hello-world/blob/main/ssrf/lab6_05.jpg)
+
+#### Vậy là thành công truyền vào url có dạng tương ứng với **http://localhost/admin**. Việc còn lại chỉ là truyền **/delete?username=carlos** tương tự như các bài trên là hoàn thành bài lab.
 
