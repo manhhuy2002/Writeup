@@ -1,7 +1,7 @@
 # Trần Mạnh Huy  SSTI-Server side template injection
 
 * [Lab 1: Basic server-side template injection](#lab-1-basic-server-side-template-injection)
-* [Lab 2: Basic server-side template injection (code context)](#lab-2-basic-server-side-template-injection)
+* [Lab 2: Basic server-side template injection (code context)](#lab-2-basic-server-side-template-injection-code-context)
 
 ## Lab 1: Basic server-side template injection
 
@@ -31,3 +31,4 @@ Dùng payload: ***<%= system('rm morale.txt) %>***
 
 ![](https://github.com/manhhuy2002/hello-world/blob/main/ssti/lab1_04.jpg)
 
+## Lab 2: Basic server-side template injection (code context)
