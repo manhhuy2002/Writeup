@@ -5,6 +5,8 @@
 * [Lab 3: SSRF with blacklist-based input filter](#lab-3-ssrf-with-blacklist-based-input-filter)
 * [Lab 4: SSRF with filter bypass via open redirection vulnerability](#lab-4-ssrf-with-filter-bypass-via-open-redirection-vulnerability)
 * [Lab 5: Blind SSRF with out-of-band detection](#lab-5-blind-ssrf-with-out-of-band-detection)
+* [Lab 6: SSRF with whitelist-based input filter](#lab-6-ssrf-with-whitelist-based-input-filter)
+* [Lab 7: Blind SSRF with Shellshock exploitation](#lab-7-blind-ssrf-with-shellshock-exploitation)
 
 To solve the lab, use this functionality to cause an HTTP request to the public Burp Collaborator server. 
 
@@ -156,7 +158,28 @@ Mình có thể check phản hồi ở bên burp collaborator, vậy là xong b�
 
 
 
+## Lab 6: SSRF with whitelist-based input filter
 
+```
+ LAB Solved
+
+This lab has a stock check feature which fetches data from an internal system.
+
+To solve the lab, change the stock check URL to access the admin interface at http://localhost/admin and delete the user carlos.
+
+The developer has deployed an anti-SSRF defense you will need to bypass. 
+
+```
+
+#### Ở tình huống bài lab này, ta đến với phương án được triển khai trên web là ***whitelist-based input filter***. Thử nhập đường dẫn **http://localhost/admin** , server phản hồi về: ***"External stock check host must be stock.weliketoshop.net"*** . 
+![]()
+
+#### Qua quá trình tìm hiểu thì ở đây chúng ta có thể khai thác bằng URL parsing:
+- Sử dụng kí tự “@” để đưa credential vào URL ngay phía trước hostname. Cụ thể ở đây là stock.weliketoshop.net. Ex: http://stock.weliketoshop.net@localhost :)
+- Sử dụng kí tự “#” để phân đoạn cái URL theo kiểu https://evil-host#expected-host.
+- Tận dụng DNS naming hierarchy để bố trí input yêu cầu của whitelist vào cái fully-qualified DNS name mà ta có thể kiểm soát theo kiểu https://expected-host.evil-host.
+- Sử dụng URL-encode characters để chọc ngoáy chức năng URL-parsing của hệ thống nhằm khai thác sự sai khác trong quá trình parsing của chỗ filter với phần xử lý request của backend.
+- Và kết hợp các phương pháp trên lại để bypass whitelist này.
 
 
 
