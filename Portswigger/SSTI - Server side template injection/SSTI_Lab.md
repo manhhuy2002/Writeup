@@ -2,6 +2,7 @@
 
 * [Lab 1: Basic server-side template injection](#lab-1-basic-server-side-template-injection)
 * [Lab 2: Basic server-side template injection (code context)](#lab-2-basic-server-side-template-injection-code-context)
+* [Lab 3: Server-side template injection using documentation](#lab-3-server-side-template-injection-using-documentation)
 
 ## Lab 1: Basic server-side template injection
 
@@ -50,7 +51,7 @@ Thử để giá trị ***first name*** và ***name*** và check phần comment 
 
 ![](https://github.com/manhhuy2002/hello-world/blob/main/ssti/lab2_03.jpg)
 
-Rõ ràng là server đã dùng tags để xử lí logic qua template engine, cụ thể ở đây là template Tornado. Cụ thể ta có check ở burp suite sau khi sửa dổi phần ***preferred name*** thành ***username***và ***submit*** được như sau:
+Rõ ràng là server đã dùng tags để xử lí logic qua template engine, ở đây là template Tornado. Cụ thể ta có check ở burp suite sau khi sửa dổi phần ***preferred name*** thành ***username***và ***submit*** được như sau:
 
 ![](https://github.com/manhhuy2002/hello-world/blob/main/ssti/lab2_04.jpg)
 
@@ -91,10 +92,22 @@ Lúc đầu thử truyền vào giá trị {%+import+os+%}+{{os.system('pwd')}} 
 
 ![](https://github.com/manhhuy2002/hello-world/blob/main/ssti/lab2_06.jpg)
 
-#### Đến đây thì tương tự như bài trên, đang ở đường dẫn: /home/carlos nên sửa pwd thành ls sẽ có file morale.txt được hiển thị. Để giải quyết bài lab, sửa payload thành : 
+#### Đến đây thì tương tự như bài trên, đang ở đường dẫn: /home/carlos nên sửa **pwd** thành **ls** sẽ có file morale.txt được hiển thị. Để giải quyết bài lab, sửa payload thành : 
 
 ```
 ***user.nickname}}{%+import+os+%}+{{os.system('rm morale.txt')*** 
 ```
 
 Như vậy là ta đã xóa được file morale.txt như bài lab mong muốn.
+
+> Reference link payload: https://book.hacktricks.xyz/pentesting-web/ssti-server-side-template-injection
+
+## Lab 3: Server-side template injection using documentation
+
+```
+ This lab is vulnerable to server-side template injection. To solve the lab, identify the template engine and use the documentation to work out how to execute arbitrary code, then delete the morale.txt file from Carlos's home directory.
+
+You can log in to your own account using the following credentials:
+content-manager:C0nt3ntM4n4g3r
+
+```
