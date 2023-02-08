@@ -1,8 +1,9 @@
-# Tran Manh Huy 
+# Tran Manh Huy - SSRF-Server side request forgery 
 
 * [Lab 1: Basic SSRF against the local server](#lab-1-basic-ssrf-against-the-local-server)
 * [Lab 2: Basic SSRF against another backend system](#lab-2-basic-ssrf-against-another-backend-system)
 * [Lab 3: SSRF with blacklist-based input filter](#lab-3-ssrf-with-blacklist-based-input-filter)
+* [Lab 4: SSRF with filter bypass via open redirection vulnerability](#lab-4-ssrf-with-filter-bypass-via-open-redirection-vulnerability)
 
 ## Lab 1: Basic SSRF against the local server
 
@@ -51,7 +52,7 @@ The developer has deployed two weak anti-SSRF defenses that you will need to byp
 
 ![lab3_01](https://github.com/manhhuy2002/hello-world/blob/main/ssrf/lab3_01.jpg)
 
-#### Tương tuwjw thử với amdin:
+#### Tương tự thử với admin:
 
 ![lab3_02](https://github.com/manhhuy2002/hello-world/blob/main/ssrf/lab3_02.jpg)
 
@@ -84,3 +85,43 @@ http://0177.00.00.01
 
 
 > Reference link: https://twitter.com/LooseSecurity/status/1331270289733324805
+
+## Lab 4: SSRF with filter bypass via open redirection vulnerability
+
+```
+ This lab has a stock check feature which fetches data from an internal system.
+
+To solve the lab, change the stock check URL to access the admin interface at http://192.168.0.12:8080/admin and delete the user carlos.
+
+The stock checker has been restricted to only access the local application, so you will need to find an open redirect affecting the application first. 
+
+```
+#### Bài lab này là dạng bài Open-redirection leads to SSRF. Ứng dụng có URL được phép chứa lỗ hổng chuyển hướng mở. Với điều kiện API được sử dụng để thực hiện yêu cầu HTTP back-end hỗ trợ redirect, mình tạo URL thỏa mãn filter và chuyển hướng đến mục tiêu back-end mà mình mong muốn.
+
+#### Cụ thể trong bài lab này có chứa 2 lỗi về param là stockApi và path, path thì cho phép open-redirect còn stockApi thì chứa lỗi ssrf dù đã được filter, mục tiêu vẫn phải đưa được đường dẫn **http://192.168.0.12:8080/admin** vào stockApi và vượt qua nó.
+
+Vẫn như thường lệ, đầu tiên check stock mình được param stockApi:
+
+![]()
+
+Sau đó để ý trên trang thì có đường dẫn cho phép chuyển trang ***Return to list| Next product*** , nhấn Next product:
+
+![](https://github.com/manhhuy2002/hello-world/blob/main/ssrf/lab4_02.jpg)
+
+Để ý trên burpsuite, có được param path chuyển hướng trang:
+
+![lab4_03](https://github.com/manhhuy2002/hello-world/blob/main/ssrf/lab4_03.jpg)
+
+Copy path **/product/nextProduct?currentProductId=10&path** rồi thay vào giá trị stockApi với đường dẫn ***path=http://192.168.0.12:8080/admin***. Gửi send request thì server trả về ***"Missing parameter 'path'"***. 
+
+![lab4_04](https://github.com/manhhuy2002/hello-world/blob/main/ssrf/lab4_04.jpg)
+
+Quên mất mình cần chuyển hướng trang thôi mà, nên thay đổi đường dẫn như sau: 
+
+> /product/nextProduct?path=http://192.168.0.12:8080/admin
+
+Được kết quả trả về thành công: 
+
+![lab4_05](https://github.com/manhhuy2002/hello-world/blob/main/ssrf/lab4_05.jpg)
+
+### Đến đây thay đường dẫn **stockApi=/product/nextProduct?path=/product/nextProduct?path=http://192.168.0.12:8080/admin/delete?username=carlos** là đã giải quyết xong bài lab.
