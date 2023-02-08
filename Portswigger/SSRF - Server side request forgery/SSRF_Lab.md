@@ -4,6 +4,9 @@
 * [Lab 2: Basic SSRF against another backend system](#lab-2-basic-ssrf-against-another-backend-system)
 * [Lab 3: SSRF with blacklist-based input filter](#lab-3-ssrf-with-blacklist-based-input-filter)
 * [Lab 4: SSRF with filter bypass via open redirection vulnerability](#lab-4-ssrf-with-filter-bypass-via-open-redirection-vulnerability)
+* [Lab 5: Blind SSRF with out-of-band detection](#lab-5-blind-ssrf-with-out-of-band-detection)
+
+To solve the lab, use this functionality to cause an HTTP request to the public Burp Collaborator server. 
 
 ## Lab 1: Basic SSRF against the local server
 
@@ -125,3 +128,38 @@ Quên mất mình cần chuyển hướng trang thôi mà, nên thay đổi đư
 ### Đến đây thay đường dẫn '**stockApi=/product/nextProduct?path=/product/nextProduct?path=http://192.168.0.12:8080/admin/delete?username=carlos**' để xóa user Carlos là giải quyết xong bài lab.
 
 > Người dùng có thể phải chịu các cuộc tấn công phishing bởi việc bị redirect sang các trang kh đáng tin cậy mà hacker tạo ra. Nếu người dùng chẳng may ấn vào đường link chuyển hướng có chứa mã độc được thực hiện trên 1 trang web đáng tin cậy thì hoàn toàn việc tấn công sẽ xảy ra. Sau đó, các Phisher có thể đánh cắp thông tin đăng nhập của người dùng và sử dụng các thông tin này để truy cập trang web hợp pháp.
+
+## Lab 5: Blind SSRF with out-of-band detection
+
+```
+This site uses analytics software which fetches the URL specified in the Referer header when a product page is loaded.
+
+To solve the lab, use this functionality to cause an HTTP request to the public Burp Collaborator server. 
+
+```
+
+### Vấn đề của bài lab này là ở Referer header khi page product được load. Mục tiêu của bài lab này là khai thác ssrf thông qua phần **referer header** bằng việc tạo http request đến burp collaborator. Cũng khá đơn giản, chỉ việc dùng burp collaborator có sẵn trong burp suite rồi đổi đường dẫn link ở **referer header** bằng đường dẫn của burp collaborator. 
+Cụ thể khi load page, mình được: 
+
+![](https://github.com/manhhuy2002/hello-world/blob/main/ssrf/lab5_01.jpg)
+
+Thay đường dẫn: 
+
+![](https://github.com/manhhuy2002/hello-world/blob/main/ssrf/lab5_02.jpg)
+
+Mình có thể check phản hồi ở bên burp collaborator, vậy là xong bài lab này: 
+
+![](https://github.com/manhhuy2002/hello-world/blob/main/ssrf/lab5_03.jpg)
+
+
+> Bài này Portswigger bắt phải dùng Burp Collaborator. Thì burp collaborator là 1 tool của burpsuite cho phép ta nhận diện và khai thác lỗ hổng bên phía client của website/application. Nó hoạt động bằng việc chạy 1 server duy nhất có thể nhận được payload từ ứng dụng mục tiêu, cho phép người dùng xác định xem có bất kỳ thành phần phía client nào đang gửi thông tin nhạy cảm đến miền của bên thứ ba hay không. Máy chủ Collaborator lắng nghe các tương tác với payload và tạo report chi tiết các tương tác đã diễn ra.
+
+
+
+
+
+
+
+
+
+
