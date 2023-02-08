@@ -100,9 +100,7 @@ The stock checker has been restricted to only access the local application, so y
 
 #### Cụ thể trong bài lab này có chứa 2 lỗi về param là stockApi và path, path thì cho phép open-redirect còn stockApi thì chứa lỗi ssrf dù đã được filter, mục tiêu vẫn phải đưa được đường dẫn **http://192.168.0.12:8080/admin** vào stockApi và vượt qua nó.
 
-Vẫn như thường lệ, đầu tiên check stock mình được param stockApi:
-
-![]()
+Vẫn như thường lệ, đầu tiên check stock mình được param stockApi.
 
 Sau đó để ý trên trang thì có đường dẫn cho phép chuyển trang ***Return to list| Next product*** , nhấn Next product:
 
@@ -124,4 +122,6 @@ Quên mất mình cần chuyển hướng trang thôi mà, nên thay đổi đư
 
 ![lab4_05](https://github.com/manhhuy2002/hello-world/blob/main/ssrf/lab4_05.jpg)
 
-### Đến đây thay đường dẫn **stockApi=/product/nextProduct?path=/product/nextProduct?path=http://192.168.0.12:8080/admin/delete?username=carlos** là đã giải quyết xong bài lab.
+### Đến đây thay đường dẫn '**stockApi=/product/nextProduct?path=/product/nextProduct?path=http://192.168.0.12:8080/admin/delete?username=carlos**' để xóa user Carlos là giải quyết xong bài lab.
+
+> Người dùng có thể phải chịu các cuộc tấn công phishing bởi việc bị redirect sang các trang kh đáng tin cậy mà hacker tạo ra. Nếu người dùng chẳng may ấn vào đường link chuyển hướng có chứa mã độc được thực hiện trên 1 trang web đáng tin cậy thì hoàn toàn việc tấn công sẽ xảy ra. Sau đó, các Phisher có thể đánh cắp thông tin đăng nhập của người dùng và sử dụng các thông tin này để truy cập trang web hợp pháp.
