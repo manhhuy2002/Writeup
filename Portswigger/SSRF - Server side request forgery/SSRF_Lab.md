@@ -193,7 +193,7 @@ The developer has deployed an anti-SSRF defense you will need to bypass.
 ![](https://github.com/manhhuy2002/hello-world/blob/main/ssrf/lab6_03.jpg)
 
 
-#### Có vẻ như kí tự này cũng bị lọc, vậy thì thử encode như bài trước đó xemm sao, encode 2 lần thành: %25%32%33 , url lúc này sẽ là ***http://localhost%25%32%33@stock.weliketoshop.net***, và server trả về kết quả:
+Có vẻ như kí tự này cũng bị lọc, vậy thì thử encode như bài trước đó xemm sao, encode 2 lần thành: %25%32%33 , url lúc này sẽ là ***http://localhost%25%32%33@stock.weliketoshop.net***, và server trả về kết quả:
 
 ![](https://github.com/manhhuy2002/hello-world/blob/main/ssrf/lab6_04.jpg)
 
@@ -202,4 +202,13 @@ Như vậy mình đã bypass qua whitelist thành công, tiếp theo để vào 
 ![](https://github.com/manhhuy2002/hello-world/blob/main/ssrf/lab6_05.jpg)
 
 #### Vậy là thành công truyền vào url có dạng tương ứng với **http://localhost/admin**. Việc còn lại chỉ là truyền **/delete?username=carlos** tương tự như các bài trên là hoàn thành bài lab.
+
+## Lab 7: Blind SSRF with Shellshock exploitation
+
+```
+ This site uses analytics software which fetches the URL specified in the Referer header when a product page is loaded.
+
+To solve the lab, use this functionality to perform a blind SSRF attack against an internal server in the 192.168.0.X range on port 8080. In the blind attack, use a Shellshock payload against the internal server to exfiltrate the name of the OS user
+
+```
 
