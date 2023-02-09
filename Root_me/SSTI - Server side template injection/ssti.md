@@ -174,7 +174,7 @@ if __name__ == "__main__":
 
 #### Đầu tiên là template engine được sử dụng là jinja2. Có thể thấy form cho ta 4 tham số nhập: Name, Surface, Email address, Birth day. Và được pass qua santized() và có giới hạn độ dài:
 
-![](https://github.com/manhhuy2002/hello-world/blob/main/ssti/lab03_01.jpg)
+![](https://github.com/manhhuy2002/hello-world/blob/main/ssti/lab3_01.jpg)
 
 Ngoài ra còn có blacklist:
 
