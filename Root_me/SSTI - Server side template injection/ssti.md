@@ -1,10 +1,10 @@
 # Trần Mạnh Huy
 
-* [1. Python - Server-side Template Injection Introduction](#1-python-server-side-template-injection-introduction)
-* [2. Java - Server-side Template Injection](#2-java-server-side-template-injection)
+* [Python - Server-side Template Injection Introduction](#python-server-side-template-injection-introduction)
+* [Java - Server-side Template Injection](#java-server-side-template-injection)
 
 
-## 1. Python - Server-side Template Injection Introduction
+## Python - Server-side Template Injection Introduction
 
 ```
 Statement
