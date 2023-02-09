@@ -1,7 +1,8 @@
 # Trần Mạnh Huy
 
-* [Python - Server-side Template Injection Introduction](#python-server-side-template-injection-introduction)
-* [Java - Server-side Template Injection](#java-server-side-template-injection)
+* [Python - Server-side Template Injection Introduction](#python---server-side-template-injection-introduction)
+* [Java - Server-side Template Injection](#java---server-side-template-injection)
+* [Python - Blind SSTI Filters Bypass](#Python - Blind SSTI Filters Bypass)
 
 
 ## Python - Server-side Template Injection Introduction
@@ -38,4 +39,9 @@ Thấy được file .passwd. Sửa payload thành : **{{ self._TemplateReferenc
 
 ![](https://github.com/manhhuy2002/hello-world/blob/main/ssti/root01_04.jpg)
 
-![](https://github.com/manhhuy2002/hello-world/blob/main/ssti/root01_05.jpg)
+![](https://github.com/manhhuy2002/hello-world/blob/main/ssti/root01_06.jpg)
+
+
+## Java - Server-side Template Injection
+
+## Python - Blind SSTI Filters Bypass
