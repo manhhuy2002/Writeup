@@ -196,3 +196,21 @@ Gửi qua contact: http://challenge01.root-me.org/web-client/ch34/?calculation=1
 ![image](https://user-images.githubusercontent.com/104350480/218165627-02281d8d-64fc-4ab1-9c1a-e0b6711aef66.png)
 
 > Flag: rootme{Eval_Is_DangER0us}
+
+## Chall 6: XSS - Reflected
+```
+Find a way to steal the administrator’s cookie.
+Be careful, this administrator is aware of info security and he does not click on strange links that he could receive.
+
+```
+
+Mở đầu với giao diện trang khá đẹp,
+
+![image](https://user-images.githubusercontent.com/104350480/218168170-5d2f71db-e72e-4d4d-b04b-f010c9b4abc3.png)
+
+
+## Chall 7: XSS DOM Based - Filters Bypass
+
+## Chall 8: XSS - Stored - filter bypass
+
+## Chall 9: XSS - DOM Based
