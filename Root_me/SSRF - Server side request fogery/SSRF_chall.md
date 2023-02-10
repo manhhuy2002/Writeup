@@ -14,7 +14,7 @@ Validation flag is stored in the file /passwd
 
 ![](https://github.com/manhhuy2002/hello-world/blob/main/ssrf_rootme/ssrf_02.jpg)
 
-Nhưng bằng cách này thì mình không thể dọc các file root mà chỉ có thể đọc được các file trong quyền của mình, nên sẽ kh đọc được flag. Vì vậy mình tiếp tục fuzz tiếp xem những port nào trên local đang chạy. Ở đây mình có thể dùng  Intruder của burp để phát hiện các cổng dịch vụ đang mở hoặc dùng script:
+Nhưng bằng cách này thì mình không thể đọc các file root mà chỉ có thể đọc được các file trong quyền của mình, nên sẽ kh đọc được flag. Vì vậy mình tiếp tục fuzz tiếp xem những port nào trên local đang chạy. Ở đây mình có thể dùng  Intruder của burp để phát hiện các cổng dịch vụ đang mở hoặc dùng script:
 
 ![](https://github.com/manhhuy2002/hello-world/blob/main/ssrf_rootme/ssrf_03.jpg)
 
@@ -87,3 +87,5 @@ Giờ thì ném payload lên và chờ sẵn ở port 1234. Chờ 1 lúc cũng �
 
 ![](https://github.com/manhhuy2002/hello-world/blob/main/ssrf_rootme/ssrf_09.jpg)
 
+
+> Flag: SSRF_PwNiNg_v1@_GoPh3r_1s_$o_c00l!
