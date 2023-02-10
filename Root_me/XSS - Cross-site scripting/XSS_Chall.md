@@ -32,7 +32,7 @@ Truyền payload vào message để lấy cookie: <script>document.location="htt
 
 ## Chall 2: XSS - Stored 2
 
-![](https://github.com/manhhuy2002/hello-world/blob/main/ssrf_rootme/xss_01.jpg)
+![](https://github.com/manhhuy2002/hello-world/blob/main/xss_rootme/xss2_01.jpg)
 
 Vẫn như bài trước cho ta 2 phần nhập nhưng thêm 1 số tính năng, và giờ title và message đã bị encode html enities nên kh thực hiện xss được ở đây.
 
@@ -40,7 +40,7 @@ Nếu để ý kĩ, mình sẽ thấy giá trị cookie status=invite đang đư
 
 #### Payload: Cookie: status="><script>alert(1)</script>
 
-![](https://github.com/manhhuy2002/hello-world/blob/main/xss_rootme/xss_04.jpg)
+![](https://github.com/manhhuy2002/hello-world/blob/main/xss_rootme/xss2_04.jpg)
 
 Thực hiện alert thành công, tương tự như bài trước ta gửi payload:
 
@@ -48,12 +48,12 @@ Thực hiện alert thành công, tương tự như bài trước ta gửi paylo
 
 Ta nhận được cookie trả về :
 
-![](https://github.com/manhhuy2002/hello-world/blob/main/ssrf_rootme/xss_02.jpg)
+![](https://github.com/manhhuy2002/hello-world/blob/main/xss_rootme/xss2_03.jpg)
 
 Có được cookie rồi ta ném vào ?section=admin để lấy flag
 
 > COOKIE: status=invite;ADMIN_COOKIE=SY2USDIH78TF3DFU78546TE7F
 
-![](https://github.com/manhhuy2002/hello-world/blob/main/ssrf_rootme/xss_03.jpg)
+![](https://github.com/manhhuy2002/hello-world/blob/main/xss_rootme/xss2_04.jpg)
 
 > FLag: E5HKEGyCXQVsYaehaqeJs0AfV
