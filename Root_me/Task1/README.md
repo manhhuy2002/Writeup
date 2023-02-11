@@ -2,9 +2,9 @@
 
 * [1. Python - Blind SSTI Filters Bypass](#1-python---blind-ssti-filters-bypass)
 * [2. XSS DOM Based - Filters Bypass](#2-xss-dom-based---filters-bypass)
-* [3: SSRF - Server side request fogery](#3-ssrf---server-side-request-fogery)
-* [4: Upload File - Zip](#4-upload-file-zip)
-* [5: SQL injection – Blind](#5-sql-injection---blind)
+* [3. SSRF - Server side request fogery](#3-ssrf---server-side-request-fogery)
+* [4. Upload File - Zip](#4-upload-file---zip)
+* [5. SQL injection - Blind](#5-sql-injection---blind)
 
 
 ## 1. Python - Blind SSTI Filters Bypass
