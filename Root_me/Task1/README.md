@@ -279,8 +279,7 @@ Giờ thì ném payload lên và chờ sẵn ở port 1234. Chờ 1 lúc cũng �
 
 > Flag: SSRF_PwNiNg_v1@_GoPh3r_1s_$o_c00l!
 
-
-4. Upload File - Zip
+## 4. Upload File - Zip
 
 ```
 Your goal is to read index.php file
