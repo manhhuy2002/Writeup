@@ -139,6 +139,32 @@ Lấy flag:
 
 ![](https://github.com/manhhuy2002/hello-world/blob/main/ssti/lab03_04.jpg)
 
+
+```
+Sử dụng và hình thành payload cho ssti. Ở bài này ta xây dựng payload dựa trên template jinja2 và dựa trên TemplateReference:
+
+_ Trong jinja2 template, ta có thể sử dụng templateReference obj của để tận dụng lại code blocks từ template. Ví dụ để tránh viết lại tiêu đề trên các mẫu,
+ta có thể set title trong {% block title %} và truy xuất chúng với {{ self.title() }}
+
+_ Build classic payload: ý tưởng cổ điển hay đơn giản nhất ở đây là dùng templateReference obj để truy cập hàm __builtins__ và sử dụng hàm __import__ để import ra module mà ta muốn, chẳng hạn thường dùng ở đây là import os. Để làm điều này thì đầu tiên ta phải khai báo trước biến toàn cục là __globals__ bằng
+cách sử dụng path classic:  self.__init__.__globals__. Như hình ở bên dưới, thì ở đây khi khởi tạo và gọi được biến cục bộ là __globals__, ta có thể gọi ra được hàm __builtins__ . Tập hợp các hàm như hình bên dưới là hàm nguyên bản trong python nên ta kh cần phải khai báo thư viện để gọi nó ra. 
+
+```
+![image](https://user-images.githubusercontent.com/104350480/218769160-1e7c5b67-7c9e-4d83-97a9-01531a105cd7.png)
+```
+Thì sau khi dùng self.__init__.__globals__. để gọi ra và truy cập được hàm __builtins__ thì ta có thể sử dụng hàm __import__ để import ra module os, module os
+cung cấp cho ta chức năng để tương tác với hệ điều hành cũng như các thông tin liên quan đến nó. Cụ thể trong hàm này sau khi import được module os, ta dùng
+hàm os.popen() để mở tệp và thực thi 1 lệnh bên trong () và nó trả về 1 đối tượng được kết nối với 1 pipe. Hay cũng thường dùng là os.system() là 1 hàm cho phép ta thực thi lệnh trong hệ thống hay lệnh shell từ trong tập lệnh của python. Có 3 tải trọng luôn cho phép được truy cập vào hệ điều hành python như:
+{{ cycler.__init__.__globals__.os.popen('id').read() }}
+{{ joiner.__init__.__globals__.os.popen('id').read() }}
+{{ namespace.__init__.__globals__.os.popen('id').read() }}
+
+Từ đây ta có thể tự hiểu và xây được những payload chính gốc nhất có thể dùng bất cứ khi nào miễn là kh bị filter :
+{{ self.__TemplateReference__context.cycler.__init__.__globals__os.popen('cmd').read() }}
+{{ self.__TempalteReference__context.joiner.__init__.__globals__os.popen('cmd').read() }}
+{{ self.__TemplateReferecne__context.namespace.__init__.gloabls__os.popen('cmd').read() }}
+```
+
 ## 2. XSS DOM Based - Filters Bypass
 Mở đầu vào ta có giao diện như sau, có thể nhập 1 số hay chữ bất kì vào, check source:
 
