@@ -26,15 +26,15 @@ Hiện nay thì jwt được sử dụng 1 cách rộng rãi trên các trang we
    - nbf (not before) : chỉ ra thời điểm trước đó mà kh thể sử dụng jwt.
    - iat (issued at) : thời điểm token được phát hành và được tính theo UNIX TIME
    - jti (jwt id) : ID của JWT
-  + Public Claim Names: Đây là các claim tùy ý được do người dùng tự định nghĩa theo ý muốn sử dụng jwt, và có thể sử dụng để định nghĩa người dùng hoặc ứng 
+ ++ Public Claim Names: Đây là các claim tùy ý được do người dùng tự định nghĩa theo ý muốn sử dụng jwt, và có thể sử dụng để định nghĩa người dùng hoặc ứng 
   dụng dùng jwt. 
-  + Private Claim Names: Đây là claim tùy ý được định nghĩa bởi tổ chức sử dụng jwt và kh được chia sẻ với bất cứ ai khác, các private claim có thể được sử dụng để định nghĩa các thông tin xác thực cụ thể về người dùng.
+ ++ Private Claim Names: Đây là claim tùy ý được định nghĩa bởi tổ chức sử dụng jwt và kh được chia sẻ với bất cứ ai khác, các private claim có thể được sử dụng để định nghĩa các thông tin xác thực cụ thể về người dùng.
   - Ví dụ về payload với người dùng có quyền admin:
   ![image](https://user-images.githubusercontent.com/104350480/219039888-b987c874-6f59-428a-b918-1da543fa78f9.png)
   
 #### Cuối cùng là Signature, signature là 1 chuỗi kí tự với sự kết hợp giữa 2 thành phần là header và payload được phân cách với nhau bởi dấu chấm, secret key và một thuật toán mã hóa được chỉ định dùng để mã hóa.  Ví dụ về signature để dễ hiểu hơn:
   
-  + Header: 
+  ++ Header: 
   
   
   ![image](https://user-images.githubusercontent.com/104350480/219042363-4e9fccc9-b130-4d74-8953-0308cd3901e7.png)
@@ -45,7 +45,7 @@ Hiện nay thì jwt được sử dụng 1 cách rộng rãi trên các trang we
 ```
 
 
-  + Payload: 
+  ++ Payload: 
 
   ```
     {"sub": "1234567890", "name": "Manh Huy", "iat": 1516239022}
