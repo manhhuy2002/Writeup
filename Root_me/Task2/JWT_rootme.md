@@ -10,13 +10,14 @@ Hiện nay thì jwt được sử dụng 1 cách rộng rãi trên các trang we
 
 - JWT gồm 3 phần chính là: header, payload và signature, được nối và phân cách với nhau bởi dấu chấm. Cấu trúc của nó đơn giản như sau:
 
-> <base64-encoded header>.<base64-encoded payload>.<HMACSHA256(base64-encoded signature)>    
-  
+```
+ <base64-encoded header>.<base64-encoded payload>.<HMACSHA256(base64-encoded signature)>    
+```
 #### Trong đó thì header thường bao gồm 2 thành phần chính là typ (type) và alg (alogrithm), tức chứa thông tin về loại token, và thuật toán để mã hóa token:
-  + type: thông thường là'JWT' 
-  + algorithm: thuật toán được mã hóa được sử dụng để tạo singnature đi kèm với token.
+  ++ type: thông thường là'JWT' 
+  ++ algorithm: thuật toán được mã hóa được sử dụng để tạo singnature đi kèm với token.
 #### Payload thì chứa thông tin xác thực cụ thể của người dùng hoặc ứng dụng. Trong đó nó là json obj chứa các attribute tùy chọn. Các attribute này được gọi là claims. Nhìn chung ta có thể phân ra làm 3 loại: Registered Claim Names, Public Claim Names, và Private Claim Names:
-  + Registrered Claim Names: Đây là thuộc tính được định sẵn  trong IANA JSON Web Token Claims registry. Những thuộc tính này là kh bắt buộc nhưng ta có thể
+  ++ Registrered Claim Names: Đây là thuộc tính được định sẵn  trong IANA JSON Web Token Claims registry. Những thuộc tính này là kh bắt buộc nhưng ta có thể
   ứng dụng nó tùy theo tình huống:
    - iss (issuer): chỉ ra định danh của người hoặc nhà cung cấp jwt
    - sub (subject): Chỉ ra đối tượng mà JWT đang xác thực, thường là ID người dùng.
