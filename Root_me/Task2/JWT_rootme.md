@@ -102,7 +102,7 @@ Như vậy kết hợp lại 3 phần ta có 1 chuỗi jwt như sau, vậy là h
 Thì về cơ bản ta đã hiểu được là jwt là một tiêu chuẩn mã hóa thông tin trong môi trường web, giúp xác thực dữ liệu đồng thời giải quyết được một số vấn
 đề mà cookie và session vướng phải:
 - Thứ nhất: jwt là một phương thức xác thực stateless, tức là jwt ở trạng thái kh cần lưu trên máy chủ. Trong khi đó cookie và session thì có, nó cần phải 
-được lưu lại trên phía máy chủ, nếu số lượng ít thì kh sao nhưng nếu số lượng lớn thì lại khác, sẽ làm chậm quá tốc độ xử lí của phía máy chủ, đây là điểm 
+được lưu lại trên phía máy khách/máy chủ, nếu số lượng ít thì kh sao nhưng nếu số lượng lớn thì lại khác, sẽ làm chậm quá tốc độ xử lí của phía máy chủ, đây là điểm 
 cộng đầu tiên của jwt.
 - Thứ hai: jwt cho phép ta trao đổi thông tin xác thực giữa các tên miền khác nhau bằng cách sử dụng 1 token chứa thông tin xác thực, còn cookie và session thì không, chúng chỉ có thể hoạt động được trên cùng 1 tên miền
 - Thứ ba: Khi một ứng dụng cookie để lưu trữ thông tin xác thực, người dùng có thể dễ dàng chỉnh sửa cookie trên trình duyệt, với jwt thì khác, nó sử dụng 
