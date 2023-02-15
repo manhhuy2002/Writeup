@@ -3,7 +3,7 @@
 
 > Reference: https://datatracker.ietf.org/doc/html/draft-ietf-oauth-json-web-token-32#section-4.1
 
-## Trước hết đi vào jwt, ta cần hiểu jwt là gì? Và một vài đặc điểm của jwt, cách thức tấn công cũng như là sự khác biệt giữa jwt với cookie và session?
+##1. Trước hết đi vào jwt, ta cần hiểu jwt là gì? Và một vài đặc điểm của jwt, cách thức tấn công cũng như là sự khác biệt giữa jwt với cookie và session?
 
 - JWT được viết tắt của json web token, là 1 tiêu chuẩn mở được mã hóa dùng để truyền thông tin qua môi trường web một cách an toàn, và nhanh chóng hơn.
 Hiện nay thì jwt được sử dụng 1 cách rộng rãi trên các trang web vì nó đơn giản và linh hoạt, ngoài ra cũng rất an toàn nếu thực hiện đúng cách. 
@@ -36,12 +36,75 @@ Hiện nay thì jwt được sử dụng 1 cách rộng rãi trên các trang we
   
   + Header: 
   
+  
   ![image](https://user-images.githubusercontent.com/104350480/219042363-4e9fccc9-b130-4d74-8953-0308cd3901e7.png)
+ 
+ ```
+ {"alg": "HS256", "typ": "JWT"}
+
+```
+
 
   + Payload: 
+
+  ```
+    {"sub": "1234567890", "name": "Manh Huy", "iat": 1516239022}
+    
+  ```
   
   ![image](https://user-images.githubusercontent.com/104350480/219042511-2edfdf27-eb98-4415-8cb1-ff565b452c14.png)
   
   Ở đây chúng ta sẽ dùng thuật toán HS256 để tạo signature. Thuật toán này sử dụng 1 secretkey để tạo signature, giả sử secretkey của chúng ta là 
   **kcscsecretkey**, để tạo signature ta thực hiện như sau: 
+  - Tạo 1 chuỗi json bao gồm header và payload nối nhau bởi dấu chấm: 
+    > eyJhbGciOiAiSFMyNTYiLCAidHlwIjogIkpXVCJ9.eyJzdWIiOiAiMTIzNDU2Nzg5MCIsICJuYW1lIjogIk1hbmggSHV5IiwgImlhdCI6IDE1MTYyMzkwMjJ9
+
+  - Sau đó sử dụng secret key và thuật toán HS256 để tạo signature từ chuỗi JSON này:
+  > HMACSHA256(
+  base64UrlEncode(header) + "." +
+  base64UrlEncode(payload),
+  mysecretkey )
   
+  #### Ở đây ta dùng script python để tạo chuỗi này :
+  
+  ```
+  
+  import hmac
+import hashlib
+import base64
+import json
+
+header = {"alg":"HS256", "typ":"JWT"}
+payload = {"sub": "1234567890", "name": "Manh Huy", "iat": 1516239022}
+# dùng base64.urlsafe_b64encode ở đây để mã hóa hoặc decode, dùng urlsafe để thay thế các ký tự đặc biệt như '+','/','='
+# thành '-','_' nếu có và loại bỏ các ký tự padding = cuối cùng khỏi chuỗi mã hóa, vì các ký tự kia khi truyền qua
+# internet có thể gây rắc rối. Giúp chuỗi base64url được truyền và xử lí dễ dàng hơn.
+header_encoded = base64.urlsafe_b64encode(json.dumps(header).encode()).decode('utf-8')
+payload_encoded = base64.urlsafe_b64encode(json.dumps(payload).encode()).decode('utf-8')
+data = header_encoded +'.'+ payload_encoded
+# tạo secret key để sign data
+secret = 'kcscsecretkey'.encode()
+# sign data  với thuật toán hmac-sha256 kết hợp với secretkey
+signature = hmac.new(secret, data.encode(), hashlib.sha256).digest()
+# ta encode signature dưới dạng base64
+signature_encoded = base64.urlsafe_b64encode(signature).decode('utf-8').rstrip('=')
+# Nối chuỗi header, payload và signature là ta tạo thành công 1 jwt
+jwt = data +'.'+signature_encoded
+print(jwt)
+
+```
+
+Như vậy kết hợp lại 3 phần ta có 1 chuỗi jwt như sau, vậy là hiểu được thành phần và quá trình tạo nên 1 jwt:
+> eyJhbGciOiAiSFMyNTYiLCAidHlwIjogIkpXVCJ9.eyJzdWIiOiAiMTIzNDU2Nzg5MCIsICJuYW1lIjogIk1hbmggSHV5IiwgImlhdCI6IDE1MTYyMzkwMjJ9.qh5sCnBphQzw4Bgb2H-LMBioumbuSEpWRV2c22evI_c
+
+#### Quên mất ta chưa trả lời câu hỏi jwt này thì có gì khác với cookie và session, triển tiếp thôi: 
+
+Thì về cơ bản ta đã hiểu được là jwt là một tiêu chuẩn mã hóa thông tin trong môi trường web, giúp xác thực dữ liệu đồng thời giải quyết được một số vấn
+đề mà cookie và session vướng phải:
+- Thứ nhất: jwt là một phương thức xác thực stateless, tức là jwt ở trạng thái kh cần lưu trên máy chủ. Trong khi đó cookie và session thì có, nó cần phải 
+được lưu lại trên phía máy chủ, nếu số lượng ít thì kh sao nhưng nếu số lượng lớn thì lại khác, sẽ làm chậm quá tốc độ xử lí của phía máy chủ, đây là điểm 
+cộng đầu tiên của jwt.
+- Thứ hai: jwt cho phép ta trao đổi thông tin xác thực giữa các tên miền khác nhau bằng cách sử dụng 1 token chứa thông tin xác thực, còn cookie và session thì không, chúng chỉ có thể hoạt động được trên cùng 1 tên miền
+- Thứ ba: Khi một ứng d
+  
+Ta đến với phần 2, tấn công jwt
