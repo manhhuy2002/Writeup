@@ -109,4 +109,7 @@ cộng đầu tiên của jwt.
 thuật toán được mã hóa ở trên và chỉ sử dụng cùng 1 thuật toán mới giải mã được, nên jwt có khả năng bảo mật sẽ tốt hơn so với cookie....
 Nói chung ta có thể thấy sơ qua được 1 vài ưu điểm của jwt như vậy. 
 
-## 2.Ta đến với phần 2, tấn công JWT, trước khi vào rootme, ta chiến trên portswigger, ta chiến lab từng dạng thôi.
+## 2.Ta đến với phần 2, tìm hiểu tất tần tật về jwt attack:  
+
+### 2.1 
+
