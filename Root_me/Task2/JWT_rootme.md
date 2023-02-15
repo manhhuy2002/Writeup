@@ -3,7 +3,7 @@
 
 > Reference: https://datatracker.ietf.org/doc/html/draft-ietf-oauth-json-web-token-32#section-4.1
 
-##1. Trước hết đi vào jwt, ta cần hiểu jwt là gì? Và một vài đặc điểm của jwt, cách thức tấn công cũng như là sự khác biệt giữa jwt với cookie và session?
+## 1. Trước hết đi vào jwt, ta cần hiểu jwt là gì? Và một vài đặc điểm của jwt, cách thức tấn công cũng như là sự khác biệt giữa jwt với cookie và session?
 
 - JWT được viết tắt của json web token, là 1 tiêu chuẩn mở được mã hóa dùng để truyền thông tin qua môi trường web một cách an toàn, và nhanh chóng hơn.
 Hiện nay thì jwt được sử dụng 1 cách rộng rãi trên các trang web vì nó đơn giản và linh hoạt, ngoài ra cũng rất an toàn nếu thực hiện đúng cách. 
@@ -105,6 +105,8 @@ Thì về cơ bản ta đã hiểu được là jwt là một tiêu chuẩn mã 
 được lưu lại trên phía máy chủ, nếu số lượng ít thì kh sao nhưng nếu số lượng lớn thì lại khác, sẽ làm chậm quá tốc độ xử lí của phía máy chủ, đây là điểm 
 cộng đầu tiên của jwt.
 - Thứ hai: jwt cho phép ta trao đổi thông tin xác thực giữa các tên miền khác nhau bằng cách sử dụng 1 token chứa thông tin xác thực, còn cookie và session thì không, chúng chỉ có thể hoạt động được trên cùng 1 tên miền
-- Thứ ba: Khi một ứng d
-  
-Ta đến với phần 2, tấn công jwt
+- Thứ ba: Khi một ứng dụng cookie để lưu trữ thông tin xác thực, người dùng có thể dễ dàng chỉnh sửa cookie trên trình duyệt, với jwt thì khác, nó sử dụng 
+thuật toán được mã hóa ở trên và chỉ sử dụng cùng 1 thuật toán mới giải mã được, nên jwt có khả năng bảo mật sẽ tốt hơn so với cookie....
+Nói chung ta có thể thấy sơ qua được 1 vài ưu điểm của jwt như vậy. 
+
+## 2.Ta đến với phần 2, tấn công JWT, trước khi vào rootme, ta chiến trên portswigger, ta chiến lab từng dạng thôi.
