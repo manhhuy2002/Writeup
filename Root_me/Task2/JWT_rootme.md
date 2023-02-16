@@ -111,5 +111,33 @@ Nói chung ta có thể thấy sơ qua được 1 vài ưu điểm của jwt nh�
 
 ## 2.Ta đến với phần 2, tìm hiểu tất tần tật về jwt attack:  
 
-### 2.1 
+### 2.1 Tấn công jwt xảy ra khi nào?
+
+ Tấn công jwt xảy ra khi người dùng sử dụng các jwt đã sửa đổi đến phía máy chủ mục tiêu có lỗi xử lí jwt trong việc xử lí. Có một vài cách để tấn công như: 
+   - Tấn công XSS (Cross-site scripting): Tấn công XSS được thực hiện bằng cách chèn mã độc vào trang web và lấy cookie chứa JWT của người dùng.
+   - Tấn công CSRF (Cross-site request forgery): Tấn công CSRF được thực hiện bằng cách khai thác việc sử dụng cookie trong JWT để thực hiện các yêu cầu giả
+mạo từ một trang web khác. 
+   - Tấn công bằng cách sử dụng thuật toán mã hóa yếu: Một số thuật toán mã hóa yếu có thể bị dò tìm hoặc tấn công bởi các kẻ tấn công. Ví dụ, thuật toán
+HS256 đã bị chứng minh là có thể bị tấn công bằng cách dò tìm khóa bí mật.
+
+
+#### 2.2 Tác động của tấn công jwt
+
+Tác động của tấn công jwt là rất nghiêm trọng, nếu kẻ tấn công có thể lấy được jwt của một người dùng, chúng có thể mạo danh tài khoản của họ và truy cập vào
+tài khoản của họ.
+
+## 3. Lab portswigger
+
+#### 3.1 : Lab: JWT authentication bypass via unverified signature
+
+```
+This lab uses a JWT-based mechanism for handling sessions. Due to implementation flaws, the server doesn't verify the signature of any JWTs that it receives.
+
+To solve the lab, modify your session token to gain access to the admin panel at /admin, then delete the user carlos.
+
+You can log in to your own account using the following credentials: wiener:peter
+
+```
+
+
 
