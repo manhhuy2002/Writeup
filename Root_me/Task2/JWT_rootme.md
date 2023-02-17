@@ -139,5 +139,17 @@ You can log in to your own account using the following credentials: wiener:peter
 
 ```
 
+![image](https://user-images.githubusercontent.com/104350480/219689675-674cd62e-97be-430d-991f-0400da89f141.png)
+
+Bài này khá đơn giản, lỗi có thể do dev nhầm lẫn giữa decode() và verify() nên chỉ cần thay đổi sub trong payload thành administrator là  được.
+
+![image](https://user-images.githubusercontent.com/104350480/219690319-84559823-6ce0-4ab5-b87d-bcd687934f0b.png)
+
+Có đường dẫn rồi, sửa request thành **GET /my-account** thành **GET /admin/delete?username=carlos** là xong
+
+![image](https://user-images.githubusercontent.com/104350480/219690588-5578a725-ea07-4544-978b-feb8f4d469da.png)
+
+
+
 
 
