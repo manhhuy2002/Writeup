@@ -1,7 +1,6 @@
 # Trần Mạnh Huy - JWT - json web token
 <hr>
 # Table of content 
-<hr>
 
 * [Chall 1: JSON Web Token (JWT) - Introduction](#chall-1-json-web-token-jwt---introduction)
 * [Chall 2: JSON Web Token (JWT) - Weak secret](#chall-2-json-web-token-jwt---weak-secret)
@@ -48,5 +47,15 @@ print(data)
 
 ## Chall 2: JSON Web Token (JWT) - Weak secret
 
-Dạng này thì là weak secret key, nghe đã biết phải brute force để tìm kiếm được secret key rồi.
+```
+"Let's play a small game, I bet you cannot access to my super secret admin section. Make a GET request to /token and use the token you'll get to try to access /admin with a POST request."
+
+```
+
+![image](https://user-images.githubusercontent.com/104350480/219711939-05cb4769-bdef-4024-aea3-2e92e5ffb132.png)
+
+Mở đường dẫn /token ta có token:
+
+> Here is your token	"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiZ3Vlc3QifQ.4kBPNf7Y6BrtP-Y3A-vQXPY9jAh_d0E6L4IUjL65CvmEjgdTZyr2ag-TM-glH6EYKGgO3dBYbhblaPQsbeClcw"
+
 
