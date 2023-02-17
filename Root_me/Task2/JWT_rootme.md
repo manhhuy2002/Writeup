@@ -141,7 +141,7 @@ You can log in to your own account using the following credentials: wiener:peter
 
 ![image](https://user-images.githubusercontent.com/104350480/219689675-674cd62e-97be-430d-991f-0400da89f141.png)
 
-Bài này khá đơn giản, lỗi có thể do dev nhầm lẫn giữa decode() và verify() nên chỉ cần thay đổi sub trong payload thành administrator là  được.
+Bài này khá đơn giản, lỗi có thể do dev nhầm lẫn giữa decode() và verify() nên chữ kí kh hề được xác minh, chỉ cần thay đổi sub trong payload thành administrator là  được.
 
 ![image](https://user-images.githubusercontent.com/104350480/219690319-84559823-6ce0-4ab5-b87d-bcd687934f0b.png)
 
@@ -149,7 +149,36 @@ Có đường dẫn rồi, sửa request thành **GET /my-account** thành **GET
 
 ![image](https://user-images.githubusercontent.com/104350480/219690588-5578a725-ea07-4544-978b-feb8f4d469da.png)
 
+#### 3.2 : Lab: Lab: JWT authentication bypass via flawed signature verification
 
+```
+ This lab uses a JWT-based mechanism for handling sessions. The server is insecurely configured to accept unsigned JWTs.
 
+To solve the lab, modify your session token to gain access to the admin panel at /admin, then delete the user carlos.
+
+You can log in to your own account using the following credentials: wiener:peter 
+
+```
+Đọc tên đề có thể thấy bài lab này là dạng bỏ qua xác thực jwt thông qua lỗi thiếu sót chữ kí, dạng này làm cho vui chứ thực tế thì hiếm là rõ rồi, vậy đổi alg thành none và sub thành administrator thôi, nhưng sau khi sửa thì thấy server trả về lỗi: 
+
+![image](https://user-images.githubusercontent.com/104350480/219693913-e0c7c3d1-386d-41cd-9779-6c141fbb59cc.png)
+
+Ngồi ngẫm 1 tý thì quên mất mình để alg = none rồi thì đâu cần signature nữa, xóa bỏ signature là được. Tương tự như trên thôi:
+
+![image](https://user-images.githubusercontent.com/104350480/219694305-ed9d2e27-fee9-4de4-922d-7b6bf8c88f92.png)
+
+> GET /admin/delete?username=carlos
+
+#### 3.3: Lab: JWT authentication bypass via weak signing key
+
+```
+This lab uses a JWT-based mechanism for handling sessions. It uses an extremely weak secret key to both sign and verify tokens. This can be easily brute-forced using a wordlist of common secrets.
+
+To solve the lab, first brute-force the website's secret key. Once you've obtained this, use it to sign a modified session token that gives you access to the admin panel at /admin, then delete the user carlos.
+
+You can log in to your own account using the following credentials: wiener:peter
+
+```
+Bài này thì là dạng weak signing key, nghe đã thấy là liên quan đến brute force để kiếm secret key rồi, triển thôi.
 
 
