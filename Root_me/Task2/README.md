@@ -72,6 +72,8 @@ Thêm Authorization vào xem được gì nào:
 Bài này dùng alg: HS512, thì như tên bài thì có vẻ secret key khá yếu, dùng tool để bruteforce xem sao: Ở đây ta dùng jwt_tool với list đơn giản
 từ rockyou.txt
 
+> payload: python3 jwt_tool.py --token --C -d /usr/share/wordlists/rockyou.txt 
+
 ![image](https://user-images.githubusercontent.com/104350480/219830868-0655a46b-6375-4fa5-bab8-da0cac9e3afd.png)
 
 Oke vậy là ta có được secretkey là lol, giờ ném lên jwt.io chỉnh lại payload thành admin và thêm secretkey lol là xong: 
