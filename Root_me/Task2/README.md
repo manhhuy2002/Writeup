@@ -81,3 +81,16 @@ Oke vậy là ta có được secretkey là lol, giờ ném lên jwt.io chỉnh 
 ![image](https://user-images.githubusercontent.com/104350480/219832730-a58fad6e-e2cb-48c3-a422-c3b4d957b817.png)
 
 > Flag: PleaseUseAStrongSecretNextTime
+ 
+Hoặc có thể dùng cách khác để bruteforce khá đơn giản là dùng hashcat
+
+>payload: hashcat -a 0 -m 16500 jwt_token.txt /usr/share/wordlists/rockyou.txt --force
+
+> https://hashcat.net/wiki/doku.php?id=example_hashes
+
+![image](https://user-images.githubusercontent.com/104350480/219835386-3adb6412-afff-454e-80fa-f1b89997c6ba.png)
+
+Ta cũng có được secretkey tương ứng là lol
+
+![image](https://user-images.githubusercontent.com/104350480/219836351-03ba3270-2447-4a15-a901-d7d27cab47c5.png)
+
