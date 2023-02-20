@@ -116,20 +116,33 @@ Ném lên burpsuite và truy cập vào **GET /web-serveur/ch60/key** ta đượ
 
 ```
 
-
 ![image](https://user-images.githubusercontent.com/104350480/220160747-369e6985-bd0f-4570-bea3-1c8760b1c3b9.png)
 
 Thử sang đường dẫn là **POST /web-serveur/ch60/admin** ta được:
 
 ![image](https://user-images.githubusercontent.com/104350480/220161853-29c693bf-e87d-445d-b25a-ceaf0ed4611e.png)
 
+Sửa như message trả về, ta thêm 'Authorization: YOURTOKEN' vào thì được message khác trả về:
 
-Tiếp với đường dẫn **POST /web-serveur/ch60/auth** ta được:
+![image](https://user-images.githubusercontent.com/104350480/220169775-4df38871-a549-4ced-8a2f-d1cfccdb76d0.png)
+
+Cần xác thực authentication nên tiếp với đường dẫn **POST /web-serveur/ch60/auth** ta được:
 
 ![image](https://user-images.githubusercontent.com/104350480/220161687-6a092d07-8ccf-4d5b-a347-b1b35dd1fe70.png)
 
-Thực ra thì nhìn giá trị trả về của trang /admin thì cũng có thấy quen thuộc với bài dạng trước nhưng mà bài này cho là public key nên chưa khai thác theo 
-hướng đó được.
+Thêm username=admin vào xem sao:
+
+![image](https://user-images.githubusercontent.com/104350480/220174432-7232c6a1-b9cd-4292-ade7-9eb26a435c80.png)
+
+Lỗi là chắc rồi, ta lại thay bằng guest để lấy token thôi: 
+
+```
+{"result": "Hello guest", "Here is your token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Imd1ZXN0In0.ijki-3H5jA6wsSWu6tKXy7HwOQcbvxkc9c1vHWgqOF8gP7dkCUg2nE7QJ2FYeuGj2-VdRPOUVdQzKfOvrsaTVI3uDmUNygrvVm8Yhuw6o9nlqtm5_MNe53dQ5Pmo7uBg-JyfMhEUvHWdW2uXLW-rxSDRCq8xcdG3RC8smzUMLs_-VmboAaW9rV-IMw5JERSZmlPnEGAQ0oMowEC8C3G1LcE5_0vZ9EtNq8yWkzr9I2CWfLwkZIWh1rj0XOI3I_iFrFsr2-LP0xK-NdaArQ86o59XjMU1KgqNCSAGQ0JmDQtvMymYWt6PkDjlzQ2x3YILJpA5gpAS8ZTOJdVnF_rZ3w"}
+
+```
+Sau khi có được token lên jwt.io để phân tích thử, ta thu được alg được dùng là RS256 và public key được dùng để verify và private key dùng để ký:
+
+![image](https://user-images.githubusercontent.com/104350480/220175012-285f05bc-63ee-4a46-8674-813d81c6ccf5.png)
 
 Đến đây vì là kiến thức cũng mới nên mình phải dừng đọc tài liệu chút:
 
@@ -141,7 +154,27 @@ còn dùng public key để veryfy() các message này. Thì như trong source c
 sang HS256 được thì signature bây giờ được verify hay xác minh bằng cách sử dụng thuật toán HS256 với chữ kí bây giờ là public key thay cho secret key, mà
 public key là cái mà ta đã biết rồi nên nếu đổi được thuật toán thì coi như ta sẽ có được secret key và lúc này coi như sẽ giải quyết được chall.
 
-Vậy thì thử tiếp xem sao
+Để khai thác tiếp thì ta sửa đổi đoạn jwt trên chút:
+
+![image](https://user-images.githubusercontent.com/104350480/220175677-72f0ea6c-668b-4e6e-be6c-47725894f22a.png)
+
+Lấy phần header và payload để kết hợp với publickey: 
+
+> eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIn0
+> Public key chuyển về dạng ascii: 
+
+
+Ta được: 
+
+![image](https://user-images.githubusercontent.com/104350480/220177007-8a8bec09-33aa-47ec-b79e-6149afb83ce2.png)
+
+> 8e5c1adf326f172ce185e38ab5a05dc3306cf52e9112fc97f22d5f3b3a6c8854
+> cmd: echo "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIn0" | openssl dgst -sha256 -mac HMAC -macopt hexkey:
+
+Dùng cyberchef ta thu được: 
+
+![image](https://user-images.githubusercontent.com/104350480/220177366-a51c0ec7-a42b-4f20-92c4-7366850a1db2.png)
+
 
 ## Chall 4: CSRF - 0 protection
 
