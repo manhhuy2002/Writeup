@@ -160,7 +160,7 @@ public key là cái mà ta đã biết rồi nên nếu đổi được thuật 
 
 Lấy phần header và payload để kết hợp với publickey: 
 
-> eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIn0
+> eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIn0.RFdzbGFzMjNSVzBZaTJ6L2tVTkhOOVdNTDV1NGVjajhHS3BqdjNaMGxZTT0
 > Public key chuyển về dạng ascii: 
 
 
