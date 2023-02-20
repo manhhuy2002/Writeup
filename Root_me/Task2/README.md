@@ -3,7 +3,7 @@
 
 * [Chall 1: JSON Web Token (JWT) - Introduction](#chall-1-json-web-token-jwt---introduction)
 * [Chall 2: JSON Web Token (JWT) - Weak secret](#chall-2-json-web-token-jwt---weak-secret)
-* [Chall 3: JSON Web Token (JWT) - Public key](#chall-4-json-web-token-jwt---public-key) 
+* [Chall 3: JSON Web Token (JWT) - Public key](#chall-3-json-web-token-jwt---public-key) 
 * [Chall 4: CSRF - 0 protection](#chall-4-csrf---0-protection)
 * [Chall 5: CSRF - token bypass](#chall-5-csrf---token-bypass)
 
@@ -97,16 +97,51 @@ Ta cũng có được secretkey tương ứng là lol
 ## Chall 3: JSON Web Token (JWT) - Public key
 
 ```
+You find an API with 3 endpoints:
+
+/key (accessible with GET)
+/auth (accessible with POST)
+/admin (accessible with POST)
 There is sure to be important data in the admin section, access it!
 
 ```
+Mở vào trang thì cũng kh có gì, nhưng như bài đã cung cấp cho ta 3 endpoint rồi:
+
+![image](https://user-images.githubusercontent.com/104350480/220160437-189b3652-27a0-4163-a95c-0e31fccfad79.png)
+
+Ném lên burpsuite và truy cập vào **GET /web-serveur/ch60/key** ta được 1 public key trả về đúng như tên bài: 
+
+```
+"-----BEGIN PUBLIC KEY-----", "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4iMUdm9olWjWrZLP5g9R", "TqFux6r1Wx0ovriPNnW5QdTYFb/FyCDOoUV4S0GGe+Ef/mi9gIQBlABIoGL34+6w", "SZyHQv+8ESxRBlniqhJQ8fMJzVV0kWDN4MtnWmFeTOhuHQ8/rBFAtJEk5tl0PZia", "KcWFghtPufxhzUqLgggO7bztvngRWztgExgcwo77NyeYQ2+EUQMgHgAKcydVokbU", "64VnfDtONsfc6o1F+EIKVhlEkp5g46oKAbiTHFlwbrasdsKVMeN9qv9+sBNbmJI/", "Au6YMj9TifkVd/OSOlW9DkCL/HIGSoaBiCC5eK+8Am4/QAo+NYEoYJ9D9TNs2f2O", "fQIDAQAB", "-----END PUBLIC KEY-----"
+
+```
+
+
+![image](https://user-images.githubusercontent.com/104350480/220160747-369e6985-bd0f-4570-bea3-1c8760b1c3b9.png)
+
+Thử sang đường dẫn là **POST /web-serveur/ch60/admin** ta được:
+
+![image](https://user-images.githubusercontent.com/104350480/220161853-29c693bf-e87d-445d-b25a-ceaf0ed4611e.png)
+
+
+Tiếp với đường dẫn **POST /web-serveur/ch60/auth** ta được:
+
+![image](https://user-images.githubusercontent.com/104350480/220161687-6a092d07-8ccf-4d5b-a347-b1b35dd1fe70.png)
+
+Thực ra thì nhìn giá trị trả về của trang /admin thì cũng có thấy quen thuộc với bài dạng trước nhưng mà bài này cho là public key nên chưa khai thác theo 
+hướng đó được.
+
+Đến đây vì là kiến thức cũng mới nên mình phải dừng đọc tài liệu chút:
+
 > Reference: https://repository.root-me.org/Exploitation%20-%20Web/EN%20-%20Attacking%20JWT%20authentication%20-%20Sjoerd%20Langkemper.pdf?_gl=1*c017c9*_ga*NzM2OTE5OTkuMTY2OTA4MzExMA..*_ga_SRYSKX09J7*MTY3NjkwOTE4Ni4xMDQuMS4xNjc2OTA5NjE1LjAuMC4w
 
 Ở bài này đọc related source mà rootme cung cấp thì bài này có liên quan đến việc thay đổi thuật toán mã hóa, thì cụ thể ở đây thì với các thuật toán như
 HS256 hay HS512 thì dùng secret key để ký và verify() các message trả về, còn thuật toán RS256 được dùng trong bài này là dùng private key để ký message 
-còn dùng public key để veryfy() các message này. Thì như trong souce cung cấp thì ta có thể hiểu thế này, nếu mà ta thay đổi được thuật toán từ RS256
+còn dùng public key để veryfy() các message này. Thì như trong source cung cấp thì ta có thể hiểu thế này, nếu mà ta thay đổi được thuật toán từ RS256
 sang HS256 được thì signature bây giờ được verify hay xác minh bằng cách sử dụng thuật toán HS256 với chữ kí bây giờ là public key thay cho secret key, mà
 public key là cái mà ta đã biết rồi nên nếu đổi được thuật toán thì coi như ta sẽ có được secret key và lúc này coi như sẽ giải quyết được chall.
+
+Vậy thì thử tiếp xem sao
 
 ## Chall 4: CSRF - 0 protection
 
