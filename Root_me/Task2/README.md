@@ -94,6 +94,20 @@ Ta cũng có được secretkey tương ứng là lol
 
 ![image](https://user-images.githubusercontent.com/104350480/219836351-03ba3270-2447-4a15-a901-d7d27cab47c5.png)
 
+## Chall 3: JSON Web Token (JWT) - Public key
+
+```
+There is sure to be important data in the admin section, access it!
+
+```
+> Reference: https://repository.root-me.org/Exploitation%20-%20Web/EN%20-%20Attacking%20JWT%20authentication%20-%20Sjoerd%20Langkemper.pdf?_gl=1*c017c9*_ga*NzM2OTE5OTkuMTY2OTA4MzExMA..*_ga_SRYSKX09J7*MTY3NjkwOTE4Ni4xMDQuMS4xNjc2OTA5NjE1LjAuMC4w
+
+Ở bài này đọc related source mà rootme cung cấp thì bài này có liên quan đến việc thay đổi thuật toán mã hóa, thì cụ thể ở đây thì với các thuật toán như
+HS256 hay HS512 thì dùng secret key để ký và verify() các message trả về, còn thuật toán RS256 được dùng trong bài này là dùng private key để ký message 
+còn dùng public key để veryfy() các message này. Thì như trong souce cung cấp thì ta có thể hiểu thế này, nếu mà ta thay đổi được thuật toán từ RS256
+sang HS256 được thì signature bây giờ được verify hay xác minh bằng cách sử dụng thuật toán HS256 với chữ kí bây giờ là public key thay cho secret key, mà
+public key là cái mà ta đã biết rồi nên nếu đổi được thuật toán thì coi như ta sẽ có được secret key và lúc này coi như sẽ giải quyết được chall.
+
 ## Chall 4: CSRF - 0 protection
 
 Mở vào chall là có:
