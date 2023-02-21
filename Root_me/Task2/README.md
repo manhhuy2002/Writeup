@@ -350,4 +350,43 @@ if (isset($_POST["data"]) && !empty($_POST["data"])) {
  
  ![image](https://user-images.githubusercontent.com/104350480/220235297-03dd0e21-e826-4b2f-8bda-71fd27a523a3.png)
 
- Đọc source code thì đây là dạng php pop chain, tức là ta phải truyền tin nhắn dưới dạng 
+ Đọc source code thì đây là dạng php pop chain, tức là ta phải truyền tin nhắn dưới dạng serialized object trong php
+ 
+ Link tham khảo về php object injection
+ 
+ > Reference: https://www.youtube.com/watch?v=-VG9ujeYu9o&t=2016s
+ 
+ Vấn đề là từ source code, làm thế nào để bypass được. Phân tích code 1 chút, nếu ta truyền vào giá trị serialize qua $data thông qua giao thức POST thì 
+ nó sẽ được thực hiện unserialize, mà khi unserialize thì magic method wakeup() sẽ được gọi rồi nối chuỗi gadget thực hiện với toString, xong khởi tạo mội đối
+ tượng mới với **new GetMessage($this->msg))->receive;** , và khi khởi tạo 1 đối tượng mới thì __construct sẽ được gọi, và kiểm tra xem giá trị truyền vào
+ có phải là "HelloBooooooy" hay không, nếu có thì sẽ trả về 1 message mà sẽ gặp rất nhiều lần trong bài này :( là : **[FRIEND]: Ahahah you get fooled by my
+ security my friend!<br>**, còn nếu không thì nó sẽ được gán vào $receive và đi qua hàm __toString() để chuyển về dạng chuỗi, nhưng vấn đề là khi kết thúc đối 
+ tượng hàm __destruct() sẽ được gọi ra và vấn đề mới thực sự ở đây: 
+ 
+ ![image](https://user-images.githubusercontent.com/104350480/220239781-5afab5fb-1414-485a-a93c-408644516993.png)
+ 
+ $getflag ở đây được sử dụng ở đây dùng để lưu trạng thái của việc lấy cờ ban đầu là false. Trong hàm __toString() của lớp WakyWaky, biến $getflag sẽ được gán
+ giá trị true, khi đối tượng GetMessage được huỷ bởi hàm __destruct(), giá trị của biến $getflag sẽ được kiểm tra. Nếu giá trị của $getflag là true ta có thể
+ đọc được file flag.php.
+ Vậy làm sao để bypass được nó? Mình thử đủ kiểu thì nó chỉ trả về hoặc là message đầu trong __construct, hoặc là message đầu trong dòng if của __destruct().
+ Đến mãi sau thì mới hiểu là có thể tận dụng code của bài bằng cách gọi ra 1 đối tượng mới GetMessage trước và truyền giá trị bất kì vào: 
+ > $a = new GetMessage('abcd1234');
+ Lúc này receive sẽ lưu giá trị là 'abcd1234', nhưng ta sẽ gán luôn thuộc tính receive của đối tương $a là $a->receive = 'HelloBooooooy'; 
+ Tiếp theo ta tạo một đối tượng **new WakyWaky()** mới và lưu trữ trong $test, thuộc tính $msg của $test sẽ được đặt trong đối tượng a:
+``` 
+ $test = new WakyWaky();
+ $test->msg=$a;
+ ```
+ Vậy là bypass được rồi
+ 
+ ![image](https://user-images.githubusercontent.com/104350480/220241862-0d051c01-4f1c-428f-94ac-3391701ed03b.png)
+
+ Ta chuyển về serialize($b) để lấy ra giá trị rồi gửi qua $data:
+ 
+ > O:8:"WakyWaky":1:{s:3:"msg";O:8:"WakyWaky":1:{s:3:"msg";O:10:"GetMessage":1:{s:7:"receive";s:13:"HelloBooooooy";}}}
+
+ Vậy là đã bypass được,ta được kết quả của flag: 
+
+ ![image](https://user-images.githubusercontent.com/104350480/220237114-1c05e967-82b7-4389-9d7e-b7282ce95b9b.png)
+ 
+ > uns3r14liz3_p0p_ch41n_r0cks
