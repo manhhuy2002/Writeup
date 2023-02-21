@@ -168,8 +168,8 @@ Ta chuyển public key về dạng giá trị hex ASCII là người dùng có t
 
 ![image](https://user-images.githubusercontent.com/104350480/220250615-5b245a42-4701-41b2-a029-daec8ad553d4.png)
 
-
 > 8e5c1adf326f172ce185e38ab5a05dc3306cf52e9112fc97f22d5f3b3a6c8854
+
 > cmd: echo "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIn0" | openssl dgst -sha256 -mac HMAC -macopt hexkey:<public_key_ascii>
 
 ![image](https://user-images.githubusercontent.com/104350480/220254489-4c31e94d-d4d4-43e8-b87c-83bd99b8a5e4.png)
