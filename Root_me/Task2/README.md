@@ -246,6 +246,9 @@ Bây giờ ta cần gửi 1 form tương tự để lừa admin kick vào link t
 Activate your account to access intranet.
 
 ```
+Dạng này thực sự thì mình chưa hiểu lm nên là có tham khảo writeup.
+Thì cũng như bài trên nhưng bài này đã có lớp phòng thủ, ta phải submit 1 dynamic token vào form của ta nữa.
+
 
 ## Chall 6: XSS - Stored - filter bypass
 
@@ -259,7 +262,7 @@ Steal the administrator’s session cookie.
 
 ##### Bài này mình tấn công xss luôn vào message, nhưng thử thì bị filter khá nhiều, ' ', " ", alert( , document. , <script>,..... Sau 1 hồi dùng burpsuite 
 intruder với từng tag và attribute trong **https://portswigger.net/web-security/cross-site-scripting/cheat-sheet** thì mình thu được thẻ tag svg với attribute 
-là animatetransform và onbegin dùng để kích hoạt 1 hoạt động cụ thể, vì alert( bị filter nên ở đây ta thử thay bằng print() xem sao:
+là **animatetransform** và **onbegin** dùng để kích hoạt 1 hoạt động cụ thể, vì alert( bị filter nên ở đây ta thử thay bằng print() xem sao:
 
 > payload: <svg><animatetransform onbegin=print()>
 
@@ -380,7 +383,14 @@ if (isset($_POST["data"]) && !empty($_POST["data"])) {
  $test = new WakyWaky();
  $test->msg=$a;
  ```
- Vậy là bypass được rồi
+ Vậy là bypass được rồi, còn vì sao hàm __construct lại không được gọi ra thì mình có tìm hiểu được là:
+ 
+ ```
+Khi ta deserialize chuỗi O:8:"WakyWaky":1:{s:3:"msg";O:10:"GetMessage":1:{s:7:"receive";s:13:"HelloBooooooy";}} bằng hàm unserialize(), PHP sẽ khởi tạo đối tượng WakyWaky và đối tượng GetMessage theo thứ tự đã định nghĩa trong chuỗi truyền vào.
+
+Khi khởi tạo đối tượng WakyWaky, nó sẽ gọi hàm __wakeup() nhưng không gọi hàm __construct(). Điều này xảy ra vì trong chuỗi serialized, ta không cung cấp đủ thông tin để PHP gọi hàm __construct() của đối tượng GetMessage. Do đó, khi khôi phục đối tượng từ chuỗi serialized, PHP sẽ không gọi hàm __construct() của GetMessage.
+ 
+ ```
  
  ![image](https://user-images.githubusercontent.com/104350480/220241862-0d051c01-4f1c-428f-94ac-3391701ed03b.png)
 
@@ -392,4 +402,4 @@ if (isset($_POST["data"]) && !empty($_POST["data"])) {
 
  ![image](https://user-images.githubusercontent.com/104350480/220237114-1c05e967-82b7-4389-9d7e-b7282ce95b9b.png)
  
- > uns3r14liz3_p0p_ch41n_r0cks
+ > Flag: uns3r14liz3_p0p_ch41n_r0cks
