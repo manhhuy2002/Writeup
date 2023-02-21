@@ -321,11 +321,11 @@ Vẫn bắt đầu với form:
 ```
 
 Trong đó thì ở đây khởi tạo 1 đối tượng XMLHttpRequest() để mở 'http://challenge01.root-me.org/web-client/ch23/?action=profile' với phương thức GET
-Ở đây XMLHttRequest() cho phép ta xử lí thao tác gửi và nhận từ một máy chủ web bất đồng bộ mà kh cần phải tải lại trang web hay toàn bộ trang.
-Ngoài ra để ý tham số thứ 3 là 'false' ở đây có tác dụng bật chế độ đồng bộ, tức sẽ chờ xử lí xong đã rồi mới tiếp tục thực hiện tiếp.
+- Ở đây XMLHttRequest() cho phép ta xử lí thao tác gửi và nhận từ một máy chủ web bất đồng bộ mà kh cần phải tải lại trang web hay toàn bộ trang.
+- Ngoài ra để ý tham số thứ 3 là 'false' ở đây có tác dụng bật chế độ đồng bộ, tức sẽ chờ xử lí xong đã rồi mới tiếp tục thực hiện tiếp.
 Sau đó gửi yêu cầu cho máy chủ. 
-Bước tiếp theo dùng match để tìm kiếm một chuỗi có 32 ký tự ứng từ a-z0-9, thực chất là sẽ phải thử lần lượt cho đến khi được thì thôi, nếu có thì sẽ được gán vào biến admin.
-Sau khi có được token rồi thì ta nộp form như bài trước là ra được flag: 
+- Bước tiếp theo dùng match để tìm kiếm một chuỗi có 32 ký tự ứng từ a-z0-9, thực chất là sẽ phải thử lần lượt cho đến khi được thì thôi, nếu có thì sẽ được gán vào biến admin.
+- Sau khi có được token rồi thì ta nộp form như bài trước là ra được flag: 
 
 ![image](https://user-images.githubusercontent.com/104350480/220264495-97ddc300-76a1-4aa5-ac5b-bd09fad105e1.png)
 
