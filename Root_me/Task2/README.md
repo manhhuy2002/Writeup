@@ -371,8 +371,10 @@ if (isset($_POST["data"]) && !empty($_POST["data"])) {
  Vậy làm sao để bypass được nó? Mình thử đủ kiểu thì nó chỉ trả về hoặc là message đầu trong __construct, hoặc là message đầu trong dòng if của __destruct().
  Đến mãi sau thì mới hiểu là có thể tận dụng code của bài bằng cách gọi ra 1 đối tượng mới GetMessage trước và truyền giá trị bất kì vào: 
  > $a = new GetMessage('abcd1234');
+ 
  Lúc này receive sẽ lưu giá trị là 'abcd1234', nhưng ta sẽ gán luôn thuộc tính receive của đối tương $a là $a->receive = 'HelloBooooooy'; 
  Tiếp theo ta tạo một đối tượng **new WakyWaky()** mới và lưu trữ trong $test, thuộc tính $msg của $test sẽ được đặt trong đối tượng a:
+ 
 ``` 
  $test = new WakyWaky();
  $test->msg=$a;
