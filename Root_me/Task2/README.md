@@ -1,4 +1,4 @@
-# Trần Mạnh Huy - JWT - json web token
+# Trần Mạnh Huy - Task2
 <hr>
 
 * [Chall 1: JSON Web Token (JWT) - Introduction](#chall-1-json-web-token-jwt---introduction)
@@ -158,24 +158,66 @@ public key là cái mà ta đã biết rồi nên nếu đổi được thuật 
 
 Để khai thác tiếp thì ta sửa đổi đoạn jwt trên chút:
 
-![image](https://user-images.githubusercontent.com/104350480/220175677-72f0ea6c-668b-4e6e-be6c-47725894f22a.png)
+![image](https://user-images.githubusercontent.com/104350480/220254516-875b7a8e-85c7-4f57-9d0e-b1d64ba6e4d8.png)
 
 Lấy phần header và payload để kết hợp với publickey: 
 
-> eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIn0.RFdzbGFzMjNSVzBZaTJ6L2tVTkhOOVdNTDV1NGVjajhHS3BqdjNaMGxZTT0
-> Public key chuyển về dạng ascii: 
+> eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIn0
 
+Ta chuyển public key về dạng giá trị hex ASCII là người dùng có thể kiểm soát Byte và có thể xử lý an toàn khi nhập lệnh.
 
-Ta được: 
+![image](https://user-images.githubusercontent.com/104350480/220250615-5b245a42-4701-41b2-a029-daec8ad553d4.png)
 
-![image](https://user-images.githubusercontent.com/104350480/220177007-8a8bec09-33aa-47ec-b79e-6149afb83ce2.png)
 
 > 8e5c1adf326f172ce185e38ab5a05dc3306cf52e9112fc97f22d5f3b3a6c8854
-> cmd: echo "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIn0" | openssl dgst -sha256 -mac HMAC -macopt hexkey:
+> cmd: echo "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIn0" | openssl dgst -sha256 -mac HMAC -macopt hexkey:<public_key_ascii>
+
+![image](https://user-images.githubusercontent.com/104350480/220254489-4c31e94d-d4d4-43e8-b87c-83bd99b8a5e4.png)
+
+
+Câu lệnh trên sẽ thực hiện 2 nhiệm vụ chính là tính giá trị băm SHA-256 của một chuỗi JSON dưới dạng hexa và sau đó sử dụng giá trị băm SHA-256 vừa tính để tạo chữ ký HMAC-SHA256, trong đó:
++  openssl dgst: Sử dụng OpenSSL để tính toán giá trị băm và chữ ký HMAC.
++  -sha256: Chỉ định thuật toán băm là SHA-256.
++  -mac HMAC: Chỉ định sử dụng chữ ký HMAC.
++  -macopt hexkey: Chỉ định khóa cho chữ ký HMAC được cung cấp dưới dạng chuỗi hexa mà ở đây chính là public key
 
 Dùng cyberchef ta thu được: 
 
-![image](https://user-images.githubusercontent.com/104350480/220177366-a51c0ec7-a42b-4f20-92c4-7366850a1db2.png)
+![image](https://user-images.githubusercontent.com/104350480/220254216-951f2292-460f-4212-962c-84e39872d2cc.png)
+
+secret key: 1W3RMVZGwzYeNB+dB2QTJ4CbJUn9JsQgD6tESW+wrU8
+
+Nhưng khi mình lắp lại thử như này truyền vào biến authorization thì truyền kh thu được kết quả:
+
+> eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIn0.1W3RMVZGwzYeNB+dB2QTJ4CbJUn9JsQgD6tESW+wrU8
+
+Ném lên jwt xem thử thì nó báo là encoded có vẻ kh chuẩn, nên thử sử dụng script viết thì thu được 1 giá trị khác:
+
+```
+import hashlib
+import base64
+
+message = 'd56dd1315646c3361e341f9d07641327809b2549fd26c4200fab44496fb0ad4f'
+
+# Tính giá trị băm SHA-256 của đầu vào
+hash_object = hashlib.sha256(message.encode('utf-8'))
+hash_value = hash_object.hexdigest()
+
+# Chuyển đổi đoạn mã băm từ hex sang dạng byte
+byte_value = bytes.fromhex(hash_value)
+
+# Chuyển đổi byte sang base64url
+base64_value = base64.b64encode(byte_value).decode('utf-8')
+base64url_value = base64_value.replace('+', '-').replace('/', '_').rstrip('=')
+
+# In kết quả
+print(base64url_value)
+
+```
+
+> hge2UO5MKTrhBLtX8deOaDsCzxMUFcRDSpyB0LXKb9I
+
+Nhưng khi lắp vào thì server vẫn kh trả về kết quả, nên mình cũng kh hiểu lm.
 
 
 ## Chall 4: CSRF - 0 protection
