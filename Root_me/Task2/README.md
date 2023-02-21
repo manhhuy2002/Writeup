@@ -6,7 +6,8 @@
 * [Chall 3: JSON Web Token (JWT) - Public key](#chall-3-json-web-token-jwt---public-key) 
 * [Chall 4: CSRF - 0 protection](#chall-4-csrf---0-protection)
 * [Chall 5: CSRF - token bypass](#chall-5-csrf---token-bypass)
-* [Chall 6: XSS
+* [Chall 6: XSS - Stored - filter bypass](#chall-6-xss---stored---filter-bypass)
+* [Chall 7: PHP - Unserialize Pop Chain](#chall-7-php---unserialize-pop-chain)
 
 <hr>
 
@@ -280,4 +281,73 @@ Và cookie được trả về:
 
 ![image](https://user-images.githubusercontent.com/104350480/220234492-e1e8b068-1017-4add-abff-eaf54a90185f.png)
 
-## Chall 7: 
+## Chall 7: PHP - Unserialize Pop Chain
+ 
+```
+Statement
+Can you avoid the security your friend put in place to access the flag?
+ 
+ ```
+ Bài này cho ta source code:
+ 
+ ```
+ <?php
+
+$getflag = false;
+
+class GetMessage {
+    function __construct($receive) {
+        if ($receive === "HelloBooooooy") {
+            die("[FRIEND]: Ahahah you get fooled by my security my friend!<br>");
+        } else {
+            $this->receive = $receive;
+        }
+    }
+
+    function __toString() {
+        return $this->receive;
+    }
+
+    function __destruct() {
+        global $getflag;
+        if ($this->receive !== "HelloBooooooy") {
+            die("[FRIEND]: Hm.. you don't see to be the friend I was waiting for..<br>");
+        } else {
+            if ($getflag) {
+                include("flag.php");
+                echo "[FRIEND]: Oh ! Hi! Let me show you my secret: ".$FLAG."<br>";
+            }
+        }
+    }
+}
+
+class WakyWaky {
+    function __wakeup() {
+        echo "[YOU]: ".$this->msg."<br>";
+    }
+
+    function __toString() {
+        global $getflag;
+        $getflag = true;
+        return (new GetMessage($this->msg))->receive;
+    }
+}
+
+if (isset($_GET['source'])) {
+    highlight_file(__FILE__);
+    die();
+}
+
+if (isset($_POST["data"]) && !empty($_POST["data"])) {
+    unserialize($_POST["data"]);
+}
+
+?>
+ 
+ ```
+ 
+ Mở vào giao diện bài là 1 khung gửi tin nhắn và link source với tiêu đề bạn có thể bypass không? :))
+ 
+ ![image](https://user-images.githubusercontent.com/104350480/220235297-03dd0e21-e826-4b2f-8bda-71fd27a523a3.png)
+
+ Đọc source code thì đây là dạng php pop chain, tức là ta phải truyền tin nhắn dưới dạng 
