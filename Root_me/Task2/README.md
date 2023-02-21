@@ -257,7 +257,7 @@ Steal the administrator’s session cookie.
 ```
 > Reference: https://hackmd.io/@devme4f/SJY9JKpFc#XSS---Stored---filter-bypass
 
-## Bài này mình tấn công xss luôn vào message, nhưng thử thì bị filter khá nhiều, ' ', " ", alert( , document. , <script>,..... Sau 1 hồi dùng burpsuite 
+##### Bài này mình tấn công xss luôn vào message, nhưng thử thì bị filter khá nhiều, ' ', " ", alert( , document. , <script>,..... Sau 1 hồi dùng burpsuite 
 intruder với từng tag và attribute trong **https://portswigger.net/web-security/cross-site-scripting/cheat-sheet** thì mình thu được thẻ tag svg với attribute 
 là animatetransform và onbegin dùng để kích hoạt 1 hoạt động cụ thể, vì alert( bị filter nên ở đây ta thử thay bằng print() xem sao:
 
