@@ -66,5 +66,7 @@ trước khi phản hồi.
 - Vì kiểu này ta cũng phải đi brute-force từng kí tự một nên cũng sẽ khá là mất thời gian như dạng blind-boolean-based
 
 #### 3. Out-of-band sqli
+- Kiểu này hơi ảo nên thôi.
+
 
 
