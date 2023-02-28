@@ -1,8 +1,8 @@
 # Trần Mạnh Huy - Task3
 
 * [1. Chết.vn](#1-chếtvn)
-* [2. Root me - SQL injection - Time based](#1-root-me---sql-injection---time-based)
-* [3. Portswigger: Blind SQL injection with time delays and information retrieval](#2-portswigger-blind-sql-injection-with-time-delays-and-information-retrieval)
+* [2. Root me - SQL injection - Time based](#2-root-me---sql-injection---time-based)
+* [3. Portswigger: Blind SQL injection with time delays and information retrieval](#3-portswigger-blind-sql-injection-with-time-delays-and-information-retrieval)
 * [4. Root me - SQL injection - Blind](#4-root-me---sql-injection---blind)
 
 
