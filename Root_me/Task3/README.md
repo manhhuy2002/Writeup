@@ -35,7 +35,7 @@ echo str_rot13(hex2bin(strrev(bin2hex(base64_decode($a)))));
 
 ![image](https://user-images.githubusercontent.com/104350480/221728668-92629b02-0bc6-4072-925b-0fe12562a26e.png)
 
-Dạng php juggling, ta chỉ cần truyền vào tham số ?number=+1337 hoặc ?number= 1337 
+Dạng php juggling, ta chỉ cần truyền vào tham số ?number=+1337 hoặc ?number=%201337 
 
 > FLAG{554382f3-960e-4859-9c79-c64ecd4445e7}
 
