@@ -374,7 +374,6 @@ while True:
 > passwrod: e2azO93i
 
 
-
-
+### Bài này ta cũng có thể dùng sqlmap để tìm kiếm: 
 
 
