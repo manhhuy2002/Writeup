@@ -148,7 +148,7 @@ Dùng 2 payload với burpsuite để tìm kiếm:
 ![image](https://user-images.githubusercontent.com/104350480/221502821-a5ca2dc9-c0b9-4da7-9641-25ac7f8069b2.png)
 
 
-Nhưng bằng cách trên mình thấy bruteforce bằng burpsuite rất lâu, nên ta viết script như sau sẽ nhanh hơn nhiều:  
+## Nhưng bằng cách trên mình thấy bruteforce bằng burpsuite rất lâu, nên ta viết script như sau sẽ nhanh hơn nhiều:  
 
 ```
 import requests
