@@ -73,8 +73,8 @@ Ta truyền vào: ?u=**%2561dmin**
 
 ![image](https://user-images.githubusercontent.com/104350480/221737560-e9e48fe2-e7fa-42bf-83f8-40a41cc3e695.png)
 
-Bài này l,giới hạn kí tự là 28 nên chuyển về hex cũng kh ổn, nhưng mà ngồi nghiên cứu 1 lúc thì ngẫm ra 1 cái khá hay là regexp preg_match() trong bài 
-nó sẽ chỉ check dòng đầu tiên thôi, thế nếu ta làm nó xuống dòng được thì sao, tất nhiên là với nội dung **give_me_the_flag** rồi.
+Bài này giới hạn kí tự truyền vào là 28 nên chuyển về hex cũng kh ổn, nhưng mà ngồi nghiên cứu 1 lúc thì ngẫm ra 1 cái khá hay là regexp preg_match() 
+trong bài nó sẽ chỉ check dòng đầu tiên thôi, thế nếu ta làm nó xuống dòng được thì sao, tất nhiên là với nội dung **give_me_the_flag** rồi.
 Ở đây ta dùng %0A để xuống dòng. Ta truyền vào với nội dung: **a%0Agive_me_the_flag** , như vậy là bypass thành công.
 
 > FLAG{62e0d117-93af-4e36-957c-3841d1ae7100}
