@@ -1,10 +1,75 @@
 # Trần Mạnh Huy - Task3
 
-* [1. Root me - SQL injection - Time based](#1-root-me---sql-injection---time-based)
-* [2. Portswigger: Blind SQL injection with time delays and information retrieval](#2-portswigger-blind-sql-injection-with-time-delays-and-information-retrieval)
+* [1. Chết.vn](#1-chết-vn)
+* [2. Root me - SQL injection - Time based](#1-root-me---sql-injection---time-based)
+* [3. Portswigger: Blind SQL injection with time delays and information retrieval](#2-portswigger-blind-sql-injection-with-time-delays-and-information-retrieval)
 
 
-## 1. Root me - SQL injection - Time based
+## 1. Chết.vn
+
+### Chall 1: 
+
+![image](https://user-images.githubusercontent.com/104350480/221727974-2fd7cd07-a715-4e41-9cc0-60ffb88322b0.png)
+
+Ctrl U ta được flag:
+
+> flag: FLAG{ddf1ea89-cd89-4da3-98bc-08028ac4dc7e}
+
+### Chall 2: 
+
+![image](https://user-images.githubusercontent.com/104350480/221728084-3dba666b-4646-4d28-ad12-da89ca8561d3.png)
+
+Ta cho vào php decode ngược lại: 
+
+```
+<?php
+$a = '1wc39mNzY4NDE1NTk9JD5vbm0mNDQ0PSQ5MHU9L2g+YHQ2NTB7dF5JU1';
+echo str_rot13(hex2bin(strrev(bin2hex(base64_decode($a)))));
+// echo base64_encode(hex2bin(strrev(bin2hex(str_rot13(print_flag(2))))))); 
+
+```
+
+> FLAG{c564ca8b-5c94-4446-aba4-955148676bfc}
+
+### Chall 3: 
+
+![image](https://user-images.githubusercontent.com/104350480/221728668-92629b02-0bc6-4072-925b-0fe12562a26e.png)
+
+Dạng php juggling, ta chỉ cần truyền vào tham số ?number=+1337 hoặc ?number= 1337 
+
+> FLAG{554382f3-960e-4859-9c79-c64ecd4445e7}
+
+### Chall 4: 
+
+![image](https://user-images.githubusercontent.com/104350480/221728934-e6677462-8ad2-40ec-9061-a67f0c0027e2.png)
+
+Vì giá trị md5 ở dưới cần so sánh nghiêm ngặt nên 1 số trick về so sánh lỏng lẻo như dưới kh dùng được:
+
+![image](https://user-images.githubusercontent.com/104350480/221729194-b6c245d9-242a-449c-995e-c9b836ec30be.png)
+
+Ở đây ta có thể truyền vào ?0[]=1&1[]=2 để bypass điều kiện dưới vì md5 chỉ tính toán giá trị băm của 1 chuỗi nên sẽ trả về lỗi giống nhau.
+
+> FLAG{82104890-f270-4d27-b4e4-638a940ffdcf}
+
+### Chall 6: 
+
+![image](https://user-images.githubusercontent.com/104350480/221729832-ba709207-cdc8-4bcc-8545-fa6aed969a11.png)
+
+Bài này cần truyền tham số number vào, mà bị preg_match lọc mất, ta có thể bypass bằng cách dùng 1 mảng truyền vào, vì preg_match sẽ kiểm tra 1 chuỗi kí
+tự chứ không lọc được mảng. Ta truyền vào giá trị: **?number[0]=1** , thỏa mãn điều kiện trên và dưới.
+
+> FLAG{2352ca3b-c94e-450b-b69a-1938cab26571}
+
+### Chall 8:
+
+![image](https://user-images.githubusercontent.com/104350480/221731358-f6f6314b-50f4-4790-8791-55fdb4e33111.png)
+
+Để ý thì sau khi truyền xong thì sẽ đi qua preg_match nhưng qua nó thì sẽ có 1 lần url decode, vậy ta encode url 2 lần là được
+Ta truyền vào: ?u=**%2561dmin**
+
+> FLAG{0406eb88-39ce-4dcc-bace-b058a7e57dd0}
+
+## 2. Root me - SQL injection - Time based
 
 Vừa vào ta có giao diện:
 
@@ -124,7 +189,7 @@ Ta chuyển đổi về dạng char về text thì được : T!m3B@s3DSQL!
 
 Ta cũng có được password: T!m3B@s3DSQL!
 
-## 2. Portswigger: Blind SQL injection with time delays and information retrieval
+## 3. Portswigger: Blind SQL injection with time delays and information retrieval
 
 Bài này thì ý tưởng vẫn tương tự bài trên, ta sẽ đi bruteforece từng cái một, đầu tiên là table_name là users, tiếp đến là column_name là username và password
 Sau khi có được username = 'administrator' ta sẽ tìm password tương ứng. Ở đây sẽ lần lượt dùng burpsuite, script và cả sqlmap để giải quyết bài này.
