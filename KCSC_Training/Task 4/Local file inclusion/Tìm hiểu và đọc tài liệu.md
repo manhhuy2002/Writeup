@@ -169,10 +169,35 @@ dùng các lệnh nguy hiểm hơn nhiều. Có lẽ tí sẽ demo bằng các b
 
 ## 3. Lab test kiến thức tryhackme
 
+Trước khi thực hiện bài lab, ta cần biết 1 vài bước thực hiện để test lfi:
+1. Tìm entry point có thể thông qua như get,post,cookie hoặc http.
+2. Nhập thông tin đầu vào hợp lệ để xem máy chủ web hoạt động như thế nào.
+3. Nhập đầu vào không hợp lệ, bao gồm các kí tự đặc biệt và các file phổ biến.
+4. Đôi khi ta có thể tấn công mà kh biết, nên dùng thêm 1 số công cụ như burp suite để hỗ trợ.
+5. Tìm lỗi trong input đầu vào không hợp lệ như đường dẫn hiện tại của ứng dụng, nếu kh có lỗi thì ta ngồi mò vài lần xem sao, chẳng may đúng thì ngon luôn.
+6. Hiểu được các xác thực đầu vào, chẳng hạn như ứng dụng web filter cái gì thì ta có thể dựa vào đó để bypass.
+7. Rồi được ròi thì tiêm thôi.
+
+__
+
+Lab1: Include a file in the input form below
+__
+
+![image](https://user-images.githubusercontent.com/104350480/222922699-adc84bd6-0b60-4583-8bc3-c5bbd7fd4687.png)
+
+Có vẻ nó đang yêu cầu ta chuyển về giao thức POST, vậy sửa lại đường dẫn thôi
+
 ## 4. Cách khắc phục
 
-Là 1 nhà phát triển ứng dụng, ta cần phải có nhận thức về các lỗ hổng web, cách tìm ra chúng
+Là 1 nhà phát triển ứng dụng, ta cần phải có nhận thức về các lỗ hổng web, cách tìm ra chúng và có phương pháp phòng ngừa. Để ngăn chặn lỗ hổng file inclusion, một số đề xuất như là:
 
+1. Luôn cập nhập phiên bản, hệ thống và dịch vụ, bao gồm các khung ứng dụng web với phiên bản mới nhất.
+2. Ẩn đi các hiển thị lỗi php để tránh hiển thị đường dẫn của ứng dụng và các thông tin có khả năng tiết lộ khác.
+3. Web Application Firewall (WAF)  là 1 lựa chọn tốt để giúp giảm thiểu các cuộc tấn công ứng dụng web.
+4. Vô hiệu hóa 1 số tính năng php gây ra lỗ hổng file inclusion nếu ứng dụng kh cần chúng như allow_url_fopen và allow_url_include.
+5. Không tin tưởng đầu vào vì vậy cần lọc và triển khai xác thực đầu vào thích hợp đối với các tệp được đưa vào.
+6.  Thực hiện blacklist và cả whitelist đầu vào.
 
+## 5. Các kiến thức tìm hiểu thêm được từ các bài lab.
 
 
