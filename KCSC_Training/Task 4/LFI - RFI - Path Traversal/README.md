@@ -98,6 +98,7 @@ To solve the lab, upload a basic PHP web shell and use it to exfiltrate the cont
 You can log in to your own account using the following credentials: wiener:peter
 
 ```
+
 Bài này vẫn như bài trước thôi nhưng mà nó có thêm cái gì đấy liên quan đến Content-type. Ném vào burpsuite rồi upload file như chall 1 xem sao.
 
 ![image](https://user-images.githubusercontent.com/104350480/222968915-e63189a5-91dd-4852-9ed3-dd33eb68d3fd.png)
@@ -108,5 +109,19 @@ Bài này vẫn như bài trước thôi nhưng mà nó có thêm cái gì đấ
 
 ![image](https://user-images.githubusercontent.com/104350480/222969080-01f41774-0a47-41d6-9878-4cdd33448855.png)
 
-Vậy là up lên thành công rồi
+Vậy là up lên thành công rồi, nhưng mà cứ để vậy thì có vẻ không ổn lắm, giờ miễn là content type là image/jpeg thì mình post gì cũng được, kiểu nó là
+vậy rồi, do check code nó vậy. Giờ xóa đuôi png nãy thêm vào rồi gửi thôi ta được kết quả như bài trước: 
+
+> Link reference: https://repository.root-me.org/Exploitation%20-%20Web/EN%20-%20Secure%20file%20upload%20in%20PHP%20web%20applications.pdf?_gl=1*1d5xuaq*_ga*NzM2OTE5OTkuMTY2OTA4MzExMA..*_ga_SRYSKX09J7*MTY3ODAzNDMzMy4xNDMuMS4xNjc4MDM0MzUyLjAuMC4w
+
+![image](https://user-images.githubusercontent.com/104350480/222975992-00cc720b-97dd-4d56-aff2-f8dde6c45664.png)
+
+![image](https://user-images.githubusercontent.com/104350480/222976082-7922aea2-9113-42be-ace2-24744ec18ab9.png)
+
+
+### 3. Lab: Web shell upload via path traversal
+
+
+
+
 
