@@ -59,7 +59,54 @@ You can log in to your own account using the following credentials: wiener:peter
 
 Dạng này là upload file, nó áp dụng luôn cả lfi và rce cho ta rồi, triển thôi. Ném vào kali tạo file cho nhanh.
 
-![image](https://user-images.githubusercontent.com/104350480/222965096-eb2bae6c-8596-4452-a0be-d917277d6452.png)
+![image](https://user-images.githubusercontent.com/104350480/222968464-1be01e51-8c26-442c-9ace-28c483fc7b7b.png)
 
-Ta tạo file php với lệnh ls để liệt kê thư mục và xem đường dẫn
+
+Ta tạo file php với lệnh ls để liệt kê thư mục và xem đường dẫn. Vì ta thực hiện POST nên ta cũng có thể thực hiện GET để thực thi nội dung đã up lên,
+bài đầu này thì không filter gì hết nên ta sẽ thực thi trên burp suite như sau: 
+
+POST:
+
+![image](https://user-images.githubusercontent.com/104350480/222968549-4bfbaf19-b5a7-4073-8fa2-a42ab6cdd929.png)
+
+GET: 
+
+![image](https://user-images.githubusercontent.com/104350480/222968559-0a2e43d1-ec92-4530-a9f4-dac99ee12abc.png)
+
+Ta cứ sửa nội dung file php truyền lên bên phần POST rồi thực thi GET cho đến khi ra được vấn đề thì thôi :))
+
+> <?php system('ls /home/'); ?>
+> <?php system('ls /home/carlos'); ?>
+
+![image](https://user-images.githubusercontent.com/104350480/222968663-1b8b13ed-493b-4c7d-9d03-cd6cd9d16242.png)
+
+Có file secret, vậy thì ta chuyển sang dạng đọc file thôi:
+
+> <?php system('cat /home/carlos/secret'); ?>
+
+![image](https://user-images.githubusercontent.com/104350480/222968730-016d6c94-38af-4d7e-a1c5-c827e0c861b0.png)
+
+> 8HIdnM5LZgY1n6gLElfNjgP6GXYTjUn4
+
+### 2. Lab: Web shell upload via Content-Type restriction bypass
+
+```
+This lab contains a vulnerable image upload function. It attempts to prevent users from uploading unexpected file types, but relies on checking user-controllable input to verify this.
+
+To solve the lab, upload a basic PHP web shell and use it to exfiltrate the contents of the file /home/carlos/secret. Submit this secret using the button provided in the lab banner.
+
+You can log in to your own account using the following credentials: wiener:peter
+
+```
+Bài này vẫn như bài trước thôi nhưng mà nó có thêm cái gì đấy liên quan đến Content-type. Ném vào burpsuite rồi upload file như chall 1 xem sao.
+
+![image](https://user-images.githubusercontent.com/104350480/222968915-e63189a5-91dd-4852-9ed3-dd33eb68d3fd.png)
+
+Ò hó, có filter nhẹ rồi. Thế thì để upload thì thêm đuôi jpg vào file portswigger.php mình định up lên xem sao
+
+![image](https://user-images.githubusercontent.com/104350480/222969040-5309ee2d-5645-4830-8c98-be6f09e30327.png)
+
+![image](https://user-images.githubusercontent.com/104350480/222969080-01f41774-0a47-41d6-9878-4cdd33448855.png)
+
+Vậy là up lên thành công rồi
 
