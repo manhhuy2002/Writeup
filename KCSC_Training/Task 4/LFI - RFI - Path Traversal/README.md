@@ -1,6 +1,7 @@
-## Trần Mạnh Huy - Các chall về lfi - rfi - path traversal
+## Trần Mạnh Huy - Các chall về lfi - rfi - path traversal - File upload vulnerabilities
 * [Portswigger - File Path Traversal](#Portswigger---file-path-traversal)
-* []()
+* [Portswigger -File upload vulnerabilities](Portswigger---File-upload-vulnerabilites)
+* [Root me]()
 * [Tryhackme - dogcat](#tryhackme---dogcat)
 
 ## Portswigger - File Path Traversal
@@ -42,3 +43,23 @@ cầu thì ở đây cũng vậy /var/www/images cũng phải có kh thì sẽ b
 nó mới chấp nhận, vậy bypass thì thêm đuôi jpg vào sau null byte là được, đằng nào cũng mất:
 
 ![image](https://user-images.githubusercontent.com/104350480/222964011-a29abf86-afa5-4df6-879c-0c7c8f60dbb0.png)
+
+## Portswigger -File upload vulnerabilities
+
+### 1. Lab: Remote code execution via web shell upload
+
+```
+ This lab contains a vulnerable image upload function. It doesn't perform any validation on the files users upload before storing them on the server's filesystem.
+
+To solve the lab, upload a basic PHP web shell and use it to exfiltrate the contents of the file /home/carlos/secret. Submit this secret using the button provided in the lab banner.
+
+You can log in to your own account using the following credentials: wiener:peter
+
+```
+
+Dạng này là upload file, nó áp dụng luôn cả lfi và rce cho ta rồi, triển thôi. Ném vào kali tạo file cho nhanh.
+
+![image](https://user-images.githubusercontent.com/104350480/222965096-eb2bae6c-8596-4452-a0be-d917277d6452.png)
+
+Ta tạo file php với lệnh ls để liệt kê thư mục và xem đường dẫn
+
