@@ -381,6 +381,30 @@ Bài này mình thấy khá hay, kiểu phải hiểu bản chất nên mình l�
 
 ### [5. Lab: Web shell upload via obfuscated file extension](https://portswigger.net/web-security/file-upload/lab-file-upload-web-shell-upload-via-obfuscated-file-extension)<a name="pulv5"></a>
 
+```
+This lab contains a vulnerable image upload function. Certain file extensions are blacklisted, but this defense can be bypassed using a classic obfuscation technique.
+
+To solve the lab, upload a basic PHP web shell, then use it to exfiltrate the contents of the file /home/carlos/secret. Submit this secret using the button provided in the lab banner.
+
+You can log in to your own account using the following credentials: wiener:peter
+
+```
+
+Bài này thì đơn giản, chỉ là bypass cái extension thôi, ta thêm .png vào để hợp lệ nhưng mà muốn vẫn giữ được là file php thì ta thêm null byte vào ngay sau
+là được. Cụ thể 2.php%00.png
+
+![image](https://user-images.githubusercontent.com/104350480/223202291-e113c6c3-615f-4a24-be28-ed137b6c4d4e.png)
+
+Oke thế là bypass được, vì sau khi qua server xử lí thì sau cái %00 cũng mất rồi, nên là còn lại là 2.php thôi. Ta thực hiện GET file, lần này check burp
+kh thấy GET file trả về thì ta check source để lấy đường dẫn và thực hiện request get: 
+
+![image](https://user-images.githubusercontent.com/104350480/223202608-0f2f2a2d-acdf-41be-b5fd-88944cddad78.png)
+
+Oke thành công r, vậy tương tự như trên ta giải quyết được chall này: 
+
+![image](https://user-images.githubusercontent.com/104350480/223202824-dd27f970-9458-4c1c-abf1-66e98df3b6ec.png)
+
+
 ### [6. Lab: Remote code execution via polyglot web shell upload](https://portswigger.net/web-security/file-upload/lab-file-upload-web-shell-upload-via-obfuscated-file-extension)<a name="pulv6"></a>
 
 Ở bài lab này, các server sẽ không đơn thuần kiểm tra extension hay content-type được truyền vào nữa, thay vào server sẽ các thực nội dung của file để biết được nó là loại file gì, chủ yếu là kiểu dạng hex. Ta có thể lấy ví dụ điển hình là các hình ảnh jpeg luôn bất đầu bằng chuỗi bytes **FF D8 FF**
