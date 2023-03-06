@@ -1,4 +1,4 @@
-# Local file inclusion - remote file inclusion - path travesal
+# Local file inclusion - remote file inclusion - path travesal - uploadfile
 
 ## 1. What is file inclusion?
 
@@ -301,4 +301,10 @@ Là 1 nhà phát triển ứng dụng, ta cần phải có nhận thức về c�
 
 ## 5. Các kiến thức tìm hiểu thêm được từ các bài lab.
 
+### Polygot file? 
+
+Kiến thức này nằm trong phần upload file, ta sẽ đi tìm hiểu polygot file là gì đã.
+
+__ Ta có thể hiểu Polygot file là một file đa năng mà nó sẽ hợp lệ với 2 hay nhiều kiểu file khác nhau. Chẳng hạn  gifar vừa là 1 file gif và vừa là 1 file rar, ... 
+__ Việc upload file là phổ biến nhưng như các chall đã làm ta có thể thấy hầu như chỉ cho phép ta thực hiện việc upload các file có extension nhất định như jpeg,png,gif,.... Và hầu hết là sẽ ngăng chặn và không cho người dùng upload các tập tin nguyên hiểm cho ứng dụng như js, php hoặc phar files.
 
