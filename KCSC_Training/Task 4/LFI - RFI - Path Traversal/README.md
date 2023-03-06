@@ -3,7 +3,7 @@
 * [Chết.vn](#chetvn)
 * [Portswigger - File Path Traversal](#Portswigger---file-path-traversal)
 * [Portswigger -File upload vulnerabilities](Portswigger---File-upload-vulnerabilites)
-* [Root me - Upload file](#root---me---upload-file)
+* [Root me - Upload file](#root-me---upload-file)
 * [Root me]()
 * [Tryhackme - dogcat](#tryhackme---dogcat)
 
