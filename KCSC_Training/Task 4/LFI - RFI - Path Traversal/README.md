@@ -267,6 +267,41 @@ You can log in to your own account using the following credentials: wiener:peter
 
 ```
 
+#### Chall này thì như tên bài, nó đã blacklist đi php, thực ra thì mình có thử 1 số cách viết khác của php5 hay php6 thì vẫn upload được nhưng mà khi thực
+thi thì nó kh chạy mà chỉ đọc các câu lệnh của mình ra thôi. Thì vấn đề ở đây có lẽ kh phải vậy rồi, đọc tài liệu tí về chall này thì nó có diễn giải ngắn gọn
+thế này, thông thường thì 1 số server sẽ không thực thi 1 file trừ khi nó được cấu hình để làm việc đó. Đúng thế đọc đến đây thì có thể nói là các chall trước
+ta làm là server đang được cấu hình như vậy. Nhưng mà để hiểu sâu hơn thì ta có thể tham khảo video này trong việc học về upload file:
+
+> https://www.youtube.com/watch?v=ttj7_uL4xPA&t=73s
+
+Tóm gọn lại thì trong video này sẽ nói cách để học về kiến thức upload file vul tốt hơn:
+
+```
+Đầu tiên ta cần biết về khái niêm httpd, httpd (httpdaemon) là trái tim của 1 web server, nó sẽ là nơi đầu tiên nhận lấy và xử lí gói tin http của người dùng
+gửi đến, hiểu rõ về httpd sẽ giúp ích ta rất nhiều về vul này: 
+
+- Để 1 trang web hoạt động thì rõ ràng cần có server và trình duyệt web, giữa trình duyệt và web server sẽ trao đổi với nhau thông qua 1 cái gội là http gồm
+có http request và http response. Thế sâu bên trong server gồm những thành phần gì và có những gì đang chạy ? Thì để có thể xử lí được các gói tin http thì
+nó cần có 1 phần phềm gọi là httpd, là 1 dịch vụ chạy ngầm, và nó chịu trách nhiệm xử lí những gói http request và trả về response cho người dùng. Thì có rất
+nhiều phần mềm httpd nổi tiếng, và 1 trong số đó chính là apache và nginx,... Phần này video cũng tập trung và httpd của apache.
+
+_ Để 1 httpd chạy được thì ta cần nạp cho nó 1 cái cấu hình, 1 thông số quan trọng và cần quan tâm trong upload file lúc này chính là document root, giá trị
+của nó là một đường dẫn /var/www/html/ , đường dẫn này sẽ được sử dụng khá là nhiều. Vậy document root này là gì ? Đơn giản là nó chứa đường dẫn tới thư mục
+mà ở thư mục này nó chứa tất cả tài nguyên của trang web này, ví dụ như file home.html, index.php,... mà a dev viết nên, nó sẽ nằm tất cả trong này. Thì
+khi nhận được 1 request GET /home.html thì httpd nó sẽ vào document root và tìm cái tài nguyên hay file có tên như vậy, và nó sẽ trả về nội dung của file
+được GET này. Ồ hố khá hay đúng kh nhỉ? Ở đây thì có nhiều ngôn ngữ được tạo ra để xử lí ở server side nhưng mà cũng đang học mỗi php nên video này cũng
+tập trung vào php luôn thì cũng hợp lí. Thì http nó xử lí 1 file php như thế nào? Khi mà có 1 cú request mà đuôi của nó là index.php như các file php
+mà ta vẫn upload chẳng hạn thì một httpd apache thì nó sẽ kh xử lí được các yêu cầu liên quan đến php, vậy nên khi mà có dịp cài đặt php thì nó sẽ có 1 
+dòng là:
+> libapache2-mod-php
+Đây là 1 module được hiểu đơn giản là cầu nối giữa httpd và php, giúp httpd thực hiện được các đoạn code trong php, thì khi ta gửi file index.php ấy thì 
+theo thứ tự sẽ là httpd đọc file index.php, nó cũng giống như trên nhưng khác cái là nó thấy file này kết thúc bằng extension là .php, nó sẽ truyền file này
+qua cho module libapache2-mod-php để xử lí, thì sau khi module này xử lí xong thì nó sẽ trả về kết quả cho apache và rồi cuối cùng httpd apache mới trả
+kết quả thực thi về cho người dùng.
+
+```
+
+
 ### 5
 
 ### 6. Lab: Remote code execution via polyglot web shell upload
