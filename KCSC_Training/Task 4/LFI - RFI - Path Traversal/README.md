@@ -6,6 +6,14 @@
     - [Chall 10:](#chall-10)
 * [Portswigger - File Path Traversal](#path-traversal)
 * [Portswigger - File upload vulnerabilities](#postswigger-upload-file)
+    - [1. Lab: Remote code execution via web shell upload](#pulv1)
+    - [2. Lab: Web shell upload via Content-Type restriction bypass](#pulv2)
+    - [3. Lab: Web shell upload via path traversal](#pulv3)
+    - [4. Lab: Web shell upload via extension blacklist bypass](#pulv4)
+    - [5. Lab: Web shell upload via obfuscated file extension](#pulv5)
+    - [6. Lab: Remote code execution via polyglot web shell upload](#pulv6)
+    - [7. Lab: Web shell upload via race condition](#pulv7)
+
 * [Root me - Upload file](#rootme-upload-file)
 * [Root me]()
 * [Tryhackme - dogcat](#tryhackme-dogcat)
@@ -163,7 +171,7 @@ nó mới chấp nhận, vậy bypass thì thêm đuôi jpg vào sau null byte l
 
 ## Portswigger - File upload vulnerabilities<a name="portswigger-upload-file"></a>
 
-### 1. Lab: Remote code execution via web shell upload
+### [1. Lab: Remote code execution via web shell upload](https://portswigger.net/web-security/file-upload/lab-file-upload-remote-code-execution-via-web-shell-upload)<a name="pulv1"></a>
 
 ```
  This lab contains a vulnerable image upload function. It doesn't perform any validation on the files users upload before storing them on the server's filesystem.
@@ -205,7 +213,7 @@ Có file secret, vậy thì ta chuyển sang dạng đọc file thôi:
 
 > 8HIdnM5LZgY1n6gLElfNjgP6GXYTjUn4
 
-### 2. Lab: Web shell upload via Content-Type restriction bypass
+### [2. Lab: Web shell upload via Content-Type restriction bypass](https://portswigger.net/web-security/file-upload/lab-file-upload-web-shell-upload-via-content-type-restriction-bypass)<a name="pulv2"></a>
 
 ```
 This lab contains a vulnerable image upload function. It attempts to prevent users from uploading unexpected file types, but relies on checking user-controllable input to verify this.
@@ -236,7 +244,7 @@ vậy rồi, do check code nó vậy. Giờ xóa đuôi png nãy thêm vào rồ
 ![image](https://user-images.githubusercontent.com/104350480/222976082-7922aea2-9113-42be-ace2-24744ec18ab9.png)
 
 
-### 3. Lab: Web shell upload via path traversal
+### [3. Lab: Web shell upload via path traversal](https://portswigger.net/web-security/file-upload/lab-file-upload-web-shell-upload-via-path-traversal)<a name="pulv3"></a>
 
 ```
  This lab contains a vulnerable image upload function. The server is configured to prevent execution of user-supplied files, but this restriction can be bypassed by exploiting a secondary vulnerability.
@@ -260,7 +268,7 @@ Có vẻ đúng rồi, ta triển khai tiếp bên GET và thực hiện thành 
 ![image](https://user-images.githubusercontent.com/104350480/223012155-a8ef18d0-6384-46c5-8ddd-d3bb6405dece.png)
 
 
-### 4. Lab: Web shell upload via extension blacklist bypass
+### [4. Lab: Web shell upload via extension blacklist bypass](https://portswigger.net/web-security/file-upload/lab-file-upload-web-shell-upload-via-extension-blacklist-bypass)<a name="pulv4"></a>
 
 ```
 This lab contains a vulnerable image upload function. Certain file extensions are blacklisted, but this defense can be bypassed due to a fundamental flaw in the configuration of this blacklist.
@@ -365,9 +373,9 @@ Get lại lần nữa ta xong solution bài lab:
 
 Bài này mình thấy khá hay, kiểu phải hiểu bản chất nên mình lúc chưa hiểu bị hơi lòng vòng tí :(((
 
-### 5. Lab: Web shell upload via obfuscated file extension
+### [5. Lab: Web shell upload via obfuscated file extension](https://portswigger.net/web-security/file-upload/lab-file-upload-web-shell-upload-via-obfuscated-file-extension)<a name="pulv5"></a>
 
-### 6. Lab: Remote code execution via polyglot web shell upload
+### [6. Lab: Remote code execution via polyglot web shell upload](https://portswigger.net/web-security/file-upload/lab-file-upload-web-shell-upload-via-obfuscated-file-extension)<a name="pulv6"></a>
 
 Ở bài lab này, các server sẽ không đơn thuần kiểm tra extension hay content-type được truyền vào nữa, thay vào server sẽ các thực nội dung của file để biết được nó là loại file gì, chủ yếu là kiểu dạng hex. Ta có thể lấy ví dụ điển hình là các hình ảnh jpeg luôn bất đầu bằng chuỗi bytes **FF D8 FF**
 Bài lab này sẽ dạy chúng ta cách thực hiện bypass mà không thể tác động vào các extension như các bài lab trước nữa:
@@ -393,6 +401,8 @@ Hiểu được cấu trúc của file sẽ giúp ta thay đổi được bytes 
 đánh lừa rằng đây  là 1 file hình ảnh hợp lệ. 
 Ta sẽ thêm cmd: -Comment="<?php echo 'START ' . file_get_contents('/home/carlos/secret') . ' END'; ?>"
 vào file portswigger.php và nhờ exiftool thực hiện nó.
+
+### [7. Lab: Web shell upload via race condition](https://portswigger.net/web-security/file-upload/lab-file-upload-web-shell-upload-via-race-condition)<a name="pulv7"></a>
 
 ## Root me - Upload file<a name="rootme-upload-file"></a>
 
