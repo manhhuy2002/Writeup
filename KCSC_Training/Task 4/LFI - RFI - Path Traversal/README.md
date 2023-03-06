@@ -3,6 +3,7 @@
 * [Chết.vn](#chetvn)
 * [Portswigger - File Path Traversal](#Portswigger---file-path-traversal)
 * [Portswigger -File upload vulnerabilities](Portswigger---File-upload-vulnerabilites)
+* [Root me - Upload file](#root---me---upload-file)
 * [Root me]()
 * [Tryhackme - dogcat](#tryhackme---dogcat)
 
@@ -233,9 +234,83 @@ vậy rồi, do check code nó vậy. Giờ xóa đuôi png nãy thêm vào rồ
 
 ### 3. Lab: Web shell upload via path traversal
 
+```
+ This lab contains a vulnerable image upload function. The server is configured to prevent execution of user-supplied files, but this restriction can be bypassed by exploiting a secondary vulnerability.
+
+To solve the lab, upload a basic PHP web shell and use it to exfiltrate the contents of the file /home/carlos/secret. Submit this secret using the button provided in the lab banner.
+
+You can log in to your own account using the following credentials: wiener:peter 
+
+``` 
+
+Bài này có liên quan đến path traversal, vì nếu để trực tếp param truyền vào tại filename thì đã bị filter hết rồi
+
+![image](https://user-images.githubusercontent.com/104350480/223011930-6b7b96b2-5683-4d4b-8a73-ddf7aa6b5193.png)
+
+Để như vậy thì xem phản hồi ta thấy bị sai rồi, ta encode / về %2f xem sao: 
+
+![image](https://user-images.githubusercontent.com/104350480/223012016-0838b94d-0945-406d-bf46-954772265b46.png)
+
+Có vẻ đúng rồi, ta triển khai tiếp bên GET và thực hiện thành công, h chỉ cần sửa lại nội dung file trực tiếp trên burp như mấy trên là xong:
+
+![image](https://user-images.githubusercontent.com/104350480/223012155-a8ef18d0-6384-46c5-8ddd-d3bb6405dece.png)
 
 
+### 4. Lab: Web shell upload via extension blacklist bypass
+
+```
+This lab contains a vulnerable image upload function. Certain file extensions are blacklisted, but this defense can be bypassed due to a fundamental flaw in the configuration of this blacklist.
+
+To solve the lab, upload a basic PHP web shell, then use it to exfiltrate the contents of the file /home/carlos/secret. Submit this secret using the button provided in the lab banner.
+
+You can log in to your own account using the following credentials: wiener:peter
+
+```
+
+## Root me - Upload file
+
+Mấy chall này chủ yếu dùng kiến thức trong related source được rootme cấp sẵn:
+
+> link reference: https://repository.root-me.org/Exploitation%20-%20Web/EN%20-%20Secure%20file%20upload%20in%20PHP%20web%20applications.pdf?_gl=1*vt6jw*_ga*NzM2OTE5OTkuMTY2OTA4MzExMA..*_ga_SRYSKX09J7*MTY3ODAzOTcxMy4xNDQuMS4xNjc4MDM5NzE4LjAuMC4w
+
+### Chall 1: File upload - Double extensions
+
+```
+Your goal is to hack this photo galery by uploading PHP code.
+Retrieve the validation password in the file .passwd at the root of the application.
+
+```
+
+![image](https://user-images.githubusercontent.com/104350480/223013207-fe95da40-dd81-4445-bf53-eeb9ec5886ea.png)
+
+Chỉ được ** .gif, .jpeg , .png** được chấp nhận nên ta sửa lại đuôi, thêm .png vào file php là được.
+Ta gửi file cái sang phần get đọc được luôn, vì vậy mà nó có tên double extension.
+
+![image](https://user-images.githubusercontent.com/104350480/223013520-c3794348-52fc-485f-ab36-d07dcc27ee22.png)
+
+Dùng find để tìm find .passwd: 
+
+![image](https://user-images.githubusercontent.com/104350480/223016249-1df432b5-35a5-4aec-b7ce-275d35bd5a85.png)
+
+Dùng cat để đọc file: 
+
+![image](https://user-images.githubusercontent.com/104350480/223016429-029c6297-dc3b-4796-8ef4-bfd7ca8398d7.png)
+
+> Flag: Gg9LRz-hWSxqqUKd77-_q-6G8
+
+### Chall 2: File upload - MIME type
+
+```
+Your goal is to hack this photo galery by uploading PHP code.
+Retrieve the validation password in the file .passwd.
+
+```
 
 
+Dạng này vẫn giống như dạng làm trên portswigger.
+Đầu tiên bypass bằng cách sử dụng thêm đuôi .png vào file với nội dung <?php system('find / -name ".passwd"') rồi sau đó qua burp mình sửa lại sau: 
 
+![image](https://user-images.githubusercontent.com/104350480/223026506-ad7c85ab-f8c4-4f16-b1b2-b9694c67230a.png)
+
+Oke 
 
