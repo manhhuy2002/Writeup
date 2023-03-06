@@ -1,14 +1,16 @@
 ## Trần Mạnh Huy - Các chall về lfi - rfi - path traversal - File upload vulnerabilities
 
 * [Chết.vn](#chetvn)
-    * [Chall 5:]   
-* [Portswigger - File Path Traversal](#Portswigger---file-path-traversal)
-* [Portswigger - File upload vulnerabilities](#Portswigger---File-upload-vulnerabilites)
-* [Root me - Upload file](#root-me---upload-file)
+    - [Chall 5:](#chall-5)   
+    - [Chall 7:](#chall-7)
+    - [Chall 10:](#chall-10)
+* [Portswigger - File Path Traversal](#path-traversal)
+* [Portswigger - File upload vulnerabilities](#postswigger-upload-file)
+* [Root me - Upload file](#rootme-upload-file)
 * [Root me]()
-* [Tryhackme - dogcat](#tryhackme---dogcat)
+* [Tryhackme - dogcat](#tryhackme-dogcat)
 
-# Chết.vn
+# Chết.vn<a name="chetvn"></a>
 
 **Mình** viết nốt các chall tuần trước chưa làm được.
 
@@ -119,7 +121,7 @@ chuỗi dưới dạng class chứ kh truyền vào dưới dạng đối tượ
 > FLAG{e4bd6b96-9c8b-4b30-8ffc-7ba57770c123}
 
 
-# Portswigger - File Path Traversal
+# Portswigger - File Path Traversal<a name="path-traversal"></a>
 
 ### 1. Lab: File path traversal, simple case
 
@@ -127,7 +129,7 @@ Chall giới thiệu về file path traversal, load trang web và thấy đườ
 
 ![image](https://user-images.githubusercontent.com/104350480/222962685-9ceb4899-1e03-453e-865a-324a28f530b8.png)
 
-### **2. Lab: File path traversal, traversal sequences blocked with absolute path bypass**
+### 2. Lab: File path traversal, traversal sequences blocked with absolute path bypass
 
 Cái này chỉ cần chuyển thành filename=/etc/passwd là xong, vì cái này là do trang web nó block ../ nhưng mà lại coi tên tệp được cung cấp như 1 thư mục làm việc mặc định:
 
@@ -159,7 +161,7 @@ nó mới chấp nhận, vậy bypass thì thêm đuôi jpg vào sau null byte l
 
 ![image](https://user-images.githubusercontent.com/104350480/222964011-a29abf86-afa5-4df6-879c-0c7c8f60dbb0.png)
 
-## Portswigger - File upload vulnerabilities
+## Portswigger - File upload vulnerabilities<a name="portswigger-upload-file"></a>
 
 ### 1. Lab: Remote code execution via web shell upload
 
@@ -392,7 +394,7 @@ Hiểu được cấu trúc của file sẽ giúp ta thay đổi được bytes 
 Ta sẽ thêm cmd: -Comment="<?php echo 'START ' . file_get_contents('/home/carlos/secret') . ' END'; ?>"
 vào file portswigger.php và nhờ exiftool thực hiện nó.
 
-## Root me - Upload file
+## Root me - Upload file<a name="rootme-upload-file"></a>
 
 Mấy chall này chủ yếu dùng kiến thức trong related source được rootme cấp sẵn:
 
