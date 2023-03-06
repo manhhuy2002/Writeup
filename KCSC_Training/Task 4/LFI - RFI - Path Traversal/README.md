@@ -2,16 +2,16 @@
 
 * [Chết.vn](#chetvn)
 * [Portswigger - File Path Traversal](#Portswigger---file-path-traversal)
-* [Portswigger -File upload vulnerabilities](#Portswigger---File-upload-vulnerabilites)
+* [Portswigger - File upload vulnerabilities](#Portswigger---File-upload-vulnerabilites)
 * [Root me - Upload file](#root-me---upload-file)
 * [Root me]()
 * [Tryhackme - dogcat](#tryhackme---dogcat)
 
-## Chết.vn
+# Chết.vn
 
 Mình viết nốt các chall tuần trước chưa làm được.
 
-### Chall 5:
+### <span style="color:blue">Chall 5:</span>
 
 ```
 <?php
@@ -50,7 +50,7 @@ Thực hiện GET ta được flag:
 
 > FLAG{19ee9d17-7f23-4c03-b702-4276246ccdb2}
 
-### Chall 7: 
+### **Chall 7:**
 
 ```
 <?php
@@ -79,7 +79,7 @@ Ta dựa vào đây để viết url thỏa mãn điều kiện bài:
 
 > FLAG{07af425c-fc46-4689-aaf6-5512e4271f63}
 
-### Chall 10: 
+### **Chall 10:**
 
 ```
 <?php
@@ -117,15 +117,16 @@ chuỗi dưới dạng class chứ kh truyền vào dưới dạng đối tượ
 
 > FLAG{e4bd6b96-9c8b-4b30-8ffc-7ba57770c123}
 
-## Portswigger - File Path Traversal
 
-### 1. Lab: File path traversal, simple case
+# Portswigger - File Path Traversal
+
+### <span style="color:blue">1. Lab: File path traversal, simple case</span>
 
 Chall giới thiệu về file path traversal, load trang web và thấy đường dẫn ảnh với param là filename, chuyển thành ../../../etc/passwd để truy cập là xong: 
 
 ![image](https://user-images.githubusercontent.com/104350480/222962685-9ceb4899-1e03-453e-865a-324a28f530b8.png)
 
-### 2. Lab: File path traversal, traversal sequences blocked with absolute path bypass
+### **2. Lab: File path traversal, traversal sequences blocked with absolute path bypass**
 
 Cái này chỉ cần chuyển thành filename=/etc/passwd là xong, vì cái này là do trang web nó block ../ nhưng mà lại coi tên tệp được cung cấp như 1 thư mục làm việc mặc định:
 
@@ -157,7 +158,7 @@ nó mới chấp nhận, vậy bypass thì thêm đuôi jpg vào sau null byte l
 
 ![image](https://user-images.githubusercontent.com/104350480/222964011-a29abf86-afa5-4df6-879c-0c7c8f60dbb0.png)
 
-## Portswigger -File upload vulnerabilities
+## Portswigger - File upload vulnerabilities
 
 ### 1. Lab: Remote code execution via web shell upload
 
@@ -300,11 +301,70 @@ qua cho module libapache2-mod-php để xử lí, thì sau khi module này xử 
 kết quả thực thi về cho người dùng.
 
 ```
+Oke giờ ta đã hiểu 1 phần tổng quát cách thức xử lí và hoạt động ở phía server. Giờ ta cần áp dụng nó để giải quyết chall này.
+Như nói ở phần trên thì các máy chủ sẽ kh thực thi file php nếu nó kh được cấu hình để làm như vậy, như module libapache2-mod-php được cài chẳng hạn.
+Hay ví dụ cụ thể ở đây là trước khi apache thực hiện các tệp do request bên phía client yêu cầu thì dev có thể thêm các lệnh sau vào tệp **/etc/apache2/apache2.conf** của họ:
 
+```
+LoadModule php_module /usr/lib/apache2/modules/libphp.so
+AddType application/x-httpd-php .php
 
-### 5
+```
+Đồng thời thì cũng có nhiều máy chủ cho phép các dev tạo các tệp được cấu hình đặc biệt trong các thư mục cá nhân của họ để ghi đè hoặc thêm 1 hoặc nhiều
+global setting. Ví dụ với apache server sẽ load 1 cấu hình dành riêng cho thư mục từ 1 file được gọi là .htaccess nếu có.
 
-### 6. Lab: Remote code execution via polyglot web shell upload
+Còn 1 trường hợp nữa trong phần tìm hiểu về upload file vul mà trang này có đề cập là các dev có thể cấu hình riêng cho thư mục của IIS (internet information
+service là 1 http server được phát triển bởi microsoft chạy trên window) bằng cách sử dụng file web.config. Điều này có thể bao gồm các chỉ thị như sau, 
+trong trường hợp này cho phép các tệp JSON được phục vụ cho người dùng:
+
+![image](https://user-images.githubusercontent.com/104350480/223177831-439e0938-49c4-40d1-aa81-cc7697096414.png)
+
+Nói chung tùy vào cách mà server cấu hình mà ta có thể thực hiện các việc khai thác khác nhau. Để xem ta có thể áp dụng gì vào chall này không. 
+Thường thì file php của ta sẽ được thực thi thông qua 1 số trên, nhưng mà toàn bị chặn là chính chứ có được đi qua nó để xử lí đâu. Vì vậy ta phải
+nghĩ xem làm sao để có thể làm file php được thực thi qua mấy th được kể ở trên.
+
+Ý tưởng ở đây là ta POST file hợp lệ lên đã, sau đó ta sẽ lợi dụng  **.htaccess** đề cập ở trên đề cập ở trên để ghi đè lên tệp cấu hình server.
+Tại sao lại là .htaccess thì ở đây ở th apache, http có thể thực hiện 1 tệp php theo request đã được cấu hình sẵn cho phép load module nào hoặc thêm các
+extension sẽ được thực thi nếu muốn. Nghe hay phải không??? Cụ thể cái ghi đè ở đây là như nào, thì nhiều server sẽ cho phép ô dev upload ghi đè tệp hoặc
+thêm content vào tệp config. Ví dụ như trong apache server thì nó cho phép ta upload 1 file cụ thể được cấu hình cụ thể cho server nếu như server tồn tại
+file **.htaccess**. Ý tưởng là vậy rồi, vào giải quyết chall luôn cho dễ hiểu, mình ngẫm 1 hồi mới hiểu, hiểu rồi thì thấy hay vđ :))
+
+#### Đầu tiên ta thực hiện việc upload file lên php5 đã hoặc file gì cũng được miễn là hợp lệ, đằng nào chẳng sửa lại qua burpsuite:
+
+![image](https://user-images.githubusercontent.com/104350480/223183853-0ce4f4e6-8a15-4509-822c-1067bbdec3e5.png)
+
+Nhưng mà thực hiện get thì chả được gì vì nó đâu có thực thi giúp ta file này đâu. Tiếp theo như ý tưởng ở trên, ta post file **.htaccess** để server nó 
+nhận được đã, để thực hiện được các bước sau: 
+
+![image](https://user-images.githubusercontent.com/104350480/223184233-223bf2e4-a3d4-4d85-ae37-f66b361fa208.png)
+
+Oke vậy là file **.htaccess** đã được up lên thành công rồi, vậy thì tiếp theo của ý tưởng sẽ là ghi đè hay thêm extension mà httpd sẽ nhận và xử lí được
+Ở đây mình thêm .manhhuy2002 :
+
+![image](https://user-images.githubusercontent.com/104350480/223184710-4c8352c7-b56f-448a-81bb-d8357cb62342.png)
+
+Oke ngon rồi, à quên thêm rồi POST lại nhé. Oke giờ th server nó sẽ chấp nhận và xử lí các file có extension là .manhhuy2002 rồi.
+Giờ ta post lại file php5 xong sửa lại extension thành .manhhuy2002 thôi, và tất nhiên h th httpd cùng th module libapache2-mod-php trong bài này sẽ giúp
+ta thực thi code php: 
+
+Thử nhẹ ls / phát:
+
+![image](https://user-images.githubusercontent.com/104350480/223185373-66ddc4bd-bf1c-4158-80e7-5702f4187f45.png)
+
+Bên thực hiện request GET file sẽ được:
+
+![image](https://user-images.githubusercontent.com/104350480/223185444-1e99297f-0fc7-4644-81a2-00d0ec14b1e0.png)
+
+Oke vậy là xong rồi, giờ thực hiện tương tự như các chall trên thôi: **<?php system('cat /home/carlos/secret');?>** để đọc file secret: 
+Get lại lần nữa ta xong solution bài lab:
+
+![image](https://user-images.githubusercontent.com/104350480/223185831-c43c9261-6a49-45b1-afb0-48122103d8d9.png)
+
+Bài này mình thấy khá hay, kiểu phải hiểu bản chất nên mình lúc chưa hiểu bị hơi lòng vòng tí :(((
+
+### **5. Lab: Web shell upload via obfuscated file extension**
+
+### **6. Lab: Remote code execution via polyglot web shell upload**
 
 Ở bài lab này, các server sẽ không đơn thuần kiểm tra extension hay content-type được truyền vào nữa, thay vào server sẽ các thực nội dung của file để biết được nó là loại file gì, chủ yếu là kiểu dạng hex. Ta có thể lấy ví dụ điển hình là các hình ảnh jpeg luôn bất đầu bằng chuỗi bytes **FF D8 FF**
 Bài lab này sẽ dạy chúng ta cách thực hiện bypass mà không thể tác động vào các extension như các bài lab trước nữa:
