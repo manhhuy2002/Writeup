@@ -318,3 +318,67 @@ Sau vài lần thử thì tìm được find .passwd như trên, ta thực hiệ
 
 > Flag: a7n4nizpgQgnPERy89uanf6T4
 
+### Chall 3: File upload - Null byte
+
+```
+Your goal is to hack this photo galery by uploading PHP code.
+
+```
+
+Bài này khá đơn giản, cũng tương tự như các chall trước, ta chỉ được up các file: **NB : only GIF, JPEG or PNG are accepted**, nếu như ý tưởng là thêm đuôi .png vào thì kh
+được bài này nó đã filter double extension rồi, nên khi truyền lên với .php.png thì cũng fail, vậy ta chỉ cần thêm %00 vào sau như: .php%00.png vào là xong, vì sau khi thực 
+hiện .png sẽ tự động bị cho out ra khỏi. còn lại mỗi extension là .php. Sau đó ta thực hiện đọc file và được password trả về luôn:
+
+![image](https://user-images.githubusercontent.com/104350480/223034178-74c4ccdd-0756-4db0-a5d1-a9d58708a2d0.png)
+
+> Flag: YPNchi2NmTwygr2dgCCF
+
+### Chall 4: File upload - ZIP
+
+```
+Your goal is to read index.php file.
+
+```
+
+Bài này thì thì như tiêu đề nó bắt ta upload 1 file zip, thì ta có thể zip file lại bằng cmd. Trước hết thì đọc chút related source mà rootme cung cấp đã.
+
+> reference: https://repository.root-me.org/Administration/Unix/Linux/EN%20-%20Linux%20man%20page%20-%20zip.pdf
+
+Nhưng mà tóm lại là chúng ta cần phải upload 1 file zip lên. Nhưng mà upload file zip thì đâu có thực thi được gì, nên ý tưởng ở đây là ta dùng symlink để khi file
+zip được gọi thì 1 file ta symlink để thực thi mã code sẽ được gọi theo.
+
+```
+Lệnh ln trong linux (hay còn gọi là lệnh liên kết tệp) cho phép người dùng tạo liên kết giữa các tệp khác nhau trong thư mục. Lệnh ln này mặc định sẽ tạo ra hard link, 
+tức là một tệp trỏ đến 1 tệp khác trong cùng 1 inode với tệp gốc. Còn loại liên kết nữa mà sẽ được dùng trong bài này là soft link (hay còn được gọi là sympolic link)
+là 1 tệp đặc biệt chứa một đường dẫn đến tệp gốc : ln -s /path/to/source_file link_name
+
+```
+Ở đây ta cần dùng sympolic link vì 
+
+Ta tạo 1 file php mới và lần lượt thực hiện:
+
+Tạo file index.php, nội dung file là gì cũng được vì cái cốt là ta muốn path traversal đến file index.php để đọc file của máy chủ họ chứ kh phải thực thi code
+
+![image](https://user-images.githubusercontent.com/104350480/223041176-9a168751-b18c-4bc8-af3a-73a87c9de0e1.png)
+
+Tiếp theo ta symlink với file index.txt, ../../../ để đến được file index.php, nó nằm ở chỗ đó, còn vì sao thì phải thử lần lượt thôi
+
+![image](https://user-images.githubusercontent.com/104350480/223041090-60bf88a8-e492-4d89-97c6-6c437c4c9494.png)
+
+Sau đó ta thực hiện zip file lại là xong, ở đây cần chú ý thêm tùy chọn --symlinks vào nếu không khi zip lại thì ln -s đã tạo ở trên sẽ mất, hiểu đơn giản là 1 cái thì
+là tạo liên kết mềm, còn 1 cái là bao gồm các liên kết mềm, không có nó thì các liên kết mềm được tạo ra sẽ bị hủy bỏ.
+
+![image](https://user-images.githubusercontent.com/104350480/223041461-12a1d70b-a079-4082-8e6b-f4e9b5752a67.png)
+
+Giờ up file đã zip lên trang ta được sau khi giải nén:
+
+![image](https://user-images.githubusercontent.com/104350480/223042505-44899c58-4dae-4e93-af61-e06006ae713c.png)
+
+Giờ nhấn vào index.txt là thực hiện được liên kết về file index.php để thực thi rồi: 
+
+![image](https://user-images.githubusercontent.com/104350480/223042608-36531bb3-6cfb-4689-a9e0-3d129371d33f.png)
+
+
+> Flag: N3v3r_7rU5T_u5Er_1npU7
+
+
