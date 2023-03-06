@@ -1,6 +1,6 @@
 ## Trần Mạnh Huy - Các chall về lfi - rfi - path traversal - File upload vulnerabilities
 
-* [Chết.vn](#Chetvn)
+* [Chết.vn](#chetvn)
 * [Portswigger - File Path Traversal](#Portswigger---file-path-traversal)
 * [Portswigger -File upload vulnerabilities](Portswigger---File-upload-vulnerabilites)
 * [Root me]()
