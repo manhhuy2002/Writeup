@@ -353,11 +353,10 @@ tức là một tệp trỏ đến 1 tệp khác trong cùng 1 inode với tệp
 là 1 tệp đặc biệt chứa một đường dẫn đến tệp gốc : ln -s /path/to/source_file link_name
 
 ```
-Ở đây ta cần dùng sympolic link vì 
 
 Ta tạo 1 file php mới và lần lượt thực hiện:
 
-Tạo file index.php, nội dung file là gì cũng được vì cái cốt là ta muốn path traversal đến file index.php để đọc file của máy chủ họ chứ kh phải thực thi code
+Tạo file index.php, nội dung file là gì cũng được vì cái cốt là ta muốn thực hiện path traversal đến file index.php để đọc file của máy chủ họ chứ kh phải thực thi code
 
 ![image](https://user-images.githubusercontent.com/104350480/223041176-9a168751-b18c-4bc8-af3a-73a87c9de0e1.png)
 
@@ -381,4 +380,12 @@ Giờ nhấn vào index.txt là thực hiện được liên kết về file ind
 
 > Flag: N3v3r_7rU5T_u5Er_1npU7
 
+### Chall 5: File upload - Polyglot
 
+#### Are you bilingual?
+
+```
+Your friend who is a photography fan has created a site to allow people to share their beautiful photos. He assures you that his site is secure because he checks that the file sent is a JPEG, and that it is not a disguised PHP file. Prove him wrong
+
+```
+Gợi ý rất rõ ràng, bạn là người song ngữ ? Chall này thì cũng giống với chall polyglot của portswigger, có lẽ ta cần phải upload 2 file
