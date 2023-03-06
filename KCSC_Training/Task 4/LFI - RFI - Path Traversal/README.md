@@ -308,9 +308,13 @@ Retrieve the validation password in the file .passwd.
 
 
 Dạng này vẫn giống như dạng làm trên portswigger.
-Đầu tiên bypass bằng cách sử dụng thêm đuôi .png vào file với nội dung <?php system('find / -name ".passwd"') rồi sau đó qua burp mình sửa lại sau: 
+Đầu tiên bypass bằng cách sử dụng thêm đuôi .png vào file với nội dung sau rồi sau đó qua burp mình sửa lại sau:
 
-![image](https://user-images.githubusercontent.com/104350480/223026506-ad7c85ab-f8c4-4f16-b1b2-b9694c67230a.png)
+![image](https://user-images.githubusercontent.com/104350480/223032185-b52a2a02-9f76-48c5-8db7-10da9fc2b5ce.png)
 
-Oke 
+Sau vài lần thử thì tìm được find .passwd như trên, ta thực hiện lệnh cat để đọc file là có flag: 
+
+![image](https://user-images.githubusercontent.com/104350480/223032326-6cbb3e58-c0b3-4a0c-aa00-8c12d6822ab4.png)
+
+> Flag: a7n4nizpgQgnPERy89uanf6T4
 
