@@ -1,8 +1,120 @@
 ## Trần Mạnh Huy - Các chall về lfi - rfi - path traversal - File upload vulnerabilities
+
+* [Chết.vn](Chetvn)
 * [Portswigger - File Path Traversal](#Portswigger---file-path-traversal)
 * [Portswigger -File upload vulnerabilities](Portswigger---File-upload-vulnerabilites)
 * [Root me]()
 * [Tryhackme - dogcat](#tryhackme---dogcat)
+
+## Chết.vn
+
+Mình viết nốt các chall tuần trước chưa làm được.
+
+### Chall 5:
+
+```
+<?php
+include __DIR__.'/../../secret.php';
+error_reporting(0);
+if(isset($_GET['inp'])) {
+    $inp = $_GET['inp'];
+    if(((array)simplexml_load_string(file_get_contents($inp))->f->l->a->g)[0] === 'flagggggggggggggg') {
+        die(print_flag(5));
+    }
+}
+
+highlight_file(__FILE__);
+
+```
+Ở đây file_get_contents() để lấy nội dung tệp xml được truyền vào qua đường dẫn, 1 chức năng của file_get_contents là có thể đọc file từ đường dẫn, và 
+trả về dưới dạng chuỗi. Tiếp theo simplexml_load_string dùng để phân tích chuỗi xml được trả về thành đối tượng SimpleXML. Đối tượng này cho phép truy cập
+các phần tử của xml dưới dạng đối tượng. Vì vậy ở đây ý tưởng là ta tạo 1 file xml có đủ nội dung như điều kiện và dựng local rồi post file lên và gọi 
+tệp qua đường dẫn bằng ngrok.
+
+Tạo file: 
+
+![image](https://user-images.githubusercontent.com/104350480/223001295-3e042785-4cdf-46d3-a9b1-18c830741447.png)
+
+Dựng server:
+
+![image](https://user-images.githubusercontent.com/104350480/223001424-636a2ec4-26f5-43be-be62-ff945efcd0b7.png)
+
+Dùng curl post file test.xml lên: 
+
+![image](https://user-images.githubusercontent.com/104350480/223001590-b8f7e6b3-0ef5-46a8-8af5-7c8bd3e01668.png)
+
+Thực hiện GET ta được flag: 
+
+![image](https://user-images.githubusercontent.com/104350480/223001682-82ac285b-2493-4e70-9de1-fa189ca3092d.png)
+
+> FLAG{19ee9d17-7f23-4c03-b702-4276246ccdb2}
+
+### Chall 7: 
+
+```
+<?php
+include __DIR__.'/../../secret.php';
+error_reporting(0);
+$user = ['admin', 'lord'];
+if(isset($_GET['u'])) {
+    if($_GET['u⁠'] === $user && $_GET['u'][0] !== 'admin') {
+        die(print_flag(7));
+    }
+}
+highlight_file(__FILE__);
+
+```
+Chall này giải quyết trực tiếp thì cũng kh ra được gì, ném vào visual code ta thấy có cái bất thường:
+
+![image](https://user-images.githubusercontent.com/104350480/223001954-43b718a1-9860-427b-978c-8b012c669748.png)
+
+Có u+2060 (word joiner) bị ẩn, làm cho điều kiện thực thi của ta nghĩ kh còn đúng nữa. Search được thì u+2060 có thể chuyển về dạng utf-8 như sau:
+
+> E2 81 A0
+
+Ta dựa vào đây để viết url thỏa mãn điều kiện bài:
+
+![image](https://user-images.githubusercontent.com/104350480/223002789-9455b43c-40a6-4a65-81a5-3c8e1afd361e.png)
+
+> FLAG{07af425c-fc46-4689-aaf6-5512e4271f63}
+
+### Chall 10: 
+
+```
+<?php
+include __DIR__.'/../../secret.php';
+error_reporting(0);
+class Get_Flag{
+    public $get = True;
+    public function __destruct(){
+        if($this->get === True){
+            die(print_flag(10));
+        }
+    }
+    public function __wakeup(){
+        $this->get = False;
+    }
+}
+if(isset($_GET['get_flag.php'])){
+    unserialize($_GET['get_flag.php']);
+}
+highlight_file(__FILE__);
+
+```
+
+Bài này thì ta kh thể truyền param là get_flag.php trực tiếp vào được như thế thì sẽ bị sai vì trong php không được truyền dấu '.' vào như thế.
+Ở đây có 1 trick là có cả _ và . được cùng xuất hiện nên nếu ta dùng \[ thì nó sẽ được convert thành _ . Và cũng như mình tham khảo được thì khi 
+\[ và . cùng xuất hiện trong các version php < 8 thì nó sẽ kh bị lỗi nữa.
+
+> link reference: https://github.com/project-sekai-ctf/sekaictf-2022/tree/main/web/sekai-game-start/solution
+
+Tiếp theo là làm thế nào để gọi được hàm ```__destruct()``` để trả về flag. Hay là cần bypass hàm wakeup(), vì vậy ý tưởng ở đây là ta sẽ truyền vào 1
+chuỗi dưới dạng class chứ kh truyền vào dưới dạng đối tượng thì hàm wakeup() sẽ không được gọi ra:
+
+![image](https://user-images.githubusercontent.com/104350480/223005027-74c6a30b-c96c-41ad-a183-f9e1a559febe.png)
+
+
+> FLAG{e4bd6b96-9c8b-4b30-8ffc-7ba57770c123}
 
 ## Portswigger - File Path Traversal
 
@@ -120,6 +232,8 @@ vậy rồi, do check code nó vậy. Giờ xóa đuôi png nãy thêm vào rồ
 
 
 ### 3. Lab: Web shell upload via path traversal
+
+
 
 
 
