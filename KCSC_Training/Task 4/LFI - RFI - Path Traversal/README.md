@@ -1,6 +1,7 @@
 ## Trần Mạnh Huy - Các chall về lfi - rfi - path traversal - File upload vulnerabilities
 
 * [Chết.vn](#chetvn)
+    * [Chall 5:]   
 * [Portswigger - File Path Traversal](#Portswigger---file-path-traversal)
 * [Portswigger - File upload vulnerabilities](#Portswigger---File-upload-vulnerabilites)
 * [Root me - Upload file](#root-me---upload-file)
@@ -9,9 +10,9 @@
 
 # Chết.vn
 
-Mình viết nốt các chall tuần trước chưa làm được.
+**Mình** viết nốt các chall tuần trước chưa làm được.
 
-### <span style="color:blue">Chall 5:</span>
+## Chall 5:
 
 ```
 <?php
@@ -50,7 +51,7 @@ Thực hiện GET ta được flag:
 
 > FLAG{19ee9d17-7f23-4c03-b702-4276246ccdb2}
 
-### **Chall 7:**
+### Chall 7:
 
 ```
 <?php
@@ -79,7 +80,7 @@ Ta dựa vào đây để viết url thỏa mãn điều kiện bài:
 
 > FLAG{07af425c-fc46-4689-aaf6-5512e4271f63}
 
-### **Chall 10:**
+### Chall 10:
 
 ```
 <?php
@@ -120,7 +121,7 @@ chuỗi dưới dạng class chứ kh truyền vào dưới dạng đối tượ
 
 # Portswigger - File Path Traversal
 
-### <span style="color:blue">1. Lab: File path traversal, simple case</span>
+### 1. Lab: File path traversal, simple case
 
 Chall giới thiệu về file path traversal, load trang web và thấy đường dẫn ảnh với param là filename, chuyển thành ../../../etc/passwd để truy cập là xong: 
 
@@ -362,9 +363,9 @@ Get lại lần nữa ta xong solution bài lab:
 
 Bài này mình thấy khá hay, kiểu phải hiểu bản chất nên mình lúc chưa hiểu bị hơi lòng vòng tí :(((
 
-### **5. Lab: Web shell upload via obfuscated file extension**
+### 5. Lab: Web shell upload via obfuscated file extension
 
-### **6. Lab: Remote code execution via polyglot web shell upload**
+### 6. Lab: Remote code execution via polyglot web shell upload
 
 Ở bài lab này, các server sẽ không đơn thuần kiểm tra extension hay content-type được truyền vào nữa, thay vào server sẽ các thực nội dung của file để biết được nó là loại file gì, chủ yếu là kiểu dạng hex. Ta có thể lấy ví dụ điển hình là các hình ảnh jpeg luôn bất đầu bằng chuỗi bytes **FF D8 FF**
 Bài lab này sẽ dạy chúng ta cách thực hiện bypass mà không thể tác động vào các extension như các bài lab trước nữa:
@@ -407,7 +408,7 @@ Retrieve the validation password in the file .passwd at the root of the applicat
 
 ![image](https://user-images.githubusercontent.com/104350480/223013207-fe95da40-dd81-4445-bf53-eeb9ec5886ea.png)
 
-Chỉ được ** .gif, .jpeg , .png** được chấp nhận nên ta sửa lại đuôi, thêm .png vào file php là được.
+Chỉ được **.gif, .jpeg , .png** được chấp nhận nên ta sửa lại đuôi, thêm .png vào file php là được.
 Ta gửi file cái sang phần get đọc được luôn, vì vậy mà nó có tên double extension.
 
 ![image](https://user-images.githubusercontent.com/104350480/223013520-c3794348-52fc-485f-ab36-d07dcc27ee22.png)
