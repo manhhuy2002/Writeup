@@ -279,8 +279,8 @@ You can log in to your own account using the following credentials: wiener:peter
 
 ```
 
-#### Chall này thì như tên bài, nó đã blacklist đi php, thực ra thì mình có thử 1 số cách viết khác của php5 hay php6 thì vẫn upload được nhưng mà khi thực
-thi thì nó kh chạy mà chỉ đọc các câu lệnh của mình ra thôi. Thì vấn đề ở đây có lẽ kh phải vậy rồi, đọc tài liệu tí về chall này thì nó có diễn giải ngắn gọn
+Chall này thì như tên bài, nó đã blacklist đi php, thực ra thì mình có thử 1 số cách viết khác của php5 hay php6 thì vẫn upload được nhưng mà khi thực thi
+thì nó kh chạy mà chỉ đọc các câu lệnh của mình ra thôi. Thì vấn đề ở đây có lẽ kh phải vậy rồi, đọc tài liệu tí về chall này thì nó có diễn giải ngắn gọn
 thế này, thông thường thì 1 số server sẽ không thực thi 1 file trừ khi nó được cấu hình để làm việc đó. Đúng thế đọc đến đây thì có thể nói là các chall trước
 ta làm là server đang được cấu hình như vậy. Nhưng mà để hiểu sâu hơn thì ta có thể tham khảo video này trong việc học về upload file:
 
