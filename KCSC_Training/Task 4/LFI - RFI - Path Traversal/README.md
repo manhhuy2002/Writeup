@@ -2,7 +2,7 @@
 
 * [Chết.vn](#chetvn)
 * [Portswigger - File Path Traversal](#Portswigger---file-path-traversal)
-* [Portswigger -File upload vulnerabilities](Portswigger---File-upload-vulnerabilites)
+* [Portswigger -File upload vulnerabilities](#Portswigger---File-upload-vulnerabilites)
 * [Root me - Upload file](#root-me---upload-file)
 * [Root me]()
 * [Tryhackme - dogcat](#tryhackme---dogcat)
@@ -266,6 +266,35 @@ To solve the lab, upload a basic PHP web shell, then use it to exfiltrate the co
 You can log in to your own account using the following credentials: wiener:peter
 
 ```
+
+### 5
+
+### 6. Lab: Remote code execution via polyglot web shell upload
+
+Ở bài lab này, các server sẽ không đơn thuần kiểm tra extension hay content-type được truyền vào nữa, thay vào server sẽ các thực nội dung của file để biết được nó là loại file gì, chủ yếu là kiểu dạng hex. Ta có thể lấy ví dụ điển hình là các hình ảnh jpeg luôn bất đầu bằng chuỗi bytes **FF D8 FF**
+Bài lab này sẽ dạy chúng ta cách thực hiện bypass mà không thể tác động vào các extension như các bài lab trước nữa:
+
+```
+
+This lab contains a vulnerable image upload function. Although it checks the contents of the file to verify that it is a genuine image, it is still possible to upload and execute server-side code.
+
+To solve the lab, upload a basic PHP web shell, then use it to exfiltrate the contents of the file /home/carlos/secret. Submit this secret using the button provided in the lab banner.
+
+You can log in to your own account using the following credentials: wiener:peter
+
+```
+
+Như đã nói ở trên thì các định dạng được cho phép chỉ là các jpeg hay png, ta dù thay đổi hay dùng các trick ở extension thì sẽ đều kh hiệu quả.
+
+![image](https://user-images.githubusercontent.com/104350480/223076635-504d3dbe-d0c6-4072-8d4d-43c63d61bd9d.png)
+
+Đọc gợi ý của bài thì ta phải dùng một cái gọi là polygot file, ta có thể hiểu polygot file nó là 1 loại file truyền tin mà sẽ hợp lệ với nhiều kiểu file khác nhau. Ví dụ như gifar file vừa là 1 file gif và vừa là 1 file rar. Tức là đầu đề đã gợi cho ta 1 ý tưởng là tạo 1 polyglot file để vừa thỏa mãn
+việc xác thực hệ thống vừa thỏa mãn có thể thực thi code. Nói thì hơi ngược, nhưng tức là thay vì như các bài trước ta tác động vào extension hay content-type thì ta bh ta sẽ phải tác động vào nội dung bytes trong file. Ví dụ như file jpeg bắt đầu vối FF D8 và kết thúc bằng FF D9 chẳng hạn,....
+
+Hiểu được cấu trúc của file sẽ giúp ta thay đổi được bytes hay metadata của nó sao cho phù hợp. Ở đây ta sẽ dùng 1 công cụ hữu hiệu để tác động vào nó là **exiftool** giúp có thể tác động hữu hiệu vào metadata của file. Ta sẽ sử dụng nó để thay đổi các dấu hiệu hay signature trong file để server bị 
+đánh lừa rằng đây  là 1 file hình ảnh hợp lệ. 
+Ta sẽ thêm cmd: -Comment="<?php echo 'START ' . file_get_contents('/home/carlos/secret') . ' END'; ?>"
+vào file portswigger.php và nhờ exiftool thực hiện nó.
 
 ## Root me - Upload file
 
