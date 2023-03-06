@@ -335,7 +335,7 @@ Thường thì file php của ta sẽ được thực thi thông qua 1 số trê
 nghĩ xem làm sao để có thể làm file php được thực thi qua mấy th được kể ở trên.
 
 Ý tưởng ở đây là ta POST file hợp lệ lên đã, sau đó ta sẽ lợi dụng  **.htaccess** đề cập ở trên đề cập ở trên để ghi đè lên tệp cấu hình server.
-Tại sao lại là .htaccess thì ở đây ở th apache, http có thể thực hiện 1 tệp php theo request đã được cấu hình sẵn cho phép load module nào hoặc thêm các
+Tại sao lại là .htaccess thì ở đây tại th apache, httpd có thể thực hiện 1 tệp php theo request đã được cấu hình sẵn cho phép load module nào hoặc thêm các
 extension sẽ được thực thi nếu muốn. Nghe hay phải không??? Cụ thể cái ghi đè ở đây là như nào, thì nhiều server sẽ cho phép ô dev upload ghi đè tệp hoặc
 thêm content vào tệp config. Ví dụ như trong apache server thì nó cho phép ta upload 1 file cụ thể được cấu hình cụ thể cho server nếu như server tồn tại
 file **.htaccess**. Ý tưởng là vậy rồi, vào giải quyết chall luôn cho dễ hiểu, mình ngẫm 1 hồi mới hiểu, hiểu rồi thì thấy hay vđ :))
