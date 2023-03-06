@@ -14,7 +14,7 @@
 
 **Mình** viết nốt các chall tuần trước chưa làm được.
 
-## Chall 5:(https://xn--cht-8jz.vn/challenge/5/)
+## [Chall 5:](https://xn--cht-8jz.vn/challenge/5/)
 
 ```
 <?php
@@ -53,7 +53,7 @@ Thực hiện GET ta được flag:
 
 > FLAG{19ee9d17-7f23-4c03-b702-4276246ccdb2}
 
-### Chall 7:(https://xn--cht-8jz.vn/challenge/7/)
+### [Chall 7:](https://xn--cht-8jz.vn/challenge/7/)
 
 ```
 <?php
@@ -82,7 +82,7 @@ Ta dựa vào đây để viết url thỏa mãn điều kiện bài:
 
 > FLAG{07af425c-fc46-4689-aaf6-5512e4271f63}
 
-### Chall 10:(https://xn--cht-8jz.vn/challenge/10/)
+### [Chall 10:](https://xn--cht-8jz.vn/challenge/10/)
 
 ```
 <?php
