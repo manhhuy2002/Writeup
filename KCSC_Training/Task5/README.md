@@ -1,5 +1,9 @@
 # Csrf - Access control vulnerabilities - Authentication - Jwt - OAuth authentication
 
+
+* [Portswigger - Cross-site scripting](#pxss)
+
+
 * [Portswigger - Cross-site request fogery](#pcsrf)
   - [1. CSRF vulnerability with no defenses](#pcsrf1)
   - [2. CSRF where token validation depends on request method](#pcsrf2)
@@ -14,6 +18,9 @@
   - [11. CSRF where Referer validation depends on header being present](#pcsrf11)
   - [12. CSRF with broken Referer validation]()
   
-  
+
+ 
 ## [1. CSRF vulnerability with no defenses](https://portswigger.net/web-security/csrf/lab-no-defenses)<a name='pcsrf1'></a>
+
+
 
