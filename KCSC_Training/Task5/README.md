@@ -21,42 +21,111 @@
 ## [1. CSRF vulnerability with no defenses](https://portswigger.net/web-security/csrf/lab-no-defenses)<a name='pcsrf1'></a>
 
 
-## DOM-based vulnerabilities
+# DOM-based vulnerabilities
 
-Kiến thức về Dom:
-```
-DOM (Document Object Model) là một mô hình lập trình cho phép các trang web được biểu diễn dưới dạng một cây phân cấp các đối tượng, trong đó mỗi đối tượng đại diện cho một phần của trang web, chẳng hạn như một thẻ HTML, một đoạn văn bản, một hình ảnh hoặc một form nhập liệu.
-
-DOM bao gồm các thành phần sau:
-
-Document Object: Đại diện cho toàn bộ trang web, bao gồm các phần tử, thuộc tính, văn bản và hình ảnh được hiển thị trên trang.
-
-Element Object: Đại diện cho các phần tử HTML trên trang, ví dụ như thẻ <div>, <p>, <img>, v.v. Mỗi phần tử có các thuộc tính như id, class, style, v.v.
-
-Attribute Object: Đại diện cho các thuộc tính của một phần tử HTML, chẳng hạn như src, href, alt, v.v.
-
-Text Object: Đại diện cho các đoạn văn bản trong các phần tử HTML, ví dụ như nội dung của một thẻ <p>.
-
-Event Object: Đại diện cho các sự kiện xảy ra trên trang web, chẳng hạn như khi người dùng nhấp chuột vào một phần tử, di chuyển chuột qua phần tử, v.v.
+Which sinks can lead to DOM-XSS vulnerabilities?
 
 ```
+document.write()
+document.writeln()
+document.domain
+element.innerHTML
+element.outerHTML
+element.insertAdjacentHTML
+element.onevent
 
-DOM-based vulnerabilities xảy ra khi trang web chứa js code mà attacker có thể control được giá trị là souce và chuyển nó vào vào 1 hàm nguy hiểm được gọi là sink.
-Để hiểu rõ lỗi này trước tiên thì ta có thể hiểu code cũng được mà ở đây ta sẽ đi từ căn bản nhất là đi từ 'dòng chảy' của code thực hiện giữa source và sink:
-
-Source: 
 ```
-Trong taint flow của DOM, "source" là một giá trị đáng nghi của một trường nhập liệu trên trang web. Nó có thể là một chuỗi hoặc một giá trị khác được nhập vào từ bên ngoài, chẳng hạn như thông tin nhập từ người dùng hoặc các giá trị được truyền qua URL.
+The following jQuery functions are also sinks that can lead to DOM-XSS vulnerabilities:
 
-Khi giá trị này được đưa vào trang web, nó trở thành một "source" đáng nghi vì nó có thể chứa các ký tự đặc biệt hoặc các mã độc được chèn vào để tấn công trang web.
+```
+add()
+after()
+append()
+animate()
+insertAfter()
+insertBefore()
+before()
+html()
+prepend()
+replaceAll()
+replaceWith()
+wrap()
+wrapInner()
+wrapAll()
+has()
+constructor()
+init()
+index()
+jQuery.parseHTML()
+$.parseHTML()
+```
 
-Từ đó, giá trị này sẽ được truyền dọc theo các thành phần khác nhau của trang web thông qua các đối tượng DOM, và nếu không kiểm soát được, nó có thể gây ra các lỗ hổng bảo mật.
+## 1. DOM-based XSS 
 
-Vì vậy, để bảo vệ trang web khỏi các cuộc tấn công tương tự, các dev cần kiểm soát và xử lý kỹ càng các "source" trong taint flow của DOM, bằng cách sử dụng các kỹ thuật như input validation, output encoding, và escape characters để đảm bảo an toàn cho trang web.
+###  1. Lab: DOM XSS in document.write sink using source location.search
+ 
+Bài này sử dụng sink là document.write với souce từ location.search, có source code: 
+
+![image](https://user-images.githubusercontent.com/104350480/224482812-01b1a31a-60be-45dd-bf1d-1a7029b029b5.png)
+
 ```
-Sink:
+<script>
+function trackSearch(query) {
+  document.write('<img src="/resources/images/tracker.gif?searchTerms='+query+'">');
+}
+var query = (new URLSearchParams(window.location.search)).get('search');
+if(query) {
+  trackSearch(query);
+}
+</script>
+
 ```
-sink là 1 đối tượng dom hoặc 1 hàm js có chứa sự nguy hiểm 
+Ta biết rằng có thể thực thi được code bên trong document.write() và cả nhiều script nên ở đây bypass đơn giản bằng cách dùng payload: 
+
+"><script>alert(1)</script>
+
+### [2. Lab: DOM XSS in document.write sink using source location.search inside a select element](https://portswigger.net/web-security/cross-site-scripting/dom-based/lab-document-write-sink-inside-select-element)
+
+![image](https://user-images.githubusercontent.com/104350480/224484597-6a2fc99a-eaea-4f6e-86dc-77be550f4cf8.png)
+
 ```
+var stores = ["London","Paris","Milan"];
+var store = (new URLSearchParams(window.location.search)).get('storeId');
+document.write('<select name="storeId">');
+if(store) {
+    document.write('<option selected>'+store+'</option>');
+}
+for(var i=0;i<stores.length;i++) {
+    if(stores[i] === store) {
+        continue;
+    }
+    document.write('<option>'+stores[i]+'</option>');
+}
+document.write('</select>');
+                            
+```
+source ở đây là location.search và sink ở đây là document.write, ở đây ta sẽ thực hiện xss ngay ở document.write đầu tiên bằng cách đóng tag <select> lại và thêm <script> vào
+> mục tiêu là thực hiện document.write với : '<select name =""></select><script>alert(1)</script>'
+
+Ta truyền tham số trên url để thực thi: ?productId=1&storeId="</select><script>alert(1)</script>
+
+### [3. Lab: DOM XSS in innerHTML sink using source](https://portswigger.net/web-security/cross-site-scripting/dom-based/lab-innerhtml-sink)
+
+![image](https://user-images.githubusercontent.com/104350480/224485700-4b5dcee3-3309-4c1e-acdc-bb59990405ac.png)
+
+soucre ở đây là location.search còn sink ở đây là innerHTML
+innerHTML là một thuộc tính của các đối tượng HTML trong JavaScript, nó cho phép ta truy cập và chỉnh sửa nội dung HTML bên trong một phần tử HTML và ngoài ra Thuộc tính innerHTML trong JavaScript có thể thực thi được hầu hết các loại nội dung HTML, bao gồm các thẻ HTML, văn bản, hình ảnh, video, âm thanh và các phần tử khác của trang web.
+Nên ta có thể tiêm script vào đây để thực thi alert, tuy vậy thì innerHTML nó block đi phần tử <script> nên ở đây  ta có thể dùng tag <img> or <svg> thay thế
+
+> payload: <img src=0 onerror=alert(1)> or <svg><animate onbegin=alert(1)>
+
+### [4. Lab: DOM XSS in jQuery anchor href attribute sink using location.search source](https://portswigger.net/web-security/cross-site-scripting/dom-based/lab-jquery-href-attribute-sink)
+
+Bài lab này chứa dom-based xss 
+
+Kiểm tra mã nguồn:
+![image](https://user-images.githubusercontent.com/104350480/224487372-765a1c62-75b5-4483-a08c-b2f20c02ebd5.png)
+
+
 
 
