@@ -101,23 +101,41 @@ document.getElementById('csrf').submit();
 ```
 ### [3. CSRF where token is not tied to user session](https://portswigger.net/web-security/csrf/bypassing-token-validation/lab-token-not-tied-to-user-session)
 
-Bài lab kế tiếp này là kiểu nó có xác thực csrf token nhưng mà nó kh ràng buộc là csrf với session là phải khớp với nhau, ý tưởng đơn giản của bài lab này là ta tạo 2 tài khoản và tráo đổi csrf token cho nhau: 
+Tình huống của bài lab này là ứng dụng web nó không hề xác thực xem csrf trong request có thuộc về 1 session của 1 user liên quan hay không. Việc này có thể hình dung là bên server tạo 1 kho chứa các token được sinh ra, miễn là token được lấy từ trong này ra thì server sẽ coi nó là hợp lệ. Với bài lab này ta sẽ chỉ cần lấy thêm cái csrf token được cấp phát sẵn.
 
-2 user: 
+Vấn đề là mỗi csrf token chỉ được sử dụng một lần duy nhất trong mỗi yêu cầu, nên là ta sẽ cần sử dụng 1 csrf token được sinh ra mà chưa thực hiện yêu cầu ở đây, nên ta sẽ login 1 user khác, và lấy csrf token được cấp cho phần thực hiện request ở đây là change-email: 
+
+Ở đây ta login vào tài khoản của carlos và lấy csrf token được cấp: efsmiBoiBBxu4ue3ZnOXYNmHN9UIdBVl
+
+![image](https://user-images.githubusercontent.com/104350480/225234294-91e9748a-79ae-4b90-8238-46370d340ec0.png)
+
+Giờ ta chỉ cần thực hiện tấn công csrf qua exploit server như các phần trên là được: 
 
 ```
-wiener:peter
-carlos:montoya
+<form id='csrf' action='https://0a69004b0378802cc04d15920022001e.web-security-academy.net/my-account/change-email' method='POST'>
+<input type='hidden' name='email' value='manhhuy2002@gmail.com'>
+<input type='hidden' name='csrf' value='efsmiBoiBBxu4ue3ZnOXYNmHN9UIdBVl'>
+<input type='submit'>
+</form>
+<script>
+document.getElementById('csrf').submit();
+</script> 
+```
+
+### [4. CSRF where token is tied to non-session cookie](https://portswigger.net/web-security/csrf/bypassing-token-validation/lab-token-tied-to-non-session-cookie)
+
+Bài lab này thì nó khác ở bài lab trước ở chỗ nó có gắn thêm csrf token vào cả phần session: cookie, nhưng mà cookie ở đây không phục vụ cho việc theo dỗi user session. Điều cần lưu ý ở đây là attackere sẽ cần có 1 phương án để cài cái non-session cookie vào browser của nạn nhân, từ đó có 1 vụ tấn công thành công được.
+
+vào phần account, change-email và ta bắt burp-suite xem: 
+
+![image](https://user-images.githubusercontent.com/104350480/225237551-8e08dfed-ad5c-4ba6-b5e5-878d67aa0634.png)
+
+Có thêm đối tượng mới xuất hiện là csrfKey cookie, bên cạnh cái csrf token như các bài lab trước. 
+Ở đây thay đổi tự do cái csrf token hay csrfKey cookie thì cũng sẽ không thu được gì và chỉ trả về invalid csrf token. Nhưng có điều đáng chú ý là nó khi thay đổi csrfKey thì nó không có báo lỗi ảnh hưởng gì đến cookie session, nên có thể thấy là csrfKey đang bị buộc nhầm chỗ.
+
+Ta mở thêm tài khoản của carlos và tráo đổi 2 thành phần của 2 bên cho nhau thì thấy vẫn có thể thay đổi được email bình thường như bài lab trên. 
+Và cái csrfKey này là cố định chỉ có csrf token bị thay đổi nên ta sẽ dàn dựng tấn công như sau: 
 
 ```
 
-Đầu tiên bắt request change email của wiener: 
-
-![image](https://user-images.githubusercontent.com/104350480/224557031-67d7d003-1e6e-4073-9e8a-ceaf8a55f72e.png)
-
-Lấy được csrf token: YabwCmwV1gU358QFi483EaZKHFDAEL5O
-Sau đó ta bắt request của carlos, rồi thay luôn csrf token của wiener vào: 
-
-![image](https://user-images.githubusercontent.com/104350480/224557098-de6f3967-5dcd-4a99-b14e-e135283b3850.png)
-
-
+```
