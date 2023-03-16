@@ -5,8 +5,8 @@
   - [3. CSRF where token is not tied to user session](#pcsrf4)
   - [4. CSRF where token is tied to non-session cookie](#pcsrf5)
   - [5. CSRF where token is duplicated in cookie](#pcsrf6)
-  - [6. CSRF where Referer validation depends on header being present](#pcsrf11)
-  - [7. CSRF with broken Referer validation](#pscrf7)
+  - [6. CSRF where Referer validation depends on header being present](#pcsrf7)
+  - [7. CSRF with broken Referer validation](#pscrf8)
 * [Portswigger - Cross-origin resource sharing](#cor)
   - [1. CORS vulnerability with basic origin reflection](#cor1)
   - [2. CORS vulnerability with trusted null origin](#cor2)
@@ -85,7 +85,7 @@ Trước hết để có thể thực hiện được 1 cuộc tấn công csrf,
 + Thứ 2 là cookie-based session handling: ứng dụng sẽ sử dụng session cookie để thực hiện xử lí phiên.
 + No unpredictable request parameters: ở đây ta sẽ có chủ yếu 2 tham số để tấn công là csrf và email, với tham số email thì ta biết được vì là tham số để ta tấn công, còn csrf là mã ngẫu nhiên kh đoán trước được, nhưng ta có thể dựa vào cách web triển khai để khai thác nó cho hợp lí.
 
-### [1. CSRF where token validation depends on request method](https://portswigger.net/web-security/csrf/bypassing-token-validation/lab-token-validation-depends-on-request-method)<a name='pcsrf1'></a>
+### [1. CSRF where token validation depends on request method](https://portswigger.net/web-security/csrf/bypassing-token-validation/lab-token-validation-depends-on-request-method)<a name='pcsrf2'></a>
 
 Bài lab này mô phỏng việc website xác thực csrf token phục thuộc vào phương thức yêu cầu: 
 Đầu tiên ta vào phần đăng nhập với mục đích bắt request của thay đổi email:
@@ -120,7 +120,7 @@ document.getElementById('csrf').submit();
 
 ```
 
-### [2. CSRF where token validation depends on token being present](https://portswigger.net/web-security/csrf/bypassing-token-validation/lab-token-validation-depends-on-token-being-present)<a name='pcsrf2'></a>
+### [2. CSRF where token validation depends on token being present](https://portswigger.net/web-security/csrf/bypassing-token-validation/lab-token-validation-depends-on-token-being-present)<a name='pcsrf3'></a>
 
 - Một số ứng dụng xác thực csrf token khi nó xuất hiện nhưng bỏ qua xác thực nếu mã thông báo bị bỏ qua, ta vẫn dùng cái trên được luôn, vì đăng nào bỏ csrf cũng được: 
 
@@ -134,7 +134,7 @@ document.getElementById('csrf').submit();
 </script> 
 
 ```
-### [3. CSRF where token is not tied to user session](https://portswigger.net/web-security/csrf/bypassing-token-validation/lab-token-not-tied-to-user-session) <a name='pcsrf3'></a>
+### [3. CSRF where token is not tied to user session](https://portswigger.net/web-security/csrf/bypassing-token-validation/lab-token-not-tied-to-user-session) <a name='pcsrf4'></a>
 
 Tình huống của bài lab này là ứng dụng web nó không hề xác thực xem csrf trong request có thuộc về 1 session của 1 user liên quan hay không. Việc này có thể hình dung là bên server tạo 1 kho chứa các token được sinh ra, miễn là token được lấy từ trong này ra thì server sẽ coi nó là hợp lệ. Với bài lab này ta sẽ chỉ cần lấy thêm cái csrf token được cấp phát sẵn.
 
@@ -157,7 +157,7 @@ document.getElementById('csrf').submit();
 </script> 
 ```
 
-### [4. CSRF where token is tied to non-session cookie](https://portswigger.net/web-security/csrf/bypassing-token-validation/lab-token-tied-to-non-session-cookie)<a name='pcsrf4'></a>
+### [4. CSRF where token is tied to non-session cookie](https://portswigger.net/web-security/csrf/bypassing-token-validation/lab-token-tied-to-non-session-cookie)<a name='pcsrf5'></a>
 
 Bài lab này thì nó khác ở bài lab trước ở chỗ nó có gắn thêm csrf token vào cả phần session: cookie, nhưng mà cookie ở đây không phục vụ cho việc theo dỗi user session. Điều cần lưu ý ở đây là attackere sẽ cần có 1 phương án để cài cái non-session cookie vào browser của nạn nhân, từ đó có 1 vụ tấn công thành công được.
 
@@ -188,7 +188,7 @@ Bên server đã chấp nhận, sau đó ta sẽ thực hiện tương tự như
 
 ```
 
-## [5. CSRF where token is duplicated in cookie](https://portswigger.net/web-security/csrf/bypassing-token-validation/lab-token-duplicated-in-cookie)<a name='pcsrf5'></a>
+## [5. CSRF where token is duplicated in cookie](https://portswigger.net/web-security/csrf/bypassing-token-validation/lab-token-duplicated-in-cookie)<a name='pcsrf6'></a>
 
 Bài này là 1 ví dụ đơn giản hơn chall trước nhưng ý tưởng vẫn thế, ta chỉ cần thay csrfKey ở bài trước thành csrf ở bài này, đặc biệt là giá trị csrf ở đây được tùy chỉnh miễn là 2 cái giống nhau là được nên ta có thể dùng script như bên dưới để thực hiện luôn: 
 
@@ -207,7 +207,7 @@ Bài này là 1 ví dụ đơn giản hơn chall trước nhưng ý tưởng v�
  ```
 
 
-## [6. CSRF where Referer validation depends on header being present](https://portswigger.net/web-security/csrf/bypassing-referer-based-defenses/lab-referer-validation-depends-on-header-being-present)<a name='pcsrf6'></a>
+## [6. CSRF where Referer validation depends on header being present](https://portswigger.net/web-security/csrf/bypassing-referer-based-defenses/lab-referer-validation-depends-on-header-being-present)<a name='pcsrf7'></a>
 
 Trong kịch bản ở 2 bài lab cuối 10 và 11 này, ngoài kiểu chống csrf attack với csrf token và bypass csrf samesite thì ứng dụng có thể sử dụng cả http referer header.
 
@@ -235,7 +235,7 @@ Với phần body:
 </form> 
 <script>document.getElementById('csrf').submit();</script>
 ```
-## [7. SRF with broken Referer validation](https://portswigger.net/web-security/csrf/bypassing-referer-based-defenses/lab-referer-validation-broken)<a name='pcsrf7'></a>
+## [7. SRF with broken Referer validation](https://portswigger.net/web-security/csrf/bypassing-referer-based-defenses/lab-referer-validation-broken)<a name='pcsrf8'></a>
 
 Ở bài lab tiếp theo này thì đã được xử lí tình huống ở bài lab trước, khi cắt đi referer header thì sẽ bị báo lỗi:
 
