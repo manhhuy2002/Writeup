@@ -233,7 +233,9 @@ Nhưng mà khi chạy như trên ta sẽ bị lỗi trả về:
 
 ![image](https://user-images.githubusercontent.com/104350480/225505658-f5d366ac-6f3a-4d7b-93db-35bab7e180fc.png)
 
-Có thể ở đây là do một số browser sẽ triển khai giải pháp bảo mật và tự động cắt cái query string ra khỏi referer header. Để đảm bảo không bị cắt xén thì ta có thể cập nhập thêm nội dung: Referer-Policy vào phần Head section của exploit như sau: 
+Có thể ở đây là do một số browser sẽ triển khai giải pháp bảo mật và tự động cắt cái query string ra khỏi referer header. Để đảm bảo không bị cắt xén thì ta có thể cập nhập thêm nội dung: Referer-Policy vào phần Head section của exploit để ghi đè như sau: 
 
 ![image](https://user-images.githubusercontent.com/104350480/225505981-463b307b-61f9-416d-a566-ef46856632e5.png)
+
+Và bài lab được giải quyết :(
 
