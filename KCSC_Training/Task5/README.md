@@ -313,7 +313,8 @@ Bàn cụ thể về việc triển khai, nhìn chung, SOP sẽ kiểm tra xem v
   
 Ví dụ cụ thể về CORS giữa hai tên miền a và b có thể được miêu tả như sau:
 
-    ![image](https://user-images.githubusercontent.com/104350480/225567014-81acb663-d39f-4dd3-a1d4-9c73fbd6b264.png)
+![image](https://user-images.githubusercontent.com/104350480/225643649-e8f1add6-ef51-4dc0-a223-fd4781cb82ef.png)
+
   
 Tên miền a: https://shop.com
 Tên miền b: https://analytics.com
