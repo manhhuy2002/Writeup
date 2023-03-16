@@ -239,3 +239,14 @@ Có thể ở đây là do một số browser sẽ triển khai giải pháp b�
 
 Và bài lab được giải quyết :(
 
+
+## CORS - Cross origin resource sharing
+
+### 1. Cross-origin resource sharing - cors attack là gì?
+
+Trước hết, cors là cơ chế của browser nhằm kích hoạt việc truy cập có kiểm soát vào tài nguyên nằm bên ngoài 1 domain xác định. Cors giúp mở rộng và tăng cường độ linh hoạt cho Same-Origin Policy -SOP mà có nói ở trên. Việc này dẫn đến nguy cơ croos-domain attack nếu cors policy của website được cấu hình không chuẩn mực. Cần nhấn mạnh cors không phải là giải pháp phòng chống các đòn cross-origin attack như csrf.
+
+#### Sơ lược về việc tấn công Cors ta có thể minh họa như sau:
+
+![image](https://user-images.githubusercontent.com/104350480/225514370-2d47d49c-eeaf-4c2f-a2a0-336853d7441d.png)
+
