@@ -396,7 +396,7 @@ Ta ta có thể sử dụng script như sau để exploit bên phái server và 
   
   ```
   Script trên sẽ yêu cầu trình duyệt gửi đi bất kì cookie nào mà trình duyệt đã lưu trữ
-  Truy cập vào phần access Log ta thấy được: 
+  Truy cập vào phần access Log ta thấy được, có thể thấy quản trị viên đã nhấp vào link ta gửi: 
   
   ![image](https://user-images.githubusercontent.com/104350480/225558967-126730ee-925e-4211-bbf5-9597630b53e9.png)
 
