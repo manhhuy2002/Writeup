@@ -408,6 +408,16 @@ Ta ta có thể sử dụng script như sau để exploit bên phái server và 
   
   Ở đây ta có dược apiKey của administrator và submit solution ta solve được bài lab: k1fxK3VjvQF8uSZXS9imoeHxNPYpy4sr
   
+  Ta cũng có thể thử chính trên server máy của mình để xem đoạn code trên thực thi như thế nào:
+  
+  ![image](https://user-images.githubusercontent.com/104350480/225596284-f8b6b576-ebe1-4aad-988e-7d885073d0bc.png)
+
+  ![image](https://user-images.githubusercontent.com/104350480/225596326-270faee3-ca52-4210-8f98-79fe664490a9.png)
+  
+  ![image](https://user-images.githubusercontent.com/104350480/225596251-b3740393-ec87-4046-8ef0-edeb27502362.png)
+
+  Dù trên trang web kh hiển thị gì nhưng ta đã lấy được APIkey của user click vào mà ở đây là wiener.
+  
   ### [2. Lab: CORS vulnerability with trusted null origin](https://portswigger.net/web-security/cors/lab-null-origin-whitelisted-attack)
   
   - Tiếp theo ở bài lab thứ hai này ta sẽ đến 1 tình huống thực tế hơn, cụ thể là ở một số ứng dụng hỗ trợ mutiple origins thông qua việc sử dụng allowed origin whitelist ( tức là danh sách các origin được cấp phép). Lúc này khi nhận 1 cors request, ứng dụng sẽ soi cái origin trong request rồi đối chiếu với allowed origin whitelist. Nếu xác nhận có thông tin tương ứng trong cái whitelist, origin này sẽ đâm vào Access-Control-Allow-Origin header của response ( và ta sẽ có thể truy cập được).
