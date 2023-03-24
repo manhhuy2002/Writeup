@@ -235,4 +235,132 @@ Vậy là mình đã đổi thành công, để biết là admin hay administrat
 
 > Flag: HTB{1d0r5_4r3_s1mpl3_4nd_1mp4ctful!!}
 
+## Hack the box - Didactic Octo Paddles
+
+```
+You have been hired by the Intergalactic Ministry of Spies to retrieve a powerful relic that is believed to be hidden within the small paddle shop, by the river. You must hack into the paddle shop's system to obtain information on the relic's location. Your ultimate challenge is to shut down the parasitic alien vessels and save humanity from certain destruction by retrieving the relic hidden within the Didactic Octo Paddles shop.
+
+```
+
+Giao diện của bài này: 
+
+![image](https://user-images.githubusercontent.com/104350480/227564014-7e3bfacf-8f81-479a-a639-996a99fda465.png)
+
+Nhìn qua chưa khai thác được gì, mình review source code mình tạo tài khoản và đăng nhập xem được gì:
+
+![image](https://user-images.githubusercontent.com/104350480/227565878-36b50d4a-0713-4f7c-ab50-8966626a9ccb.png)
+
+Có /register mình tạo tài khoản và đăng nhập thì được giao diện mới như sau: 
+
+![image](https://user-images.githubusercontent.com/104350480/227566192-22a109f4-3376-45a5-aa97-136d13f10dba.png)
+
+Tiếp tục đọc source mình được:
+
+![image](https://user-images.githubusercontent.com/104350480/227568837-b76dbb14-439f-4b7f-8e4b-0fea78260091.png)
+
+Có vẻ như nếu mình có thể truy cập và /admin thì có thể exploit SSTI ở đây vì nó đang được render một cách không an toàn. Bây giờ cần phải truy cập được /admin để khai thác được nó. Để ý khi gọi /admin thì nó sẽ gọi 1 hàm trung gian ở đây là  AdminMiddleware trước để xác thực xem mình có quyền vào hay không. Vì vậy phải sang bên  AdminMiddleware.js xem để khai thác tiếp. Source của file  AdminMiddleware.js như sau:
+
+```
+
+const jwt = require("jsonwebtoken");
+const { tokenKey } = require("../utils/authorization");
+const db = require("../utils/database");
+
+const AdminMiddleware = async (req, res, next) => {
+    try {
+        const sessionCookie = req.cookies.session;
+        if (!sessionCookie) {
+            return res.redirect("/login");
+        }
+        const decoded = jwt.decode(sessionCookie, { complete: true });
+
+        if (decoded.header.alg == 'none') {
+            return res.redirect("/login");
+        } else if (decoded.header.alg == "HS256") {
+            const user = jwt.verify(sessionCookie, tokenKey, {
+                algorithms: [decoded.header.alg],
+            });
+            if (
+                !(await db.Users.findOne({
+                    where: { id: user.id, username: "admin" },
+                }))
+            ) {
+                return res.status(403).send("You are not an admin");
+            }
+        } else {
+            const user = jwt.verify(sessionCookie, null, {
+                algorithms: [decoded.header.alg],
+            });
+            if (
+                !(await db.Users.findOne({
+                    where: { id: user.id, username: "admin" },
+                }))
+            ) {
+                return res
+                    .status(403)
+                    .send({ message: "You are not an admin" });
+            }
+        }
+    } catch (err) {
+        return res.redirect("/login");
+    }
+    next();
+};
+
+module.exports = AdminMiddleware;
+
+```
+![image](https://user-images.githubusercontent.com/104350480/227573524-4ebc9712-a4f2-4962-9194-dc2111f1632c.png)
+
+Ở file này, nó đang sử dụng jwt để xác thực, với điều kiện kiểm tra ở đây là ở phần header với algorithm không được để là none, nếu để là none trang sẽ tự động redirect mình về /login.
+Tiếp theo nếu để alg là HS256 thì nó sử dụng jwt.verify () để giải mã JWT và lấy ra thông tin user và kiểm tra xem user có phải là admin hay không thông qua truy vấn đến database. Nếu user là admin, thì người dùng được phép truy cập vào trang admin, nếu không, sẽ trả về mã lỗi HTTP 403 Forbidden.
+Trong trường hợp thuật toán ký được sử dụng khác HS256, đoạn code cũng sử dụng jwt.verify () để giải mã JWT với thuật toán ký đó. Sau đó kiểm tra xem user có phải là admin hay không và trả về mã lỗi 403 Forbidden nếu không phải.
+
+Nhìn qua chỉ có thể đoạn cuối có thể khai thác, ở đây bài chỉ filter alg để là none, mà mình hoàn toàn có thể để là NONE với cùng ý nghĩa là không dùng thuật toán, và vì vậy nó hoàn toàn có thế chui xuống điều kiện cuối cùng. Trước hết xem qua jwt được cấp đã: 
+
+![image](https://user-images.githubusercontent.com/104350480/227574770-9edac5e5-5f2e-4292-b331-f42848c9167b.png)
+
+Giờ mình lấy mã jwt trên và sửa lại một chút, ở đây không có cái isAdmin hay không ở phần payload, nên có thể đoán là admin ở đây sẽ tương ứng với id = 1 và vì alg là NONE nên ở đây sẽ bỏ luôn signature luôn: 
+
+```
+header: eyJhbGciOiJOT05FIiwidHlwIjoiSldUIn0 ứng với {"alg":"NONE","typ":"JWT"}
+payload: ew0KICAiaWQiOiAxLA0KICAiaWF0IjogMTY3OTY3MTA5MywNCiAgImV4cCI6IDE2Nzk2NzQ2OTMNCn0 ứng với {
+  "id": 1,
+  "iat": 1679671093,
+  "exp": 1679674693
+}
+
+Và Jwt truyền vào:
+
+eyJhbGciOiJOT05FIiwidHlwIjoiSldUIn0.ew0KICAiaWQiOiAxLA0KICAiaWF0IjogMTY3OTY3MTA5MywNCiAgImV4cCI6IDE2Nzk2NzQ2OTMNCn0.
+
+```
+
+Sau khi truyền vào, mình đã thực hiện việc chuyển hướng trang /admin thành công: 
+
+![image](https://user-images.githubusercontent.com/104350480/227581211-17407459-be6f-4417-8189-6798d17b8d26.png)
+
+Tiếp theo cần khai thác tiếp cái chỗ SSTI vừa nãy. 
+Để ý kĩ ảnh trên thì nó render username của mình luôn ở phần dưới, xem lại code: 
+
+![image](https://user-images.githubusercontent.com/104350480/227582180-ff3e9862-184c-4c15-b839-ffc34b068f27.png)
+
+Tức giờ mình có thể thực hiện SSTI vào điểm ${usernames} và chờ render ra. Và đây là dạng Template Injection: JsRender/JsViews
+
+> https://appcheck-ng.com/template-injection-jsrender-jsviews
+
+
+Tạo tài khoản đăng kí:
+
+![image](https://user-images.githubusercontent.com/104350480/227586119-88847f4f-062f-47cc-ba2a-5a168574f351.png)
+
+Và đăng nhập: 
+
+![image](https://user-images.githubusercontent.com/104350480/227586266-38b0a2a6-30ab-4bb8-8f52-16a600d2032c.png)
+
+Giờ chỉ cần làm lại các bước thực hiện để bypass jwt như nãy nữa là xong: 
+
+![image](https://user-images.githubusercontent.com/104350480/227586937-cdfb744c-0a66-4ee8-8b35-36a2696feb75.png)
+
+> FLag: HTB{Pr3_C0MP111N6_W17H0U7_P4DD13804rD1N6_5K1115}
 
