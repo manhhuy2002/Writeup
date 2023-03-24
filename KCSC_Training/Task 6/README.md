@@ -320,7 +320,7 @@ Nhìn qua chỉ có thể đoạn cuối có thể khai thác, ở đây bài ch
 
 ![image](https://user-images.githubusercontent.com/104350480/227574770-9edac5e5-5f2e-4292-b331-f42848c9167b.png)
 
-Giờ mình lấy mã jwt trên và sửa lại một chút, ở đây không có cái isAdmin hay không ở phần payload, nên có thể đoán là admin ở đây sẽ tương ứng với id = 1 và vì alg là NONE nên ở đây sẽ bỏ luôn signature luôn: 
+Giờ mình lấy mã jwt trên và sửa lại một chút, ở đây không có cái isAdmin hay không ở phần payload và tạo tài khoản đầu tiên đã có id = 2, nên có thể đoán là admin ở đây sẽ tương ứng với id = 1 và vì alg là NONE nên ở đây sẽ bỏ luôn signature luôn: 
 
 ```
 header: eyJhbGciOiJOT05FIiwidHlwIjoiSldUIn0 ứng với {"alg":"NONE","typ":"JWT"}
@@ -347,7 +347,7 @@ Tiếp theo cần khai thác tiếp cái chỗ SSTI vừa nãy.
 
 Tức giờ mình có thể thực hiện SSTI vào điểm ${usernames} và chờ render ra. Và đây là dạng Template Injection: JsRender/JsViews
 
-> https://appcheck-ng.com/template-injection-jsrender-jsviews
+> Refference: https://appcheck-ng.com/template-injection-jsrender-jsviews
 
 
 Tạo tài khoản đăng kí:
@@ -361,6 +361,7 @@ Và đăng nhập:
 Giờ chỉ cần làm lại các bước thực hiện để bypass jwt như nãy nữa là xong: 
 
 ![image](https://user-images.githubusercontent.com/104350480/227586937-cdfb744c-0a66-4ee8-8b35-36a2696feb75.png)
+
 
 > FLag: HTB{Pr3_C0MP111N6_W17H0U7_P4DD13804rD1N6_5K1115}
 
