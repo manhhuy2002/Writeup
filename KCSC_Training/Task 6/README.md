@@ -56,13 +56,28 @@ password cần lấy ra có độ dài là 32, tiếp tục ta dùng substring �
 
 > pass: 1692b753c031f2905b89e7258dbc49bb
 
-Đọc source ta thấy password được lưu ở dạng md5 nên ta đi decrypt thử xem được không: 
+Đọc source mình thấy password được lưu ở dạng md5 nên ta đi decrypt thử xem được không: 
 
 ![image](https://user-images.githubusercontent.com/104350480/227458488-38227c2b-29e7-4e2e-a7ef-d35fa7265a16.png)
 
 Vậy pass của admin là: ichliebedich
 
-Đăng nhập thành công, ta vào được trang chủ:
+Đăng nhập thành công, mình vào được trang chủ:
 
 ![image](https://user-images.githubusercontent.com/104350480/227458727-47a507e6-768b-4f8b-8947-63e979dba82d.png)
 
+Ở đây đọc source code ở phần routes.py ta để ý /api/export có cho phép ta thực hiện get dữ liệu được truyền dưới dạng json qua tham số name  được truyền trong 1 json payload: 
+
+![image](https://user-images.githubusercontent.com/104350480/227515819-f80fbb3f-e7c2-424e-9552-f83ca2278ad2.png)
+
+Để ý là nếu mình truyền đúng, server sẽ send lại cho ta cái file mà ta muốn export, ở đây rõ ràng không có cơ chế bảo vệ path traversal tức hoàn toàn có thể control được nó. Giờ cần tìm file chứa flag nữa là xong. Đọc source trong file docker: 
+
+![image](https://user-images.githubusercontent.com/104350480/227516371-465c9ac3-ff3d-421c-a8dc-ad6550cc89ca.png)
+
+File flag.txt được copy và lưu vào nơi có đường dẫn /signal_sleuth_firmware. Oke vậy giờ mình vào trang thực chủ thực hiện export để bắt đường dẫn nữa là xong: 
+
+![image](https://user-images.githubusercontent.com/104350480/227516730-abd25924-c7cd-4fec-a7d9-62ff0efcbed9.png)
+
+Giờ thực hiện path traversal là có được flag: 
+
+![image](https://user-images.githubusercontent.com/104350480/227515568-02540e51-ed27-461b-a65c-12fc2222c6eb.png)
