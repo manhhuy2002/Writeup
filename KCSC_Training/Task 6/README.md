@@ -365,3 +365,12 @@ Giờ chỉ cần làm lại các bước thực hiện để bypass jwt như n�
 
 > FLag: HTB{Pr3_C0MP111N6_W17H0U7_P4DD13804rD1N6_5K1115}
 
+Từ mấy bài này mình viết wu vào để thêm kiến thức: :3 
+
+## Hack the box - SpyBug
+
+```
+
+As Pandora made her way through the ancient tombs, she received a message from her contact in the Intergalactic Ministry of Spies. They had intercepted a communication from a rival treasure hunter who was working for the alien species. The message contained information about a digital portal that leads to a software used for intercepting audio from the Ministry's communication channels. Can you hack into the portal and take down the aliens counter-spying operation?
+
+```
