@@ -365,7 +365,7 @@ Giờ chỉ cần làm lại các bước thực hiện để bypass jwt như n�
 
 > FLag: HTB{Pr3_C0MP111N6_W17H0U7_P4DD13804rD1N6_5K1115}
 
-Từ mấy bài này mình viết wu vào để thêm kiến thức: :3 
+Từ mấy bài này mình viết wu để thêm kiến thức: :3 
 
 ## Hack the box - SpyBug
 
