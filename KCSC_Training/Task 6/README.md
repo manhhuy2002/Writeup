@@ -224,6 +224,7 @@ Mình sẽ sửa lại về dạng mutation để sửa mật khẩu admin thàn
 {"query":"mutation { UpdatePassword(username: \"admin\", password: \"123456\") { message } }" }
 
 ```
+Ở đây mình dùng thêm trường message của đối tượng ResponseType hay kiểu sẽ được trả về để xem có thực hiện đổi thành công không: 
 
 ![image](https://user-images.githubusercontent.com/104350480/227536084-13fe3447-6d89-4eef-99cc-440daaf21468.png)
 
