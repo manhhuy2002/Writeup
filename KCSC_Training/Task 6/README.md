@@ -17,7 +17,9 @@
 ## Information disclosure vulnerabilities
 * [Information disclosure in error messages](#if1)
 * [Information disclosure on debug page](#if2)
-
+* [Source code disclosure via backup files](#if3)
+* [Authentication bypass via information disclosure](#if4)
+* [Information disclosure in version control history](#if5)
 ## Hack the box - Trapped Source <a name='htb1'></a>
 
 ```
@@ -860,3 +862,21 @@ Truy cập vào đường dẫn ta được:
 ![image](https://user-images.githubusercontent.com/104350480/227724823-ff529f31-9918-4fad-a639-b02bf195f07c.png)
 
 Vậy sercret_key cần tìm trong bài lab này là:curqc9aetnhby7nshy5ulap5ydw86w0q
+
+### [Source code disclosure via backup files](https://portswigger.net/web-security/information-disclosure/exploiting/lab-infoleak-via-backup-files)<a name='if3'></a>
+
+![image](https://user-images.githubusercontent.com/104350480/227729377-e500e35a-63a1-46c8-9a80-562234e422ea.png)
+
+Như tên bài lab, thông tin source code bị lộ ra thông qua file backup, lục tung source code lên kh thấy có gì, thử /robots.txt ta được:
+
+![image](https://user-images.githubusercontent.com/104350480/227729461-20e72736-f19e-452b-ab5a-fb5fe9c1edb1.png)
+
+
+Oke vậy là ta có soucre code: 
+
+![image](https://user-images.githubusercontent.com/104350480/227729491-7aaf3a1f-4026-484f-b9c6-7f6ee4969e84.png)
+
+Và password cần tìm trong source code là: 9n3s71z9zdkbxvta65ivg8o9iccg3ntd
+
+## [Authentication bypass via information disclosure](https://portswigger.net/web-security/information-disclosure/exploiting/lab-infoleak-authentication-bypass)<a name='if4'></a>
+
