@@ -833,7 +833,7 @@ Ta truyền base64 urlencoded trên vào cookie và để nó thực hiện:
 
 ## Error messages
 
-### [Information disclosure in error messages](https://portswigger.net/web-security/information-disclosure/exploiting/lab-infoleak-in-error-messages)<a name='#if1'></a>
+### [Information disclosure in error messages](https://portswigger.net/web-security/information-disclosure/exploiting/lab-infoleak-in-error-messages)<a name='if1'></a>
 
 Dạng này là dạng trả về lỗi dẫn đến việc tiết lộ các thông tin cần thiết mà một kẻ tấn công có thể cần: 
 
@@ -849,7 +849,7 @@ Thử tiêm sql hay bất kì vào phần productID xem có thể gây ra lỗi 
 
 ## Debugging data
 
-### [Information disclosure on debug page](https://portswigger.net/web-security/information-disclosure/exploiting/lab-infoleak-on-debug-page)<a name='#if2'></a>
+### [Information disclosure on debug page](https://portswigger.net/web-security/information-disclosure/exploiting/lab-infoleak-on-debug-page)<a name='if2'></a>
 
 Bài này vẫn tương tự như bài trên nhưng ta không thể trick lỗi như bài trên nữa, giờ ta kiểm tra xem có file nào đang ẩn không: 
 
