@@ -3,12 +3,9 @@
 * [2. Modifying serialized data types](#id2)
 * [3. Using application functionality to exploit insecure deserialization](#id3)
 * [4. Arbitrary object injection in PHP](#id4)
-* [5. Exploiting Java deserialization with Apache Commons](#id5)
-* [6. Exploiting PHP deserialization with a pre-built gadget chain](#id6)
-* [7. Exploiting Ruby deserialization using a documented gadget chain](#id7)
-* [8. Developing a custom gadget chain for Java deserialization](#id8)
-* [9. Developing a custom gadget chain for PHP deserialization](#id9)
-* [10. Using PHAR deserialization to deploy a custom gadget chain](#id10)
+* [5. Exploiting PHP deserialization with a pre-built gadget chain](#id5)
+* [6. Developing a custom gadget chain for PHP deserialization](#id6)
+
 
 
 ## Hack the box - Trapped Source
@@ -517,7 +514,7 @@ private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundE
 Một readObject() mehtod khai báo  chính xác như cách 1 magic method được gọi trong quá trình deserialization. Điều này cho phép class kiểm soát quá trình deserialization các trường của chính nó chặt chẽ hơn. Đây sẽ là điểm khởi đầu cho các cuộc khai thác cao hơn trong java.
 
 
-### [3. Injecting arbitrary objects](https://portswigger.net/web-security/deserialization/exploiting/lab-deserialization-arbitrary-object-injection-in-php)<a name="id3"></a>
+### [4. Injecting arbitrary objects](https://portswigger.net/web-security/deserialization/exploiting/lab-deserialization-arbitrary-object-injection-in-php)<a name="id3"></a>
 
 ```
 This lab uses a serialization-based session mechanism and is vulnerable to arbitrary object injection as a result. To solve the lab, create and inject a malicious serialized object to delete the morale.txt file from Carlos's home directory. You will need to obtain source code access to solve this lab.
@@ -577,4 +574,77 @@ class CustomTemplate {
 
 ```
 Nhìn đoạn code ta có thể khai thác đơn giản như sau: 
-Mục tiêu là giờ gọi được \_\_destruct ra để thực hiện unlink cái file mình muốn, mà \_\_destruct được gọi ra khi một đối tượng bị hủy hoặc không được dùng nữa, hoặc là khi kết thúc chương trình. Nên ở đây ta sẽ khởi tạo 1 đối tượng mới là new CustomTemplate để gọi được hàm khởi tạo \_\_construct() và khi gọi được nó ra rồi thì ta sẽ truyền cái link mình muốn vào để 
+Mục tiêu là giờ gọi được \_\_destruct ra để thực hiện unlink cái file mình muốn, mà \_\_destruct được gọi ra khi một đối tượng bị hủy hoặc không được dùng nữa, hoặc là khi kết thúc chương trình. Ở đây ta chỉ cần gọi ra một đối tượng và truyền vào thuộc tính lock_file_path vào là được:
+
+![image](https://user-images.githubusercontent.com/104350480/227704000-ef4b696e-aea2-4944-b22d-4201db38162b.png)
+
+> O:14:"CustomTemplate":1:{s:14:"lock_file_path";s:23:"/home/carlos/morale.txt";}
+
+Giờ ta truyền vào cookie và đợi nó gọi hàm \_\_destruct và ta sẽ được: 
+
+![image](https://user-images.githubusercontent.com/104350480/227704938-e1fd2da1-d3dd-4ce3-84ca-5d5e6516f1f1.png)
+
+
+## [5. Exploiting PHP deserialization with a pre-built gadget chain](https://portswigger.net/web-security/deserialization/exploiting/lab-deserialization-exploiting-php-deserialization-with-a-pre-built-gadget-chain)<a name='id5'></a>
+
+Bài này ta đăng nhập vào và xem phần cookie: 
+
+![image](https://user-images.githubusercontent.com/104350480/227717594-f6143670-292a-4d8f-9787-177cacdd3eb4.png)
+
+
+![image](https://user-images.githubusercontent.com/104350480/227717590-3525c915-cd24-4e2f-99a4-6abaccafbdf1.png)
+
+Có thể thấy rằng token là 1 đối tượng php được serialize có chứa tên người dùng và mã token truy cập cũng như chữ kí hmac
+Một hmac - mã xác thực dựa trên việc băm là phương thức xác thực sử dụng hàm băm, trong trường hợp này là SHA-1, cùng với khóa bí mật làm đầu vào bổ sung. Tức giờ để có thể thay đổi được đoạn serialize thì ta còn cần phải biết được secret-key để có thể tạo token mới hợp lệ.
+Chẳng hạn thay đổi token bất kì ta được:
+
+![image](https://user-images.githubusercontent.com/104350480/227718084-62c683df-ff2d-4ab8-aa36-9c5b570601b9.png)
+
+Nó trả về cho ta lỗi cũng như tên framework đang được dùng là Symfony -v 4.3.6
+
+Ta ctrl U kéo xuống cùng sẽ thấy đường dẫn đề bài hint cho: 
+
+![image](https://user-images.githubusercontent.com/104350480/227717892-7c0e6ce3-3c64-4dfd-b974-48678656528e.png)
+
+Hoặc ta cũng có thể dùng dirsearch hoặc gobuster để tìm ra nó: 
+
+![image](https://user-images.githubusercontent.com/104350480/227717917-db1e5807-7875-4060-9190-b69d8915302f.png)
+
+Ta truy cập vào trang ẩn này và thấy được cái cần tìm là secret key: 
+
+![image](https://user-images.githubusercontent.com/104350480/227717952-01947072-189a-4863-a58b-4f54a67608b6.png)
+
+> 7g002p3envnfwwao2czxn5uo79xnugi7
+
+Vì bài là bảo ta tìm gadget chain có thể tìm sẵn ở link này với phiên bản tương ứng: 
+
+> https://github.com/ambionics/phpggc
+
+![image](https://user-images.githubusercontent.com/104350480/227718183-6de65232-b7b2-443b-807c-69d486bb8943.png)
+
+Ta có thể thấy nó là lỗ hổng CVE-2019-18889 :
+
+![image](https://user-images.githubusercontent.com/104350480/227718419-95bf5565-cf9d-4896-aeb6-5e5f3edfb35d.png)
+
+Dùng tool này để tạo đoạn mã tấn công và base64 lại luôn: 
+
+![image](https://user-images.githubusercontent.com/104350480/227720025-d65b9335-30bf-4831-a7e4-50feb265440a.png)
+
+Tiếp theo giờ ta cần sinh khóa: 
+
+![image](https://user-images.githubusercontent.com/104350480/227718705-132cd2f5-d10f-404d-bb36-da6fcf3eae64.png)
+
+> f360a4c0f67ddd4fc796d81f893849653fd22150
+
+Nhưng có nhầm khóa :)) thử mãi mới để ý là bị sai khóa: 
+
+![image](https://user-images.githubusercontent.com/104350480/227719672-28cac2ba-45a0-4382-95e1-a8e5f74390db.png)
+
+> 7g002p3envnfwwao2czxn5uo79xnugi7
+
+
+Đoạn mã sinh cookie: 
+
+![image](https://user-images.githubusercontent.com/104350480/227719970-bc623afe-23e4-4feb-8646-c9f68fa0d821.png)
+
+Vậy là giờ mới xong bài lab.
