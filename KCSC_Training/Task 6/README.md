@@ -576,4 +576,5 @@ class CustomTemplate {
 ?>
 
 ```
-
+Nhìn đoạn code ta có thể khai thác đơn giản như sau: 
+Mục tiêu là giờ gọi được \_\_destruct ra để thực hiện unlink cái file mình muốn, mà \_\_destruct được gọi ra khi một đối tượng bị hủy hoặc không được dùng nữa, hoặc là khi kết thúc chương trình. Nên ở đây ta sẽ khởi tạo 1 đối tượng mới là new CustomTemplate để gọi được hàm khởi tạo \_\_construct() và khi gọi được nó ra rồi thì ta sẽ truyền cái link mình muốn vào để 
