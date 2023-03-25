@@ -1,3 +1,11 @@
+## Hack the box 
+* [Hack the box - Trapped Source](#htb1)
+* [Hack the box - Gunhead](#htb2)
+* [Hack the box - Drobots](#htb3)
+* [Hack the box - Orbital](#htb4)
+* [Hack the box - IGMS PASSMAN](#htb5)
+* [Hack the box - Didactic Octo Paddles](#htb6)
+
 ## Insecure deserialization - Portswigger
 * [1. Modifying serialized objects](#id1)
 * [2. Modifying serialized data types](#id2)
@@ -8,7 +16,7 @@
 
 
 
-## Hack the box - Trapped Source
+## Hack the box - Trapped Source <a name='htb1'></a>
 
 ```
 Intergalactic Ministry of Spies tested Pandora's movement and intelligence abilities. She found herself locked in a room with no apparent means of escape. Her task was to unlock the door and make her way out. Can you help her in opening the door?
@@ -57,7 +65,7 @@ Và:
 
 > Flag: HTB{4lw4y5_54n1t1z3_u53r_1nput!!!}
 
-## Hack the box - Drobots
+## Hack the box - Drobots<a name='htb4'></a>
 
 ```
 Pandora's latest mission as part of her reconnaissance training is to infiltrate the Drobots firm that was suspected of engaging in illegal activities. Can you help pandora with this task?
@@ -83,7 +91,7 @@ Còn đọc source thì có thể thấy lỗ hổng bởi việc không có san
 ![image](https://user-images.githubusercontent.com/104350480/227528817-c29738ca-a4eb-4f14-8349-877cff388a10.png)
 
 
-## Hack the box - Orbital
+## Hack the box - Orbital<a name='htb4></a>
 
 ```
 In order to decipher the alien communication that held the key to their location, she needed access to a decoder with advanced capabilities - a decoder that only The Orbital firm possessed. Can you get your hands on the decoder?
@@ -200,7 +208,7 @@ Giờ thực hiện path traversal là có được flag:
 > flag: HTB{T1m3_b4$3d_$ql1_4r3_fun!!!}
 
 
-## Hack the box - IGMS PASSMAN
+## Hack the box - IGMS PASSMAN<a name='htb5'></a>
 
 ```
 Pandora discovered the presence of a mole within the ministry. To proceed with caution, she must obtain the master control password for the ministry, which is stored in a password manager. Can you hack into the password manager?
@@ -245,7 +253,7 @@ Vậy là mình đã đổi thành công, để biết là admin hay administrat
 
 > Flag: HTB{1d0r5_4r3_s1mpl3_4nd_1mp4ctful!!}
 
-## Hack the box - Didactic Octo Paddles
+## Hack the box - Didactic Octo Paddles <a name='htb6'></a>
 
 ```
 You have been hired by the Intergalactic Ministry of Spies to retrieve a powerful relic that is believed to be hidden within the small paddle shop, by the river. You must hack into the paddle shop's system to obtain information on the relic's location. Your ultimate challenge is to shut down the parasitic alien vessels and save humanity from certain destruction by retrieving the relic hidden within the Didactic Octo Paddles shop.
