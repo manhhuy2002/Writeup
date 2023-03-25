@@ -461,7 +461,7 @@ Chẳng hạn việc xử lí logic ở trong chuỗi này:
 
 Nó hoàn toàn có thể bị khai thác đơn giản vì đang để so sánh lỏng lẻo, nếu kẻ tấn công điều chỉnh thuộc tính password chứa số nguyên 0 thay vì là 1 string. Miễn là mật khẩu được lưu trữ không bắt đầu là một số thì nó sẽ luôn trả về **true** . Và tất nhiên thì điều này chỉ xảy ra trong quá trình duy trì trạng thái dữ liệu của deserialization. Nếu lấy trực tiếp mật khẩu từ yêu cầu thì nó sẽ bị sai vì lúc này 0 sẽ bị chuyển sang string và kết quả lúc này sẽ là **false**.
 
-* [2. Modifying serialized data types](https://portswigger.net/web-security/deserialization/exploiting/lab-deserialization-modifying-serialized-data-types)<a name="id2"></name>
+## [2. Modifying serialized data types](https://portswigger.net/web-security/deserialization/exploiting/lab-deserialization-modifying-serialized-data-types)<a name="id2"></name>
 
 Bài này vẫn được serialize qua cookie:
 
@@ -473,5 +473,107 @@ Sửa lại một chút quá trình serialize, username thành administrator tư
 
 Và tương tự như bài trên ta cũng dùng GET hoặc POST để delete username là carlos.
 
+## Using application functionality
 
+Tiếp đến là việc một web app có thể đang sử dụng các chức năng nguy hiểm mà dùng serialize, ta có thể tận dụng và sửa đội nó để thực hiện các chức năng nguy hiểm . Ví dụ như chức năng "Delete user" trong bài lab sắp tới đây, ảnh hồ sơ của người dùng sẽ bị xóa bằng cách truy cập đường dẫn tệp trong thuộc tính $ user-> Image_Location. Nếu $user được tạo từ một serialized obj, một kẻ tấn công có thể khai thác điều này bằng việc truyền đối tượng đã bị điều chỉnh với 
+image_location và đặt thành một đường dẫn tùy ý và chẳng hạn như ở bài lab này sẽ xóa đi user carlos chẳng hạn.
+
+### [3. Using application functionality to exploit insecure deserialization](https://portswigger.net/web-security/deserialization/exploiting/lab-deserialization-using-application-functionality-to-exploit-insecure-deserialization)
+
+```
+This lab uses a serialization-based session mechanism. A certain feature invokes a dangerous method on data provided in a serialized object. To solve the lab, edit the serialized object in the session cookie and use it to delete the morale.txt file from Carlos's home directory.
+
+You can log in to your own account using the following credentials: wiener:peter
+
+You also have access to a backup account: gregg:rosebud
+
+```
+
+Chẳng hạn khi vào giao diện của bài:
+
+![image](https://user-images.githubusercontent.com/104350480/227693532-911d8687-cfe3-4e69-b566-1203f8617669.png)
+
+Có chứng năng delete, mà giờ xóa nhầm là mất tài khoản luôn nên sẽ thử với tài khoản gregg:rosebud trước. Bài cho phép ta thực hiện xóa người dùng nên ở đây hoàn toàn có thể khai thác điều này bằng việc chỉ cần sửa dổi đường dẫn file, thay vì để đường dẫn avatar như ban đầu thì đổi thành /home/carlos/morale.txt với độ dài là 23 để thỏa mãn yêu cầu đề bài:
+
+![image](https://user-images.githubusercontent.com/104350480/227695375-f98cf76a-d51b-47d5-bb05-76573f21d07f.png)
+
+Vậy là xong bài lab này.
+
+## Magic method: 
+Magic method là tập hợp các method đặc biệt mà ta không cần phải gọi ra, mà nó sẽ được tự động thực thi khi có 1 sự kiện tương ứng với nó xảy ra. Các magic methods là tính năng phổ biến trong lập trình hướng đối tượng. 
+Các developer thể thêm các magic methods vào 1 class để xác định trước mã nào nên được thực thi khi một sự kiện tương ứng xảy ra. Chính xác là khi nào và tại sao một magic method được gọi từ phương thức này qua phương thức khác. Một trong những ví dụ phổ biến nhất trong PHP là \_\_contruct() , nó sẽ được gọi bất cứ khi nào một đối tượng trong lớp được khởi tạo, cũng tương tự như \_\_inti\_\_ trong python. Thông thường thì các phương thức magic khởi tạo như này sẽ chứa code để khởi tạo các thuộc tính của instance. Tuy nhiên thì các magic methods có thể bị điều chỉnh bởi các dev để thực thi những đoạn code mà ta muốn.
+
+Magic methos được sử dụng rộng rãi và bản thân chúng thì không đại diện cho một lỗ hổng. Nhưng chúng có thể trở nên nguy hiểm nếu dữ liệu đầu vào có thể bị kiểm soát. VÍ dụ, như từ một deserialize obj. Chẳng hạn trong php thì một số hàm magic method thường gặp như \_\_wakeup sẽ tự động được gọi khi một đối tượng thực hiện unserialize,...
+
+Trong java deserialization, điều tương tự được áp dụng với method ObjectInputStream.readObject(), phương thức này được sử dụng để đọc dữ liệu từ byte stream ban đầu và về cơ bản nó hoạt động như một constructor (hàm tạo)  để "re-initializing" (khởi tạo lại) một serialized obj. Tuy nhiên thì Serializeable class có thể khia báo phương thức readObject() của riêng nó như sau:
+
+```
+private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException
+{
+    // implementation
+}
+
+```
+Một readObject() mehtod khai báo  chính xác như cách 1 magic method được gọi trong quá trình deserialization. Điều này cho phép class kiểm soát quá trình deserialization các trường của chính nó chặt chẽ hơn. Đây sẽ là điểm khởi đầu cho các cuộc khai thác cao hơn trong java.
+
+
+### [3. Injecting arbitrary objects](https://portswigger.net/web-security/deserialization/exploiting/lab-deserialization-arbitrary-object-injection-in-php)<a name="id3"></a>
+
+```
+This lab uses a serialization-based session mechanism and is vulnerable to arbitrary object injection as a result. To solve the lab, create and inject a malicious serialized object to delete the morale.txt file from Carlos's home directory. You will need to obtain source code access to solve this lab.
+
+You can log in to your own account using the following credentials: wiener:peter
+
+```
+
+Bài này yêu cầu ta phải kiếm được source để khai thác, ctrl U ta được:
+
+![image](https://user-images.githubusercontent.com/104350480/227697292-3f5663cf-fb63-4504-aead-08b03cbc4a95.png)
+
+Thử truy cập vào đường dẫn /libs/CustomTemplate.php thì báo lỗi Not found, để ý thì nó có nói mới được update, vậy ta có thể lấy source thông qua bản backup của nó bằng việc thêm ~ ở cuối và được source như sau: 
+
+![image](https://user-images.githubusercontent.com/104350480/227697438-3ed46225-5c6e-4343-83a8-56322330e8bb.png)
+
+```
+<?php
+
+class CustomTemplate {
+    private $template_file_path;
+    private $lock_file_path;
+
+    public function __construct($template_file_path) {
+        $this->template_file_path = $template_file_path;
+        $this->lock_file_path = $template_file_path . ".lock";
+    }
+
+    private function isTemplateLocked() {
+        return file_exists($this->lock_file_path);
+    }
+
+    public function getTemplate() {
+        return file_get_contents($this->template_file_path);
+    }
+
+    public function saveTemplate($template) {
+        if (!isTemplateLocked()) {
+            if (file_put_contents($this->lock_file_path, "") === false) {
+                throw new Exception("Could not write to " . $this->lock_file_path);
+            }
+            if (file_put_contents($this->template_file_path, $template) === false) {
+                throw new Exception("Could not write to " . $this->template_file_path);
+            }
+        }
+    }
+
+    function __destruct() {
+        // Carlos thought this would be a good idea
+        if (file_exists($this->lock_file_path)) {
+            unlink($this->lock_file_path);
+        }
+    }
+}
+
+?>
+
+```
 
