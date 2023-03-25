@@ -14,7 +14,9 @@
 * [5. Exploiting PHP deserialization with a pre-built gadget chain](#id5)
 * [6. Developing a custom gadget chain for PHP deserialization](#id6)
 
-
+## Information disclosure vulnerabilities
+* [Information disclosure in error messages](#if1)
+* [Information disclosure on debug page](#if2)
 
 ## Hack the box - Trapped Source <a name='htb1'></a>
 
@@ -826,3 +828,35 @@ TzoxNDoiQ3VzdG9tVGVtcGxhdGUiOjI6e3M6MzM6IgBDdXN0b21UZW1wbGF0ZQBkZWZhdWx0X2Rlc2Nf
 Ta truyền base64 urlencoded trên vào cookie và để nó thực hiện:
 
 ![image](https://user-images.githubusercontent.com/104350480/227723227-12897bd5-3dd5-4399-92da-67305c1e18db.png)
+
+
+
+## Error messages
+
+### [Information disclosure in error messages](https://portswigger.net/web-security/information-disclosure/exploiting/lab-infoleak-in-error-messages)<a name='#if1'></a>
+
+Dạng này là dạng trả về lỗi dẫn đến việc tiết lộ các thông tin cần thiết mà một kẻ tấn công có thể cần: 
+
+![image](https://user-images.githubusercontent.com/104350480/227724448-bdaa965b-b2b3-4a58-8d89-ab2bd9b607af.png)
+
+Giao diện chẳng có gì ngoài việc view và nút home.
+
+Thử tiêm sql hay bất kì vào phần productID xem có thể gây ra lỗi không ta được:
+
+![image](https://user-images.githubusercontent.com/104350480/227724379-3565febc-88e8-4984-9d80-54bf267d3cc6.png)
+
+> solution: Apache Struts 2 2.3.31
+
+## Debugging data
+
+### [Information disclosure on debug page](https://portswigger.net/web-security/information-disclosure/exploiting/lab-infoleak-on-debug-page)<a name='#if2'></a>
+
+Bài này vẫn tương tự như bài trên nhưng ta không thể trick lỗi như bài trên nữa, giờ ta kiểm tra xem có file nào đang ẩn không: 
+
+![image](https://user-images.githubusercontent.com/104350480/227724757-db8fac49-f226-4c54-ba5a-d8a1b6b4a94d.png)
+
+Truy cập vào đường dẫn ta được: 
+
+![image](https://user-images.githubusercontent.com/104350480/227724823-ff529f31-9918-4fad-a639-b02bf195f07c.png)
+
+Vậy sercret_key cần tìm trong bài lab này là:curqc9aetnhby7nshy5ulap5ydw86w0q
