@@ -1,3 +1,16 @@
+## Insecure deserialization - Portswigger
+* [1. Modifying serialized objects](#id1)
+* [2. Modifying serialized data types](#id2)
+* [3. Using application functionality to exploit insecure deserialization](#id3)
+* [4. Arbitrary object injection in PHP](#id4)
+* [5. Exploiting Java deserialization with Apache Commons](#id5)
+* [6. Exploiting PHP deserialization with a pre-built gadget chain](#id6)
+* [7. Exploiting Ruby deserialization using a documented gadget chain](#id7)
+* [8. Developing a custom gadget chain for Java deserialization](#id8)
+* [9. Developing a custom gadget chain for PHP deserialization](#id9)
+* [10. Using PHAR deserialization to deploy a custom gadget chain](#id10)
+
+
 ## Hack the box - Trapped Source
 
 ```
@@ -365,12 +378,100 @@ Giờ chỉ cần làm lại các bước thực hiện để bypass jwt như n�
 
 > FLag: HTB{Pr3_C0MP111N6_W17H0U7_P4DD13804rD1N6_5K1115}
 
-Từ mấy bài này mình viết wu để thêm kiến thức: :3 
 
-## Hack the box - SpyBug
+
+# Exploiting insecure deserialization vulnerabilities
+
+## Trong phần này mình sẽ đi qua các phần:
+- How to identify insecure deserialization 
+- Modifying serialized objects that are expected by the website 
+- Passing malicious data into dangerous website functionality 
+- Injecting arbitrary object types 
+- Chaining method invocations to control the flow of data into dangerous sink gadgets 
+- Manually creating your own advanced exploits 
+- PHAR deserialization 
+
+### How to identify insecure deserialization 
+
+Để xác định được lỗ hổng insecure deserialization, nhìn chung phải xác định xem dữ liệu được truyền trong web có được serialize hay không. Nếu đã xác định được serailize data, lúc này mình bắt đầu có thể test dựa trên kiến thức về lỗ hổng trên php hoặc java,...
+
+### PHP serialization format
+
+PHP sử dụng một định dạng có thể đọc được với các chữ cái đại diện cho kiểu dữ liệu và số đại diện cho độ dài của mỗi mục. VÍ dụm xem một User obj với các thuộc tính: 
+```
+$user->name= "carlos";
+$user->isLoggedIn = true;
 
 ```
 
-As Pandora made her way through the ancient tombs, she received a message from her contact in the Intergalactic Ministry of Spies. They had intercepted a communication from a rival treasure hunter who was working for the alien species. The message contained information about a digital portal that leads to a software used for intercepting audio from the Ministry's communication channels. Can you hack into the portal and take down the aliens counter-spying operation?
+Khi được serialized, object này nó sẽ có dạng: 
 
-```
+> O:4:User:2:{s:4:"name":s:6:"carlos"; s:10:"sLoggedIn"b:1;}
+
+trong đó thì Obj User có 2 thuộc tính là name và isLoggedIn và độ dài cũng như giá trị tương ứng của mỗi thuộc tính.
+
+PHương thức serialization trong PHP là serialize() và unserialize(). Nếu đọc source code, ta nên bắt đầu với việc tìm kiếm unseriizalize() ở trong code và kiểm tra chúng.
+
+### Java serialization format
+
+Trong một vài ngôn ngữ, chẳng hạn như java nó sử dụng serialize ở định dạng nhị phân. Điều này làm khó hơn nhiều cho việc độc, nhưng ta vẫn có thể xác định dữ liệu serialized được nếu ta nhận diện được một vài dấu hiệu. Ví dụ, các đối tượng serialized trong java luôn bắt đầu với cùng các bytes, nó được mã hóa nhyw ac ed trong hexa và rO0 trong base64.
+
+Bất kì class nào thực thi interface java.io.Serializable có thể được serialized và deserialized. Nếu ta có source code, để ý đến bất kì đoạn code nào sử dụng phương thức readObject(), cái này có thể được dùng để đọc và deserialize dữ liệu từ InputStream.
+
+### Manipulating serialized objects
+
+Khai thác một số lỗ hổng deserialization có thể được thực hiện thông qua việc thay đổi một thuộc tính trong đối tượng serialized. Ta có thể xác định và phân tích cũng như thêm các luồng truyền vào độc hại vào website thông qua quá trình deserialization. Đây là bước đầu cho việc khai thác deserialization cơ bản.
+
+Nhìn chung, có 2 cáchđể ta có thể xử lí các đối tượng serialized. Ta có thể chỉnh sửa trực tiếp các đối tượng trong mỗi luồng byte của nó, hoặc ta có thể viết một script ngắn với ngôn ngữ tương ứng để tạo và thực hiện việc serialize một obj của chính mình. Cách tiếp cận thứ 2 thường sẽ dễ dàng hơn khi làm việc với các định dạng serialize nhị phân.
+
+### Modifying object attributes
+
+Khi giả mạo (tampering) dữ liệu, miễn là kẻ tấn công có thể giữ lại được một đối tượng serialized hợp lệ, quá trình deserialization sẽ tạo một đối tượng bên máy chủ với các thuộc tính được sửa đổi.
+
+Ví dụ đơn giản ở đây, khi xem một website sử dụng một serialized User obj để chứa dữ liệu về các phiên người dùng trong cookie. Nếu một kẻ tấn công (spotted) phát hiện được đối tượng được serialized này trong http request thì hắn có thể decode nó và tìm thấy byte stream:
+
+> O:4:"User":2:{s:8:"username";s:6:"carlos";s:7:"isAdmin";b:0;}
+
+Ở đây thuộc tính isAdmin có điểm b đại diện cho boolean đang để ở 0, nếu để là 1 thì nó sẽ trở thành true, sau đó ta lại re-encode cái đối tượng này lại và sau đó nó sẽ ghi đè lại trên cookie. Sau đó dữ liệu này sẽ được truyền vào và giúp leo thang đặc quyền.
+
+### [1. Modifying serialized objects](https://portswigger.net/web-security/deserialization/exploiting/lab-deserialization-modifying-serialized-objects)<a name="id1"></a>
+
+Bắt qua burpsuite ta được:
+
+![image](https://user-images.githubusercontent.com/104350480/227683071-2130194f-f709-485d-b550-98d7e40e2601.png)
+
+Chỉ cần thay b:1 tương ứng với true sau đó apply lại là thành công.
+
+![image](https://user-images.githubusercontent.com/104350480/227683696-5e74dee3-8535-43e6-901b-c7a543e1f211.png)
+
+Chuyển về method POST thêm /admin/delete và username=carlos nữa là xong.
+
+## Modifying data types
+
+Bài lab trên là một ví dụ cơ bản về việc ta có thể điều chỉnh các giá trị thuộc tính trong các đối tuongj serialized, nhưng đồng thời ta cũng có thể thêm các loại dữ liệt đáng ngờ khác vào.
+
+Logic nền tảng tảng trong php đặc biệt dễ bị tổn thương với kiểu xử lí này bởi hành vi của việc so sánh lỏng lẻo giữa các toán tử là khá thường xuyên. Ví dụ, nếu ta thực hiện một so sánh lỏng lẻo giữa một số và một string, php sẽ cố gắng chuyển đổi chuỗi này thành 1 số nghĩa là 5 == "5" và tương ứng với true. Ngoài ra điều này còn hoạt động với bất kì chuỗi nào mà bắt đầu bằng một số. Trong đó thì php sẽ chuyển đổi toàn bộ chuỗi thành một giá trị só dựa trên bắt đầu của chuỗi đó cũng là một số. Ví dụ 10 == "10 lalallalal lalal" trong php vẫn được coi là 10 == 10.
+
+Điều này còn có thể khai thác một cách lạ hơn là: 0 == "abcd efgh" thì nó vẫn là true.
+Bởi vì chuỗi này không có số, nghĩa là 0 chữ số trong chuỗi. Php sẽ coi toàn bộ chuỗi này như một số nguyên không. 
+
+Chẳng hạn việc xử lí logic ở trong chuỗi này:
+
+![image](https://user-images.githubusercontent.com/104350480/227687394-9612a5e2-91a7-44ff-a0d0-6d3ba44e594e.png)
+
+Nó hoàn toàn có thể bị khai thác đơn giản vì đang để so sánh lỏng lẻo, nếu kẻ tấn công điều chỉnh thuộc tính password chứa số nguyên 0 thay vì là 1 string. Miễn là mật khẩu được lưu trữ không bắt đầu là một số thì nó sẽ luôn trả về **true** . Và tất nhiên thì điều này chỉ xảy ra trong quá trình duy trì trạng thái dữ liệu của deserialization. Nếu lấy trực tiếp mật khẩu từ yêu cầu thì nó sẽ bị sai vì lúc này 0 sẽ bị chuyển sang string và kết quả lúc này sẽ là **false**.
+
+* [2. Modifying serialized data types](https://portswigger.net/web-security/deserialization/exploiting/lab-deserialization-modifying-serialized-data-types)<a name="id2"></name>
+
+Bài này vẫn được serialize qua cookie:
+
+![image](https://user-images.githubusercontent.com/104350480/227688215-6675d027-f0d6-488c-b457-7974c506f900.png)
+
+Sửa lại một chút quá trình serialize, username thành administrator tương ứng s:13 và để access_token có value là b:1 tương ứng với true:
+
+![image](https://user-images.githubusercontent.com/104350480/227688920-86369dda-ef94-40d7-9337-fbd00643b764.png)
+
+Và tương tự như bài trên ta cũng dùng GET hoặc POST để delete username là carlos.
+
+
+
