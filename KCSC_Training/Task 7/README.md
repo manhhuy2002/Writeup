@@ -30,4 +30,9 @@ Và muốn xác nhận các http request được gửi từ một người nào
 Nhìn chung thì hầu hết các lỗ hổng trong cơ chế xác thực phát sinh theo 2 cách: 
 - Những cơ chế xác thực yếu bởi chúng thất bại trong việc thực hiện bảo vệ đầy đủ trước những cuộc tấn công vét cạn.
 - Những lỗ hổng logic hoặc là việc code kém trong việc triển khai các cơ thế xác thực khiến cho chúng có thể bị vượt qua bởi những kẻ tấn công. Cái này thường được gọi là "broken authentication" 
-- 
+Trong đó thì có thể chia ra làm 3 loại chính: 
+- Lỗ hổng trong đăng nhập dựa trên mật khẩu.
+- Lỗ hổng trong xác thực đa yếu tố.
+- Lỗ hổng trong các cơ chế xác thực khác.
+
+## Lỗ hổng trong đăng nhập dựa trên mật khẩu: 
