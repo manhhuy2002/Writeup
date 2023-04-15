@@ -1,3 +1,26 @@
+## JerseyCTF
+
+### put-the-cookie-down
+
+![image](https://user-images.githubusercontent.com/104350480/232238888-c18e6771-1095-41a5-bcb5-cc02dc7a582f.png)
+
+> FLag: I_WILL_BE_BACK_FOR_MORE_C00KI3S!
+
+### look-im-hacking
+
+![image](https://user-images.githubusercontent.com/104350480/232239086-e3e3e07f-93ce-435e-84d4-d167a3eea92c.png)
+
+Ctrl U có: 
+
+![image](https://user-images.githubusercontent.com/104350480/232239104-5a13832c-bf05-4fc5-bb3a-fbe2a459007e.png)
+
+Flag: 
+
+![image](https://user-images.githubusercontent.com/104350480/232239134-7e9f5b12-2d44-4b81-9444-9906f365ed4f.png)
+
+### 
+
+
 # Authentication vulnerabilities
 
 ## What is authentication? 
