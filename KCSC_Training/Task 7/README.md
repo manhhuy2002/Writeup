@@ -18,7 +18,15 @@ Flag:
 
 ![image](https://user-images.githubusercontent.com/104350480/232239134-7e9f5b12-2d44-4b81-9444-9906f365ed4f.png)
 
-### 
+### [i-got-the-keys](https://ctf.jerseyctf.com/challenges#i-got-the-keys-35)
+
+![image](https://user-images.githubusercontent.com/104350480/232287618-3e4cf226-d0da-4011-af37-fbc2f81adb47.png)
+
+Ctrl U ta được: 
+
+![image](https://user-images.githubusercontent.com/104350480/232287630-3844f786-744d-439e-85ef-3c5a8e9913e1.png)
+
+
 
 
 # Authentication vulnerabilities
