@@ -205,7 +205,7 @@ Load lại trang là có flag:
 
 ![image](https://user-images.githubusercontent.com/104350480/232690800-6374c3a3-2567-420a-b7b9-965852b88593.png)
 
-Ta truy cập đường dẫn và nhập thử: 
+Ta truy cập đường dẫn và nhập bất kì: 
 
 ![image](https://user-images.githubusercontent.com/104350480/232692157-49ef18a5-3363-4683-a5db-9b6703ee0395.png)
 
@@ -217,7 +217,7 @@ Check thử ls -lsa, có mysql_history, ta cat thử xem file có gì:
 
 ![image](https://user-images.githubusercontent.com/104350480/232692554-dde91d94-4d2e-4571-b5a5-9409c47ed756.png)
 
-Có vẻ là dữ liệu liên quan đến trang web đăng nhập ở trên, giờ ta truy cập thử vào mysql của hệ thống xem có gì: 
+Tiếp tục ta truy cập vào mysql của hệ thống xem có gì với cmd: **mysql -p** với password như đề bài cho: 
 
 ![image](https://user-images.githubusercontent.com/104350480/233173388-21c7497b-cebd-4db1-89ac-0caee4ff6e47.png)
 
@@ -235,13 +235,12 @@ Ta không đọc được file .usernames.txt trực tiếp như vậy vì ta kh
 
 ![image](https://user-images.githubusercontent.com/104350480/233175266-c40ad5fd-0672-4451-9185-fcaf0c6cd174.png)
 
-Có danh sách username và password rồi, bước tiếp theo chỉ cần viết script brute-force để đăng nhập nữa là xong: 
+Có danh sách username và password rồi, bước tiếp theo chỉ cần viết script brute-force và ngồi đợi là xong: 
 
 ```
 
 import requests
-usernames = open("./username.txt","r").readlines()
-usernames = [a.strip() for a in unsernames if a.strip != ""]
+usernames = open("./username.txt","r").readlines().split("/n")
 print(usernames)
 
 for username in usernames:
@@ -252,3 +251,8 @@ for username in usernames:
         break
 
 ```
+
+![image](https://user-images.githubusercontent.com/104350480/233179203-cfa69d82-4bc6-4adf-8c02-6c16791515c1.png)
+
+
+> FLag: jctf{w3_LoV3_M@RV3L_:)_GOOD_JOB!}
