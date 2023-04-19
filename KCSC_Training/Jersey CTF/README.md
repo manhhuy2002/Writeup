@@ -1,12 +1,22 @@
-# JerseyCTF
+# JerseyCTF - Writeup web challenge: 
+* [1. put-the-cookie-down](#1)
+* [2. look-im-hacking](#2)
+* [3. i-got-the-keys](#3)
+* [4. Timeless](#4)
+* [5. ninja-jackers](#5)
+* [6. Poisoned](#6)
+* [7. xss-terminator](#7)
+* [8. avenge-my-password](#8)
 
-## [1. put-the-cookie-down](https://jerseyctf-put-the-cookie-down.chals.io/)
+## [1. put-the-cookie-down](https://jerseyctf-put-the-cookie-down.chals.io/)<a name="1"></a>
+
+Ctrl Shilft I ta được:
 
 ![image](https://user-images.githubusercontent.com/104350480/232238888-c18e6771-1095-41a5-bcb5-cc02dc7a582f.png)
 
 > FLag: I_WILL_BE_BACK_FOR_MORE_C00KI3S!
 
-### [2. look-im-hacking](https://www.jerseyctf.online/)
+### [2. look-im-hacking](https://www.jerseyctf.online/)<a name="2"></a>
 
 ![image](https://user-images.githubusercontent.com/104350480/232239086-e3e3e07f-93ce-435e-84d4-d167a3eea92c.png)
 
@@ -18,7 +28,7 @@ Flag:
 
 ![image](https://user-images.githubusercontent.com/104350480/232239134-7e9f5b12-2d44-4b81-9444-9906f365ed4f.png)
 
-## [3. i-got-the-keys](https://ctf.jerseyctf.com/challenges#i-got-the-keys-35)
+## [3. i-got-the-keys](https://ctf.jerseyctf.com/challenges#i-got-the-keys-35)<a name="3"></a>
 
 ![image](https://user-images.githubusercontent.com/104350480/232287618-3e4cf226-d0da-4011-af37-fbc2f81adb47.png)
 
@@ -49,7 +59,7 @@ Thay vào burpsuite ta get được flag trả về:
 
 > Flag: jctf{*MAJ0R-K3Y-AL3RT*}
 
-## [4. Timeless](http://137.184.135.40:3000/)
+## [4. Timeless](http://137.184.135.40:3000/)<a name="4"></a>
 
 ![image](https://user-images.githubusercontent.com/104350480/232410378-4ebe5bf4-2664-403a-b70f-fe6b15e14312.png)
 
@@ -74,7 +84,7 @@ Ta bypass được luôn, bài kh filter ở phần password:
 > Flag: jctf{LOVE_ALL_TRUST_A_FEW_&_DO_WRONG_TO_NONE}
 
 
-## [5. ninja-jackers](https://jerseyctf-ninja-jackers.chals.io/)
+## [5. ninja-jackers](https://jerseyctf-ninja-jackers.chals.io/)<a name="5"></a>
 
 ![image](https://user-images.githubusercontent.com/104350480/232291689-ff7fee7f-1c66-4b00-a5b8-643e9cf8e296.png)
 
@@ -106,7 +116,7 @@ Ta được file FLAG_is_H3RE.txt, giờ cat file ra là ta có flag:
 
 > Flag: jctf{Ar3Nt_Y0U_GLaD_I_Didnt_SAY_NINJA}
 
-## [6. Poisoned](https://jerseyctf-poisoned.chals.io/?page=welcome)
+## [6. Poisoned](https://jerseyctf-poisoned.chals.io/?page=welcome)<a name="6"></a>
 
 ![image](https://user-images.githubusercontent.com/104350480/232411154-3e2ba221-99fc-4159-932d-fda0b955fe18.png)
 
@@ -147,7 +157,7 @@ Ta có được file secret_fl4g.txt, tiếp tục cmd: &poison=cat /secret_fl4g
 > Flag: jctf{4PachE_L0G_POiS0nInG}
 
 
-## [7. xss-terminator](http://198.211.99.71:3000/)
+## [7. xss-terminator](http://198.211.99.71:3000/)<a name="7"></a>
 
 ![image](https://user-images.githubusercontent.com/104350480/232418058-74501bc5-8c33-477c-9606-faa9297c1237.png)
 
@@ -174,7 +184,7 @@ The Terminator told you to put the cookie down, and you didn't listen. Now he is
 
 ```
 
-Ở đây bài nói cookie chưa được hạ xuống, có vẻ vẫn lưu trên web và dựa vào giao diện web t2 thì hướng đi giờ chỉ cần lấy document.cookie và thực hiện như này là õng: **Steal the cookie and send it to my /cookie?data endpooint** , tên là bài hard nhưng hơi lạ.
+Ở đây bài nói cookie chưa được hạ xuống, có vẻ vẫn lưu trên web và dựa vào giao diện web t2 thì hướng đi giờ chỉ cần lấy document.cookie và thực hiện như này là xong: **Steal the cookie and send it to my /cookie?data endpooint** , tên là bài hard nhưng hơi lạ.
 
 Ta chỉ việc vào thẳng web lấy: 
 
@@ -190,7 +200,7 @@ Load lại trang là có flag:
 
 > Flag: Flag: jctf{who_said_you_could_open_the_cookie_jar!?}
 
-## [8. avenge-my-password](http://159.203.191.48/)
+## [8. avenge-my-password](http://159.203.191.48/)<a name="8"></a>
 
 
 ![image](https://user-images.githubusercontent.com/104350480/232690800-6374c3a3-2567-420a-b7b9-965852b88593.png)
@@ -209,7 +219,23 @@ Check thử ls -lsa, có mysql_history, ta cat thử xem file có gì:
 
 Có vẻ là dữ liệu liên quan đến trang web đăng nhập ở trên, giờ ta truy cập thử vào mysql của hệ thống xem có gì: 
 
+![image](https://user-images.githubusercontent.com/104350480/233173388-21c7497b-cebd-4db1-89ac-0caee4ff6e47.png)
 
+Thực hiện truy vấn trong table login: **select * from login;** ta được 500 mật khẩu trả về dạng băm, để ý ở userID 401, có một mật khẩu ở dạng rõ: 
+
+![image](https://user-images.githubusercontent.com/104350480/233173563-1c4a76b4-bcca-4aaf-98b0-f69726df8b03.png)
+
+Ta sẽ dùng mật khẩu này để thực hiện đăng nhập. 
+
+Tiếp theo ta cần tìm được username, truy cập vào đường dẫn /var/www/html nơi chứa các tệp của website đang được dựng lên: 
+
+![image](https://user-images.githubusercontent.com/104350480/233174527-0effa0eb-d8af-4a47-b689-610f7f4a1a3f.png)
+
+Ta không đọc được file .usernames.txt trực tiếp như vậy vì ta kh được cấp quyền root, tuy vậy ta có thể đọc nó qua đường dẫn trên trang web với path: **http://159.203.191.48/.username/.usernames.txt** và được một danh sách username trả về:
+
+![image](https://user-images.githubusercontent.com/104350480/233175266-c40ad5fd-0672-4451-9185-fcaf0c6cd174.png)
+
+Có danh sách username và password rồi, bước tiếp theo chỉ cần viết script brute-force để đăng nhập nữa là xong: 
 
 ```
 
