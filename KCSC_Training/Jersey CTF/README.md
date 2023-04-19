@@ -104,7 +104,7 @@ Vậy là nó dính SSTI rồi, giờ ta thử tiếp để xem đây là templa
 
 ![image](https://user-images.githubusercontent.com/104350480/232292404-8c8a316a-bd7d-41e5-917c-a8303109b34e.png)
 
-Cả 2 đều không lỗi ta có thể kết luận tempalate này là jinja2, giờ hoặc tự tạo builtins rồi import os và dùng cmd hoặc dùng luôn hàm sẵn đều được: 
+Cả 2 đều không lỗi ta có thể kết luận tempalate này là jinja2, giờ hoặc tự tạo builtin rồi import os và dùng cmd hoặc dùng luôn hàm sẵn đều được: 
 
 ![image](https://user-images.githubusercontent.com/104350480/232293106-b378c27f-0d72-4523-bd9e-f4abc9457382.png)
 
