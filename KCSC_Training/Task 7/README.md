@@ -306,4 +306,16 @@ Cái trên dưới là tương tự nhau nhưng cái dưới là bản shortcut 
 
 > Flag: HTB{t3mpl4t3s_4r3_m0r3_p0w3rfu1_th4n_u_th1nk!}
 
+## [2. Toxic_web]
+        
+```
+Humanity has exploited our allies, the dart frogs, for far too long, take back the freedom of our lovely poisonous friends. Malicious input is out of the question when dart frogs meet industrialisation.
+
+```
+Giao diện của bài: 
+        
+        ![image](https://user-images.githubusercontent.com/104350480/233412736-bf27e894-ca89-461a-bfa7-43599037e366.png)
+
+        
+        
 
