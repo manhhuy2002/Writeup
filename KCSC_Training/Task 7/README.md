@@ -318,5 +318,11 @@ Giao diện của bài:
 ![image](https://user-images.githubusercontent.com/104350480/233412736-bf27e894-ca89-461a-bfa7-43599037e366.png)
 
         
+ Giao diện của bài không có chỗ nào để nhập hay chuyển trang gì cả, nhưng bài cho ta source code, ta review source: 
         
+![image](https://user-images.githubusercontent.com/104350480/233413508-6ec01d41-9b56-4593-b537-47143bf0547d.png)
+
+![image](https://user-images.githubusercontent.com/104350480/233413586-cc28e0bf-92a3-4773-b09e-577e0ad92596.png)
+
+ Để ý có 2 đoạn code quan trọng như trên, nhìn qua có thể thầy nồng mùi php deserialize, 
 
