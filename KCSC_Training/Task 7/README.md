@@ -1,12 +1,22 @@
-# JerseyCTF
+# JerseyCTF - Writeup web challenge: 
+* [1. put-the-cookie-down](#1)
+* [2. look-im-hacking](#2)
+* [3. i-got-the-keys](#3)
+* [4. Timeless](#4)
+* [5. ninja-jackers](#5)
+* [6. Poisoned](#6)
+* [7. xss-terminator](#7)
+* [8. avenge-my-password](#8)
 
-## [1. put-the-cookie-down](https://jerseyctf-put-the-cookie-down.chals.io/)
+## [1. put-the-cookie-down](https://jerseyctf-put-the-cookie-down.chals.io/)<a name="1"></a>
+
+Ctrl Shilft I ta được:
 
 ![image](https://user-images.githubusercontent.com/104350480/232238888-c18e6771-1095-41a5-bcb5-cc02dc7a582f.png)
 
 > FLag: I_WILL_BE_BACK_FOR_MORE_C00KI3S!
 
-### [2. look-im-hacking](https://www.jerseyctf.online/)
+### [2. look-im-hacking](https://www.jerseyctf.online/)<a name="2"></a>
 
 ![image](https://user-images.githubusercontent.com/104350480/232239086-e3e3e07f-93ce-435e-84d4-d167a3eea92c.png)
 
@@ -18,7 +28,7 @@ Flag:
 
 ![image](https://user-images.githubusercontent.com/104350480/232239134-7e9f5b12-2d44-4b81-9444-9906f365ed4f.png)
 
-## [3. i-got-the-keys](https://ctf.jerseyctf.com/challenges#i-got-the-keys-35)
+## [3. i-got-the-keys](https://ctf.jerseyctf.com/challenges#i-got-the-keys-35)<a name="3"></a>
 
 ![image](https://user-images.githubusercontent.com/104350480/232287618-3e4cf226-d0da-4011-af37-fbc2f81adb47.png)
 
@@ -49,7 +59,7 @@ Thay vào burpsuite ta get được flag trả về:
 
 > Flag: jctf{*MAJ0R-K3Y-AL3RT*}
 
-## [4. Timeless](http://137.184.135.40:3000/)
+## [4. Timeless](http://137.184.135.40:3000/)<a name="4"></a>
 
 ![image](https://user-images.githubusercontent.com/104350480/232410378-4ebe5bf4-2664-403a-b70f-fe6b15e14312.png)
 
@@ -74,7 +84,7 @@ Ta bypass được luôn, bài kh filter ở phần password:
 > Flag: jctf{LOVE_ALL_TRUST_A_FEW_&_DO_WRONG_TO_NONE}
 
 
-## [5. ninja-jackers](https://jerseyctf-ninja-jackers.chals.io/)
+## [5. ninja-jackers](https://jerseyctf-ninja-jackers.chals.io/)<a name="5"></a>
 
 ![image](https://user-images.githubusercontent.com/104350480/232291689-ff7fee7f-1c66-4b00-a5b8-643e9cf8e296.png)
 
@@ -94,7 +104,7 @@ Vậy là nó dính SSTI rồi, giờ ta thử tiếp để xem đây là templa
 
 ![image](https://user-images.githubusercontent.com/104350480/232292404-8c8a316a-bd7d-41e5-917c-a8303109b34e.png)
 
-Cả 2 đều không lỗi ta có thể kết luận tempalate này là jinja2, giờ hoặc tự tạo builtins rồi import os và dùng cmd hoặc dùng luôn hàm sẵn đều được: 
+Cả 2 đều không lỗi ta có thể kết luận tempalate này là jinja2, giờ hoặc tự tạo builtin rồi import os và dùng cmd hoặc dùng luôn hàm sẵn đều được: 
 
 ![image](https://user-images.githubusercontent.com/104350480/232293106-b378c27f-0d72-4523-bd9e-f4abc9457382.png)
 
@@ -106,7 +116,7 @@ Ta được file FLAG_is_H3RE.txt, giờ cat file ra là ta có flag:
 
 > Flag: jctf{Ar3Nt_Y0U_GLaD_I_Didnt_SAY_NINJA}
 
-## [6. Poisoned](https://jerseyctf-poisoned.chals.io/?page=welcome)
+## [6. Poisoned](https://jerseyctf-poisoned.chals.io/?page=welcome)<a name="6"></a>
 
 ![image](https://user-images.githubusercontent.com/104350480/232411154-3e2ba221-99fc-4159-932d-fda0b955fe18.png)
 
@@ -147,7 +157,7 @@ Ta có được file secret_fl4g.txt, tiếp tục cmd: &poison=cat /secret_fl4g
 > Flag: jctf{4PachE_L0G_POiS0nInG}
 
 
-## [7. xss-terminator](http://198.211.99.71:3000/)
+## [7. xss-terminator](http://198.211.99.71:3000/)<a name="7"></a>
 
 ![image](https://user-images.githubusercontent.com/104350480/232418058-74501bc5-8c33-477c-9606-faa9297c1237.png)
 
@@ -174,7 +184,7 @@ The Terminator told you to put the cookie down, and you didn't listen. Now he is
 
 ```
 
-Ở đây bài nói cookie chưa được hạ xuống, có vẻ vẫn lưu trên web và dựa vào giao diện web t2 thì hướng đi giờ chỉ cần lấy document.cookie và thực hiện như này là õng: **Steal the cookie and send it to my /cookie?data endpooint** , tên là bài hard nhưng hơi lạ.
+Ở đây bài nói cookie chưa được hạ xuống, có vẻ vẫn lưu trên web và dựa vào giao diện web t2 thì hướng đi giờ chỉ cần lấy document.cookie và thực hiện như này là xong: **Steal the cookie and send it to my /cookie?data endpooint** , tên là bài hard nhưng hơi lạ.
 
 Ta chỉ việc vào thẳng web lấy: 
 
@@ -190,12 +200,12 @@ Load lại trang là có flag:
 
 > Flag: Flag: jctf{who_said_you_could_open_the_cookie_jar!?}
 
-## [8. avenge-my-password](http://159.203.191.48/)
+## [8. avenge-my-password](http://159.203.191.48/)<a name="8"></a>
 
 
 ![image](https://user-images.githubusercontent.com/104350480/232690800-6374c3a3-2567-420a-b7b9-965852b88593.png)
 
-Ta truy cập đường dẫn và nhập thử: 
+Ta truy cập đường dẫn và nhập bất kì: 
 
 ![image](https://user-images.githubusercontent.com/104350480/232692157-49ef18a5-3363-4683-a5db-9b6703ee0395.png)
 
@@ -207,17 +217,32 @@ Check thử ls -lsa, có mysql_history, ta cat thử xem file có gì:
 
 ![image](https://user-images.githubusercontent.com/104350480/232692554-dde91d94-4d2e-4571-b5a5-9409c47ed756.png)
 
-Có vẻ là dữ liệu liên quan đến trang web đăng nhập ở trên, giờ ta truy cập thử vào mysql của hệ thống xem có gì: 
+Tiếp tục ta truy cập vào mysql của hệ thống xem có gì với cmd: **mysql -p** với password như đề bài cho: 
 
+![image](https://user-images.githubusercontent.com/104350480/233173388-21c7497b-cebd-4db1-89ac-0caee4ff6e47.png)
 
+Thực hiện truy vấn trong table login: **select * from login;** ta được 500 mật khẩu trả về dạng băm, để ý ở userID 401, có một mật khẩu ở dạng rõ: 
+
+![image](https://user-images.githubusercontent.com/104350480/233173563-1c4a76b4-bcca-4aaf-98b0-f69726df8b03.png)
+
+Ta sẽ dùng mật khẩu này để thực hiện đăng nhập. 
+
+Tiếp theo ta cần tìm được username, truy cập vào đường dẫn /var/www/html nơi chứa các tệp của website đang được dựng lên: 
+
+![image](https://user-images.githubusercontent.com/104350480/233174527-0effa0eb-d8af-4a47-b689-610f7f4a1a3f.png)
+
+Ta không đọc được file .usernames.txt trực tiếp như vậy vì ta kh được cấp quyền root, tuy vậy ta có thể đọc nó qua đường dẫn trên trang web với path: **http://159.203.191.48/.username/.usernames.txt** và được một danh sách username trả về:
+
+![image](https://user-images.githubusercontent.com/104350480/233175266-c40ad5fd-0672-4451-9185-fcaf0c6cd174.png)
+
+Có danh sách username và password rồi, bước tiếp theo chỉ cần viết script brute-force và ngồi đợi là xong: 
 
 ```
 
 import requests
-usernames = open("./username.txt","r").readlines()
-usernames = [a.strip() for a in unsernames if a.strip != ""]
+usernames = open("./username.txt","r").readlines().split("/n")
 print(usernames)
-
+password ="Spring2023!!!"
 for username in usernames:
     print(f"{username}=")
     r = requests.post("http://159.203.191.48/", data = {"username":username, "password":password, "submit":"Login"})
@@ -227,50 +252,58 @@ for username in usernames:
 
 ```
 
+![image](https://user-images.githubusercontent.com/104350480/233179203-cfa69d82-4bc6-4adf-8c02-6c16791515c1.png)
 
 
+> FLag: jctf{w3_LoV3_M@RV3L_:)_GOOD_JOB!}
 
 
+# Hack The Box Lab 
+
+## [1. Templated]
+
+```
+
+Can you exploit this simple mistake?
+
+```
+
+![image](https://user-images.githubusercontent.com/104350480/233298712-b22805a1-9811-45d9-b733-ddf90c29517b.png)
+
+Một chall đơn giản về ssti, vào giao diện ta có thể thấy nó gợi ý luôn cho ta về việc trang web đang dùng template jinja2.
+Test thử một số payload: 
+
+![image](https://user-images.githubusercontent.com/104350480/233298939-284f534f-aa0a-40e4-8686-bae61b449cb2.png)
+
+![image](https://user-images.githubusercontent.com/104350480/233299010-07120251-de4b-4935-9ae1-37007c5bfda8.png)
+
+Giờ ta sẽ tự built payload để thực hiện lệnh trong hệ thống. Trong jinja2 template, thì ta có thể sử dụng TemplateReference để tái sử dụng lại các code block từ template. Chẳng hạn, để tránh viết lại tiêu đề trên tất cả các template chẳng hạn, thì ta có thể đặt tiêu đề trong 1 khối block chẳng hạn như {% block title%} và truy xuất nó với {{self.title()}} sau đó. Ta có thể truy cập TemplateReference obj mà kh cần các điều kiện, ngay cả khi không có biến nào được đặt trong render(): 
+
+>>> jinja2.Template("My name is {{ self }}").render()
+'My name is <TemplateReference None>'
+
+Dựa vào đó ta sẽ xây dựng pyaload để cho phép truy cập vào các os module từ TemplateReference obj.
+
+### Building a classic payload: 
+Ý tưởng cổ điển để sử dụng TemplateReference obj là truy cập tới các hàm **__builtins__** và sử dụng hàm **__import__** để import module chúng ta muốn. Đầu tiên ta sẽ sử dụng biến toàn cục __globals__ thông qua: self.__init__.__globals__
+
+Trong __globals__, chúng ta có thể sử dụng các hàm buidtins sẵn, trong đó có chứa hàm __import__. Ta sẽ sử dụng trực tiếp module os như sau: 
+```
+{{self.__init__.__globals__.__builtins__.__import__('os').popen('id').read()}}
+
+```
+Ta sử dụng popen để thực thi lệnh hệ thống id và trả về đối tượng có thể đọc được thông qua output của nó thông qua phương thức read. 
+
+Như lệnh ở trên ta có thể khai thác được bài này rồi. Ngoài ra có thể đơn giản hơn là dùng hàm sẵn không cần thông qua builtins như trên vì thường nó sẽ bị filter: 
+
+![image](https://user-images.githubusercontent.com/104350480/233304119-21d3c136-a2cd-47fc-b23d-46257d5f9832.png)
+
+Cái trên dưới là tương tự nhau nhưng cái dưới là bản shortcut đơng giản hơn. Còn cycler , joiner và namespace là gì thì ta có thể hiểu đơn giản là nó là nơi mà hàm os trong hệ thống đã được gọi sẵn, thì khi gọi đến nó thì os sẽ được gọi mà kh cần phải import nữa. Giờ ta tìm và cat flag ra là xong: 
+
+![image](https://user-images.githubusercontent.com/104350480/233304665-514006a4-4582-41e5-9e87-23d457d3e560.png)
+
+![image](https://user-images.githubusercontent.com/104350480/233304810-f417a39d-2dbe-46d0-90f6-fe238b123de5.png)
+
+> Flag: HTB{t3mpl4t3s_4r3_m0r3_p0w3rfu1_th4n_u_th1nk!}
 
 
-
-
-
-# Authentication vulnerabilities
-
-## What is authentication? 
-Xác thực là một quá trình xác minh định danh của người dùng hoặc khách hàng. Nói cách khác nó liên quan tới việc xác nhận chúng ta là ai. Có thể chia ra làm 3 tác nhân xác thực: 
-+ Something you know, chẳng hạn như một mật khẩu hoặc một câu hỏi bảo mật. Cái này thường được gọi là "knowledge factors".
-+ Somthing you have, là những đối tượng như điện thoại hoặc mã thông báo bảo mật. Hay còn được gọi là "possession factors". 
-+ Somthing you are or do, ví dụ là dấu vân tay của những mẫu hành vi của ta. Thường được gọi là "inherence factors" (những nhân tố về đặc điểm sinh học). 
-
-Những cơ chế xác thực dựa trên một loạt các kĩ thuật để xác minh một hoặc nhiều các tác nhân trên.
-
-Theo quy trình thực hiện thì ở đây, authen sẽ xác định rằng một người đang cố gắng truy cập vào một trang web thông qua đăng nhập xem người đó có phải là người trong hệ thống mà đã tạo tài khoản đó và mật khẩu hay không. Một khi được xác thực xong thì quyền của anh ta xác định liệu anh ta có được ủy quyền hay không, ví dụ, để truy cập thông tin cá nhân về người dùng khác hoặc thực hiện các hành động như xóa tài khoản của người dùng khác. 
-
-Cụ thể hơn thì authentication trong ứng dụng web có thể xuất hiện ở các lớp nghĩa khác nhau: chẳng hạn việc server xác thực yêu cầu do đúng từ client của người dùng đó gửi lên hay không cũng là một quá trình authentication, ở đây server có thể dùng các phương thức xác thực như authentication token, session, digital siganture, hoặc việc mã hóa để kiểm tra và đảm báo tính xác thực của yêu cầu được gửi từ client đó. Cũng trong đó, việc server xác thực nội dung yêu cầu do đúng từ người dùng hợp lệ gửi lên hay không cũng là authentication. 
-
-Về bản chất thì khi ta gửi một http request tới một trang web để lấy nội dung hoặc thực hiện các hành vi trên trang web, thì làm sao để server biết ta là ai. Trong đó thì http request là một stateless protocol, tức là các request sẽ được xử lí một cách độc lập, không phục thuộc vào trạng thái hay kết quả của các request trước. Và để giải quyết vấn đề này, cũng như có thể xác thực được những yêu cầu này đến từ ai, thì http sử dụng các phiên (session) hoặc mã thông báo (authentication token) để duy trì thông tin về trạng thái của client giữa các yêu cầu. Cụ thể như cookie hoặc jwt,...
-Minh hoạt cho việc stateless của http request: 
-
-![image](https://user-images.githubusercontent.com/104350480/230588126-591ba14d-5f5b-4e1d-a369-7e737f647449.png)
-
-Và muốn xác nhận các http request được gửi từ một người nào đó: 
-
-![image](https://user-images.githubusercontent.com/104350480/230588283-5327bae9-7b5f-4f29-9c56-f4460ffe3cea.png)
-
-
-## Điểm khác nhau giữa authentication và authorization
-+ Authen thì nó là một quá trình xác minh một người dùng hoặc một hành dộng nào đó và hiểu đơn giản là nó sẽ dùng để trả lời cho câu giỏi: Who are you? 
-+ Authorization thì cũng dùng để xác minh người dùng nhưng sẽ liên quan tới câu hỏi: what are you allowed to do? Nó được sinh ra sau khi xác thực thành công, đây sẽ là việc kiểm soát các truy cập theo ngang, dọc và cả theo ngữ cảnh. 
-
-## Những lỗ hổng xác thực sinh ra như thế nào?
-Nhìn chung thì hầu hết các lỗ hổng trong cơ chế xác thực phát sinh theo 2 cách: 
-- Những cơ chế xác thực yếu bởi chúng thất bại trong việc thực hiện bảo vệ đầy đủ trước những cuộc tấn công vét cạn.
-- Những lỗ hổng logic hoặc là việc code kém trong việc triển khai các cơ thế xác thực khiến cho chúng có thể bị vượt qua bởi những kẻ tấn công. Cái này thường được gọi là "broken authentication" 
-Trong đó thì có thể chia ra làm 3 loại chính: 
-- Lỗ hổng trong đăng nhập dựa trên mật khẩu.
-- Lỗ hổng trong xác thực đa yếu tố.
-- Lỗ hổng trong các cơ chế xác thực khác.
-
-## Lỗ hổng trong đăng nhập dựa trên mật khẩu: 
