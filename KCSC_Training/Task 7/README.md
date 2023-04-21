@@ -326,3 +326,14 @@ Giao diện của bài:
 
  Để ý có 2 đoạn code quan trọng như trên, nhìn qua có thể thầy nồng mùi php deserialize, 
 
+
+## [3. Neonify]
+
+```
+It's time for a shiny new reveal for the first-ever text neonifier. Come test out our brand new website and make any text glow like a lo-fi neon tube!
+
+```
+
+Giao diện của bài:
+
+
