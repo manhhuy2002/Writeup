@@ -405,7 +405,7 @@ ${7*7} = ${7*7}
         
 ![image](https://user-images.githubusercontent.com/104350480/233562696-036b2e24-ffb5-4539-a0f7-5a64f88fddb4.png)
 
-Giờ tìm vị trí chứa flag nữa là xong: thay bằng lệnh **find / -name "flag*"** để tìm kiếm 
+Giờ tìm vị trí chứa flag nữa là xong: thay bằng lệnh **find / -name "flag\*"** để tìm kiếm 
         
 ![image](https://user-images.githubusercontent.com/104350480/233563694-5523ff49-bc16-4214-bd2b-a814ded25ba4.png)
 
