@@ -336,4 +336,44 @@ It's time for a shiny new reveal for the first-ever text neonifier. Come test ou
 
 Giao diện của bài:
 
+![image](https://user-images.githubusercontent.com/104350480/233559237-9cd64465-1c7b-48fc-922f-e15a06356676.png)
 
+ Bài cho ta một form nhập, nhập cái gì thì hiện lên trang web cái đó, trừ mấy kí tự đặc biệt: 
+        
+![image](https://user-images.githubusercontent.com/104350480/233559381-554121ae-da3b-4599-9603-38afbd2170b7.png)
+        
+Dạng đặc trưng của SSTI, bài cho ta source code: 
+
+        ![image](https://user-images.githubusercontent.com/104350480/233559541-e365e7c0-3ef5-4f47-b228-4a97a30ab41d.png)
+
+```
+        
+        class NeonControllers < Sinatra::Base
+
+  configure do
+    set :views, "app/views"
+    set :public_dir, "public"
+  end
+
+  get '/' do
+    @neon = "Glow With The Flow"
+    erb :'index'
+  end
+
+  post '/' do
+    if params[:neon] =~ /^[0-9a-z ]+$/i
+      @neon = ERB.new(params[:neon]).result(binding)
+    else
+      @neon = "Malicious Input Detected"
+    end 
+    erb :'index'
+  end
+
+end
+                                             
+```
+                                             
+    Bài đang dùng template ERB của ruby, phân tích một chút.
+                                              params[:neon] =~ /^[0-9a-z ]+$/i  
+                                             
+                                             
