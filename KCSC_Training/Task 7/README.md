@@ -327,7 +327,7 @@ Giao diện của bài:
         
 Dạng đặc trưng của SSTI, bài cho ta source code: 
 
-        ![image](https://user-images.githubusercontent.com/104350480/233559541-e365e7c0-3ef5-4f47-b228-4a97a30ab41d.png)
+![image](https://user-images.githubusercontent.com/104350480/233559541-e365e7c0-3ef5-4f47-b228-4a97a30ab41d.png)
 
 ```
         
