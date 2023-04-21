@@ -398,4 +398,39 @@ Giờ tìm vị trí chứa flag nữa là xong: thay bằng lệnh **find / -na
         
 > Flag: HTB{r3pl4c3m3n7_s3cur1ty}
     
-    
+## 3. LoveTok
+        
+Giao diện của bài: 
+        
+![image](https://user-images.githubusercontent.com/104350480/233661647-28e5f7e9-72b8-494a-8b03-83949a4a44a7.png)
+
+Bài không có phần nào nhập hay gì hết, bài cho ta source code, ta sẽ phân tích xem khai thác được gì không:
+
+![image](https://user-images.githubusercontent.com/104350480/233661882-0def240b-20ab-4557-b0ca-6e9bb57ea59c.png)
+
+![image](https://user-images.githubusercontent.com/104350480/233661975-0ae68f43-5547-4ed8-a6e8-b85bdf2d7570.png)
+
+Để ý có 2 đoạn code ở trên, đoạn đầu kiểm tra xem có tham số format được truyền vào không thông qua biến $_GET hay không, nếu $_GET['format'] tồn tại, $format sẽ được gán với giá trị đó, nếu không, $format sẽ được gán với giá trị 'r'. Tuy vậy thì đọc code ở đoạn 2 thì nó cũng chỉ là giá trị random sẽ được in ra màn hình:
+
+![image](https://user-images.githubusercontent.com/104350480/233663812-f94f93d1-43cd-41a1-aed8-d650363e2cc0.png)
+
+Để ý ở đoạn code thứ 2, khi tra truyền giá trị vào tham số format, nó sẽ đi qua hàm addslashes, **$this->format = addslashes($format);** - phương thức addslashes() trong PHP được sử dụng để thêm ký tự backslash (\) trước các ký tự đặc biệt trong một chuỗi, như các ký tự nháy đơn ('), nháy kép ("), backslash (\) và NULL (\0). Để ý hàm exec ở dưới, tức bài muốn ngăn ta không thực thi các câu lệnh với các dấu như ",' . Vậy hướng đi của ta bây giờ là sẽ bypass hàm addslashes này, để có thể thực thi được lệnh hệ thống. Trước hết ta thử thực thi lệnh mà kh cần dùng đến ",',\. Chẳng hạn phpinf() với việc thông qua dùng một lệnh tương tự như đô la thần chưởng bên js: 
+**${phpinfo()}**
+        
+![image](https://user-images.githubusercontent.com/104350480/233665878-be5d7b8b-a0cc-468a-9b82-490cc4f7ee7b.png)
+
+Thực hiện được luôn, giờ ta muốn thực hiện cmd trong hệ thống, thì cú pháp sẽ là <?php system("ls");?> tuy vậy thì cú pháp này không thực thi được, ta sẽ thay thế bằng $, ${system("ls")}, lệnh này cũng không vì vẫn có dấu "". Ở đây có 1 trick là ta có thể dùng $_GET trong php như một mảng kết hợp chứa các tham số được truyền vào từ URL, ta có thể định danh nó bằng việc dùng nó như 1 mảng. Chẳng hạn $_GET[0]&0=ls sẽ thay thế cho "ls". Ta thực thi lệnh như sau: 
+
+![image](https://user-images.githubusercontent.com/104350480/233667494-22782f6d-3786-4aa4-ac2c-f576ab0e8839.png)
+
+Ta thực thi thành công, giờ ta sẽ dùng lệnh find tìm nơi chứa flag luôn: find / -name "flag*"
+        
+![image](https://user-images.githubusercontent.com/104350480/233667674-e08a13d3-abd9-4fc1-951b-3a8dad532eb5.png)
+
+Giờ cat flag nữa là xong: 
+
+![image](https://user-images.githubusercontent.com/104350480/233667789-25497a69-517f-4e89-b045-d0c8c5a9e1ef.png)
+
+> FLag: HTB{wh3n_l0v3_g3ts_eval3d_sh3lls_st4rt_p0pp1ng}
+
+     
