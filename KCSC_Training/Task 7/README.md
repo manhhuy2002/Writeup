@@ -8,6 +8,12 @@
 * [7. xss-terminator](#7)
 * [8. avenge-my-password](#8)
 
+# Hack the box: 
+
+* [1. Templated](#htb1)
+* [2. Neonify](#htb2)
+* [3. LoveTok](#htb3)
+
 ## [1. put-the-cookie-down](https://jerseyctf-put-the-cookie-down.chals.io/)<a name="1"></a>
 
 Ctrl Shilft I ta được:
@@ -260,7 +266,7 @@ for username in usernames:
 
 # Hack The Box Lab 
 
-## [1. Templated]
+## [1. Templated]<a name="htb1"></a>
 
 ```
 
@@ -310,7 +316,7 @@ Cái trên dưới là tương tự nhau nhưng cái dưới là bản shortcut 
 
 
 
-## 2. Neonify
+## [2. Neonify]<a name="htb2"></a>
 
 ```
 It's time for a shiny new reveal for the first-ever text neonifier. Come test out our brand new website and make any text glow like a lo-fi neon tube!
@@ -398,7 +404,7 @@ Giờ tìm vị trí chứa flag nữa là xong: thay bằng lệnh **find / -na
         
 > Flag: HTB{r3pl4c3m3n7_s3cur1ty}
     
-## 3. LoveTok
+## [3. LoveTok]<a name="htb3"></a>
         
 Giao diện của bài: 
         
