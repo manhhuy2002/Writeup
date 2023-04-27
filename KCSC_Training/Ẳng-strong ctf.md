@@ -96,7 +96,8 @@ Thử nhập bất kì thì sẽ báo là lỗi, Ctrl U ta được source code:
         
  ```
  
- Phân tích qua thì có thể thấy nếu ta nhập tên username là admin và ở trường password ta nhập vào 1 giá trị sao cho sau khi thực hiện chunk và swap mà ra được giá trị **7e08250c4aaa9ed206fd7c9e398e2}actf{cl1ent_s1de_sucks_544e67ef12024523398ee02fe7517fffa92516317199e454f4d2bdb04d9e419ccc7** ta sẽ login thành công, còn kh thì trả về 1 message báo lỗi. Ở đây hàm chunk nhận 2 tham số, với tham số đầu tiên là chuỗi nhập vào và tham số thứ 2 để phân tách chuỗi của ta thành các đoạn có độ dài 30 kí tự, và trả về mảng chứa giá trị ban đầu, ở đây có 120 kí tự nên được chia thành 4 đoạn. Tiếp theo là dùng hàm swap để hoán đổi vị trí của nó. Giờ ta chỉ cần viết script ngược lại để trả về giá trị cần tìm là được: 
+ Phân tích qua thì có thể thấy nếu ta nhập tên username là admin và ở trường password ta nhập vào 1 giá trị sao cho sau khi thực hiện chunk và swap mà ra được giá trị **7e08250c4aaa9ed206fd7c9e398e2}actf{cl1ent_s1de_sucks_544e67ef12024523398ee02fe7517fffa92516317199e454f4d2bdb04d9e419ccc7** ta sẽ login thành công
+ Còn kh thì trả về 1 message báo lỗi. Ở đây hàm chunk nhận 2 tham số, với tham số đầu tiên là chuỗi nhập vào và tham số thứ 2 để phân tách chuỗi của ta thành các đoạn có độ dài 30 kí tự, và trả về mảng chứa giá trị ban đầu, ở đây có 120 kí tự nên được chia thành 4 đoạn. Tiếp theo là dùng hàm swap để hoán đổi vị trí của nó. Giờ ta chỉ cần viết script ngược lại để trả về giá trị cần tìm là được: 
  
  ```
  
