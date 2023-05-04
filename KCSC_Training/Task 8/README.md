@@ -1,67 +1,21 @@
-xss sql injection logic business authentication xml 
-
-# xxe - xml external entity
-
-## xxe vul là gì?
-
-## xml external entity(xxe) vul xảy ra khi một ứng dụng web hoặt api chấp nhận dữ liệu xml đầu vào chưa được làm sạch và phần xử lí bên backend xml parser được cấu hình cho phép external xml entity parsing. ( là quá trình sử dụng các thực thể external xml trong quá trình phân tích tài liệu xml, khi một tài liệu xml được phân tích, các xml entity có thể được sử dụng để giải ãm các tham chiếu đến tài liệu hoặc dữ liệu external)
-## DTDs và xml entities
-
-- Trước khi một xml parser có thể xử lí xml input, ta cần khai báo cấu trúc của tài liệu đầu vào hợp lệ. 
-- Trong tài liệu xml, các thực thể xml là các tham số đại diện cho các ký tự khó nhập hoặc đặc biệt. Các entities được định nghĩa trong 1 DTD (document type definition) bằng các sử dụng phần tử <!ENTITY>. Để tham chiếu đến một thực thể đã được định nghĩa, ta sử dụng tên của nó kèm theo dấu & ở trước và dấu ; ở đằng sau. Ví dụ nếu ta định nghĩa một thực thể có tên là "logo" trong DTD, thì để sử dụng thực thể này, ta có thể sử dụng &logo; . Khi tài liệu xml được phân tích, các thực thể sẽ được thay thế bằng các giá trị thực tế tương ứng của chúng.  
-Tóm lại các thực thể xml là các tham số đại diện cho các ký tự khó nhập hoặc có ý nghĩa đặc biệt và được sử dụng để giúp cho việc tạo tài liệu xml trở nên dễ dàng hơn.
+# Ta sẽ đi tìm hiểu cơ bản nhất về leo thang đặc quyền trong linux: 
 
 
+## what is shell? 
 
-## Các phương thức leo thang đặc quyền trên linux
+Trước khi đi vào chi tiết về gửi và nhận shell, điều quan trọng là phải hiểu rõ shell là gì? Hiểu đơn giản thì shell là công cụ để tương tác với môi trường Command Line Interface (CLI). Nói cách khác, các chương trình bash hoặc sh trong Linux và cmd.exe và Powershell trên Windows đều là các ví dụ về shell. Khi tấn công các hệ thống từ xa, đôi khi có thể ép một ứng dụng đang chạy trên máy chủ (ví dụ như một máy chủ web) để thực thi mã nguồn tùy ý. Khi điều này xảy ra, chúng ta muốn sử dụng quyền truy cập ban đầu này để có được shell chạy trên mục tiêu.
 
-Kĩ thuật 1: từ user thấp leo thang đặc quyền lên user có đặc quyền cao, khi user được nằm trong 
-một root đặc biệt như docker
-
-Đầu tiên ta tạo 1 user có đặc quyền thấp và sau đó cho user này nằm trong nhóm docker và bắt đầu tiến hành leo thang đặc quyền lên:
-
-Chuẩn bị: 
-
-```
-apt install docker.io
-
-```
-
-![image](https://user-images.githubusercontent.com/104350480/236109979-63cb7e23-b73f-4e86-958b-1a9bdfc30852.png)
-
-Sau đó ta thêm 1 user với cmd: useradd -m user1
-
-![image](https://user-images.githubusercontent.com/104350480/236112189-52c14929-0175-4f11-8673-9be3e7aaff8b.png)
-
-![image](https://user-images.githubusercontent.com/104350480/236112283-ba778ab5-97fc-403d-8cda-7940b18baf81.png)
+Đơn giản là, chúng ta có thể ép buộc máy chủ từ xa gửi cho chúng ta quyền truy cập dòng lệnh vào máy chủ (reverse shell), hoặc mở cổng trên máy chủ mà chúng ta có thể kết nối để thực thi các lệnh tiếp theo (bind shell).
 
 
-Từ đây ta sẽ cố gắng leo lên quyền root. Đối với môi trường máy host thì user1 không có  quyền hạn gì, nhưng khi chạy 1 container bất kì thì user này có khả năng mount dữ liệu từ máy host sang 1 container, mà trong 1 container thì user1 lại có toàn quyền. 
-Ta sẽ tạo một container chạy hệ điều hành alpine: docker -it -v /:/linux alpine , -it interactive terminal cho phép ta tương tác với container qua terminal, -v /:/linux, tham số này  chỉ định một kết nối giữa thư mục bên máy host và thư mục linux trong container, ta để : là lấy tất. Sau khi chạy xong ta sẽ được như sau:
+## Tools
 
-![image](https://user-images.githubusercontent.com/104350480/236121937-abb2a65e-2e69-47ca-aea8-a7d271423091.png)
+Có rất nhiều loại tool khác nhau được sử dụng để nhận một kết nối một reverse shell và gửi kết nối bind shell. Tổng thể, ta cần mã malicious shell cùng với cách tương tác với resulting shell. Resulting shell ở đây là shell mà chúng ta đã tạo ra và truy cập được sau khi tấn công thành công một hệ thống bằng mã malicious shell. Ta sẽ nói chi tiết hơn ở dưới đây: 
 
-Vói hostname là containerid. vào thư mục linux ta sẽ thấy tất cả các dữ liệu đã được mount từ root sang, giờ ta sẽ có vai trò như root và có thể đọc cũng như chỉnh sửa bất kì dữ liệu gì: 
+### reverse shells and bind shells
 
-![image](https://user-images.githubusercontent.com/104350480/236122163-6a2c108b-6e56-4a0d-94b3-03e89e5b00c6.png)
+Reverse shells là khi mục tiêu bị buộc phải thực thi mã kết nối lại với máy tính của ta. Bằng việc sử dụng netcat hoặc socat để thiết lập một trình nghe được sử dụng để kết nối. Reverse shell là 1 phương án để bypass các quy tắc tưởng lửa ngăn chặn ta kết nối đến các cổng tùy ý trên mục tiêu. Ở cái này thì ta sẽ phải cấu hình mạng một chút, thông thường thì mình làm qua ngrok.
 
-Leo thang đặc quyền ở đây chỉ là việc ta sẽ sửa đổi file /etc/shadow 1 chút, sửa phần pass của root để thành trắng và ta sẽ có thể chuyển sang root mà kh cần mật khẩu từ 1 user bất kì: 
+Bind shells là khi code đã thực thi trên mục tiêu được sử dụng để bắt đầu một trình nghe đưuọc gắn liền với một shell trực tiếp trên mục tiêu. Sau đó trình nghe sẽ được mở ra cho internet, nghĩa là ta có thể kết nối đến cổng mà mã đã mở và thực thi rce. Cái này thì ta sẽ không phải cấu hình gì trên mạng của mình nhưng mà lại dễ bị ngăn chặn bởi tường lửa của mục tiêu. 
 
-![image](https://user-images.githubusercontent.com/104350480/236122317-d2d75bd5-8d3c-424c-b7e8-5e2d33f3247b.png)
-
-Giờ thoát ra khỏi container và về user1 ban đầu:
-
-![image](https://user-images.githubusercontent.com/104350480/236122473-45f9eec6-b576-409b-9cbb-6109a577061e.png)
-
-Ta sẽ leo thang thành công mà không cần nhập mật khẩu. 
-
-
-## 
-
-
-
-
-
-
-
-
+Ví dụ cụ thể thì chẳng hạn một hacker muốn xâm nhập vào hệ thống mạng của một công ty, trong đó có một máy chủ web đang chạy trên cổng 80 và máy tính của hacker đang chạy trên địa chỉ ip công cộng lầ 123.45.67.89 chẳng hạn, thì để tấn công vào máy chủ web, hacker có thể sử dụng một lỗ hổng bảo mật trên máy chủ để tải xuống và thực thi mã độc, cho phép hacker thực hiện các lệnh trên máy chủ. Tuy nhiên để tạo một kết nối đến máy chủ hacker, hai phương án được thực thi ở đây sẽ là reverse shell và bind shell. Nếu hacker sử dụng revershell, mã độc sẽ bắt máy chủ web kết nối đến máy tính của hacker tại địa chỉ ip public 123.45.67.89 và cổng được chỉ định bởi hacker ví dụ 1234 đ biết phải không nhưng
