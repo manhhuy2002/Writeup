@@ -129,4 +129,30 @@ Mục đích của bài lab này là leo thang đặc quyền và đọc đượ
 
 Dùng lệnh find như trên mà tìm kiếm được vị trí, giờ ta cần leo lên root để đọc file này, như gợi ý đề bài thông qua kernel exploits, và ở phần trước nó cũng cho mình một gợi ý khi tìm thông tin về cve của kernel, với kernel là 3.13.0-24-generic thì search mạng ta được cve là : CVE-2015-1328.
 
-Vì vậy ta chỉ cần lên mạng search thêm exploit là xong, 
+Vì vậy ta chỉ cần lên mạng search thêm exploit là xong, vấn đề là tryhackme chỉ cho phép down dữ liệu thông qua mạng openvpn họ cấp nên ta sẽ down về máy mình rồi dựng server lên rồi wget qua nó vậy. 
+
+> link tải về: https://www.exploit-db.com/exploits/37292
+
+Mà tải về chỉ được 1 file là 37292 với loại tập tin với mã nguồn c, ta mv sang file .c với thành 37292.c . Sau đó dùng lệnh gcc để cấp quyền, sau đó ta sử dụng lệnh **gcc 37292.c -o flag** biên dịch mã nguồn C trong tập tin 37292.c thành một chương trình có thể thực thi được và lưu vào tập tin có tên là flag.
+
+Sau đó ta chỉ cần thực thi lệnh để chuyển sang root, code này mình chắc để học thêm rồi phân tích sau chứ nhìn hơi choáng 🧔
+
+![image](https://user-images.githubusercontent.com/104350480/236413652-f16c4c6b-54ca-45b6-84cd-56bc752399e7.png)
+
+
+Ta được flag: 
+
+![image](https://user-images.githubusercontent.com/104350480/236411774-45af7a77-3a81-4461-bc2b-776feac9a3db.png)
+
+
+<hr> 
+
+
+## Task 6: Privilege Escalation: Sudo
+
+Mình sẽ tóm gọn lại nội dung của phần task này trên tryhackme
+
+Đầu tiên giới thiệu về sudo, thì ta có thể hiểu đơn giản là lệnh sudo cho phép ta chạy với đặc quyền root, thông thường thì phải có mật khẩu hoặc được cấp để sử dụng nó. Tuy vậy thì trong thực tế, các admin có thể cần cấp cho người dùng thông thường một số độ linh hoạt về quyền hạn. Ví dụ, một nhân viên phân tích SOC mới có thể cần sử dụng Nmap thường xuyên nhưng không được cấp quyền truy cập root đầy đủ. Trong trường hợp này, quản trị viên hệ thống có thể cho phép người dùng này chỉ chạy Nmap với quyền root trong khi giữ nguyên cấp độ đặc quyền thông thường trong phần còn lại của hệ thống. Thông thường có thể kiểm tra nó bằng lệnh sudo -l để biết user đó có được cấp gì 
+
+
+
