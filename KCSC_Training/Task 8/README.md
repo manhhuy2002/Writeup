@@ -83,6 +83,8 @@ Muốn lấy ngắn gọn danh sách các người dùng trong hệ thống ta c
 
 **history**: lệnh history có thể được sử dụng để gợi ý cho ta về các lệnh trước đó đã được sử dụng trên hệ thống mục tiêu và có thể cung cấp cho chúng ta một số ý tưởng về hệ thống đó và đôi khi có thể lưu trữ thông tin như mật khẩu hoặc tên người dùng. 
 
+<hr> 
+
 **find**: lệnh find này cũng khá thường xuyên được sử dụng để tìm kiếm flag hoặc file gì đó mà ta quên hoặc chưa biết vị trí, và đôi khi có thể được dùng để leo thang đặc quyền, mình sẽ demo sau. 
 Cụ thể thì ta có ví dụ: 
 find . -name flag.txt: tìm file có tên là flag.txt ở thư mục hiện tại trở đi. 
@@ -106,6 +108,7 @@ perm trong lệnh find là tùy chọn dùng để tìm kiếm các tập tin ho
 lệnh dùng để tìm các thư mục có quyền ghi, trong đó thì 2>/dev/null là một đoạn ghi đè (redirection) đầu ra của lệnh, có nghĩa là đầu ra thông báo lỗi của lệnh sẽ không được hiển thị trên màn hình mà sẽ được gửi đến thiết bị /dev/null (thiết bị này không lưu trữ dữ liệu và không trả về gì khi được ghi vào). Ký tự 2 ở đây tượng trưng cho đầu ra lỗi (stderr), trong khi > là toán tử redirection để chuyển đầu ra sang một tệp hoặc thiết bị khác. Bằng cách này, nếu có bất kỳ lỗi nào xảy ra khi chạy lệnh find, chúng sẽ không được hiển thị trên màn hình và sẽ bị loại bỏ hoàn toàn.
 
 <hr> 
+
 **SUID**: viết tắt của set user id. Khi một tệp có quyền SUID được thực thi, nó được thực thi với đặc quyền của chủ sở hữu của nó thay vì người dùng thực thi nó. Ví dụ, nếu một tệp có quyền SUID được sở hữu bởi người dùng "root" và được thực thi bởi một người dùng khác, nó sẽ chạy với đặc quyền "root" thay vì đặc quyền của người dùng thực thi nó.
 Ta cũng có thể dùng lệnh find để tìm kiếm các file này: **find / -perm -u=s -type f 2>/dev/null**
 Trong đó thì -u=s ở đây sẽ tìm kiếm quyền SUID được thiết lập cho người sở hữu của tập tin, và ta có thể dùng nó để leo thang đặc quyền. 
