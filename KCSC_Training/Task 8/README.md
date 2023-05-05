@@ -152,7 +152,30 @@ Ta được flag:
 
 Mình sẽ tóm gọn lại nội dung của phần task này trên tryhackme
 
-Đầu tiên giới thiệu về sudo, thì ta có thể hiểu đơn giản là lệnh sudo cho phép ta chạy với đặc quyền root, thông thường thì phải có mật khẩu hoặc được cấp để sử dụng nó. Tuy vậy thì trong thực tế, các admin có thể cần cấp cho người dùng thông thường một số độ linh hoạt về quyền hạn. Ví dụ, một nhân viên phân tích SOC mới có thể cần sử dụng Nmap thường xuyên nhưng không được cấp quyền truy cập root đầy đủ. Trong trường hợp này, quản trị viên hệ thống có thể cho phép người dùng này chỉ chạy Nmap với quyền root trong khi giữ nguyên cấp độ đặc quyền thông thường trong phần còn lại của hệ thống. Thông thường có thể kiểm tra nó bằng lệnh sudo -l để biết user đó có được cấp gì 
+Đầu tiên giới thiệu về sudo, thì ta có thể hiểu đơn giản là lệnh sudo cho phép ta chạy với đặc quyền root, thông thường thì phải có mật khẩu hoặc được cấp để sử dụng nó. Tuy vậy thì trong thực tế, các admin có thể cần cấp cho người dùng thông thường một số độ linh hoạt về quyền hạn. Ví dụ, một nhân viên phân tích SOC mới có thể cần sử dụng Nmap thường xuyên nhưng không được cấp quyền truy cập root đầy đủ. Trong trường hợp này, quản trị viên hệ thống có thể cho phép người dùng này chỉ chạy Nmap với quyền root trong khi giữ nguyên cấp độ đặc quyền thông thường trong phần còn lại của hệ thống. Thông thường có thể kiểm tra nó bằng lệnh sudo -l để biết user đó có được cấp gì quyền root hay không. 
 
+> Một trang web khá hay về leo thang đặc quyền: https://gtfobins.github.io/
 
+![image](https://user-images.githubusercontent.com/104350480/236420250-c1316746-e308-4802-b64d-5b6f2636f187.png)
 
+Như ở đây là karen đang có 3 quyền thực thi root trên find, less và nano, ta cũng có thể làm tương tự điều này bằng cách thêm 1 user và thêm quyền vào trong file /etc/sudoers và tự khai thác để hiểu hơn về cách thức, nhưng ta sẽ khai thác ở đây luôn. 
+
+Đầu tiên đối với nano ta có thể leo thang bằng cách: mở nano lên và ctrl R ctrl X rồi nhập reset; sh 1>&0 2>&0 là ta sẽ lên root và thực thi được lệnh trong nano luôn. Sau đấy thì có thể đọc file flag2.txt như bình thường. Trong đó thì khi ta sử dụng ctrl R và ctrl X nó cho phép ta sử dụng tính năng "execute-command" của nano. Khi nhập "reset; sh 1>&0 2>&0" vào đó và nhấn Enter, lệnh "reset" sẽ xóa bảng điều khiển của ta và chuẩn bị màn hình cho một lệnh mới. Sau đó, lệnh "sh" sẽ chạy, đưa bạn vào chế độ shell với quyền root, do đó bạn có thể thực hiện các hành động với quyền root
+
+![image](https://user-images.githubusercontent.com/104350480/236421661-30931255-fb7f-4560-85d8-216a0f946945.png)
+
+Trước mình cũng nhìn mấy lệnh này nhưng cũng kh hiểu nó lắm, nhất là 1>&0 và 2>&0 thì 1>&0 và 2>&0 ở đây là các lệnh redirect trên linux, nó có chức năng đưa ra đầu ra tiêu chuẩn stdout và đầu ra lỗi stderr của một chương trình về cùng địa chỉ với đầu vào tiêu chuẩn (stdin). Trong trường hợp này, 1>&0 và 2>&0 được sử dụng để đưa đầu ra tiêu chuẩn và đầu ra lỗi của shell script đang chạy về địa chỉ tương đương với đầu vào tiêu chuẩn, tức là đưa chúng về terminal hiện tại. Khi đó, shell sẽ đưa đầu vào của người dùng (input) vào terminal, và các lệnh trong shell script sẽ được thực thi với quyền root.
+
+Tương tự ta cũng có thể làm điều đó với lệnh find, với cmd để leo thang: **sudo find . -exec /bin/sh \; -quit**. Ở đây thay vì dùng để tìm kiếm như thông thường thì nó tìm kiếm được file nào cái thì nó sẽ dùng -exec /bin/sh để thực thi 1 shell và leo lên quyền root. \; để kết thúc lệnh này và khi tìm thấy và thực thi thì nó sẽ quit ngay lập tức với -quit. 
+
+Tương tự với less:
+
+```
+sudo less /etc/profile
+!/bin/sh
+
+Dùng ! để thực thi 1 shell khác với quyền root và ở đây là shell /bin/sh (/bin/sh là một loại shell Unix standard, được sử dụng để thực thi các lệnh trên hệ thống Unix-like. Shell này cung cấp một giao diện dòng lệnh cho người dùng để tương tác với hệ thống).
+```
+Tương tự ta có thể thực thi nhiều loại khác nữa miễn là được cấp quyền thì hoàn toàn có thể leo thang. 
+
+Trong phần này còn có cái Leverage LD_PRELOAD mình chưa hiểu lắm, nhưng ở sau mình sẽ thực thi demo, kiểu gì cũng phải hiểu =)))
