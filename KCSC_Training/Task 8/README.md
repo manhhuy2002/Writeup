@@ -187,9 +187,10 @@ Tiếp tục đến với phần SUID, ở phần này sẽ kh còn liên quan �
 
 ![image](https://user-images.githubusercontent.com/104350480/236432185-be612a79-31d5-4bb7-8f75-94b5f93ce418.png)
 
-Nhắc lại, SUID (set user identification là một thuộc tính trên các tập tin trên hệ thống Linux/Unix, cho phép tập tin được thực thi với đặc quyền của chủ sở hữu của nó thay vì người dùng thực thi nó.Khi một tập tin được đặt thuộc tính SUID, nó sẽ được thực thi với đặc quyền của chủ sở hữu của tập tin đó thay vì người dùng thực thi nó. Ví dụ, nếu tập tin đó thuộc về người dùng có quyền root, khi được thực thi, tập tin sẽ được thực thi với quyền root thay vì quyền người dùng thực thi nó.
+Nhắc lại, SUID (set user identification) là một thuộc tính (bit) trên các tập tin trên hệ thống Linux/Unix, cho phép tập tin được thực thi với đặc quyền của chủ sở hữu của nó thay vì người dùng thực thi nó. Khi một tập tin được đặt thuộc tính SUID, nó sẽ được thực thi với đặc quyền của chủ sở hữu của tập tin đó thay vì người dùng thực thi nó. Ví dụ, nếu tập tin đó thuộc về người dùng có quyền root, khi được thực thi, tập tin sẽ được thực thi với quyền root thay vì quyền người dùng thực thi nó.
 
 Có thể dùng lệnh **find / -type f -perm -04000 -ls 2>/dev/null** để liệt kê ra các file có cài đặt SUID và SGID trong hệ thống (Bit SUID được thiết lập bằng cách sử dụng số octal 4xxx ). 
 
 ![image](https://user-images.githubusercontent.com/104350480/236434183-ef4f1808-5284-4eaa-bb1c-99340c5fbde2.png)
 
+Chẳng hạn nếu ở đây nano thuộc sở hữu của người dùng root, ta có 2 option để có thể leo thang đặc quyền một là đọc file /etc/shadow 2 là thêm 1 user vào /etc/passwd. Nhưng ở đây kh có nano, ta sẽ tìm kiếm 1 lệnh khác. 
