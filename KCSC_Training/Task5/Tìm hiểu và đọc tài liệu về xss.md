@@ -1,5 +1,0 @@
-# Giới thiệu về Xss - cross-site scripting
-**Cross-site scripting** là một kiểu tấn công được sử dụng để giành quyền truy cập vào trình duyệt của nạn nhận thông qua lỗ hổng trong webapp, giành được quyền truy cập vào các thông tin riêng tư và nhạy cảm của người dùng. Cụ thể hơn xss là 1 dạng tấn công code injection mà xảy ra ở phía client. Nó cho phép kẻ tấn công phá vỡ các quy tắc **SOP** (same origin policy) mà để tách biệt các trang web với nhau.
-```
-Nói rõ hơn về SOP (same origin policy), SOP là 1 chính sách bảo mật trong trình duyệt web được tạo ra để ngăn chặn việc các tài nguyên web ( như cookies, XMLHttpRequests, DOM) được truy cập bởi các trang web không cùng thuộc 1 nguồn gốc(origin). Ở đây được coi là cùng 1 nguồn gốc khi bao gồm domain, giao thức và port. SOP sẽ đảm bảo rằng khi một tài nguyên web được yêu cầu từ trang web thi trình duyệt sẽ chỉ cho phép truy cập nếu nguồn request trùng  khớp với nguồn của tài nguyên web. Nếu không khớp, trình duyệt sẽ từ chối cho phép truy cập và bảo vệ người dùng khỏi việc truy cập trái phép các tài nguyên của họ.
-```
