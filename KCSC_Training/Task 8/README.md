@@ -111,4 +111,22 @@ lệnh dùng để tìm các thư mục có quyền ghi, trong đó thì 2>/dev/
 
 **SUID**: viết tắt của set user id. Khi một tệp có quyền SUID được thực thi, nó được thực thi với đặc quyền của chủ sở hữu của nó thay vì người dùng thực thi nó. Ví dụ, nếu một tệp có quyền SUID được sở hữu bởi người dùng "root" và được thực thi bởi một người dùng khác, nó sẽ chạy với đặc quyền "root" thay vì đặc quyền của người dùng thực thi nó.
 Ta cũng có thể dùng lệnh find để tìm kiếm các file này: **find / -perm -u=s -type f 2>/dev/null**
-Trong đó thì -u=s ở đây sẽ tìm kiếm quyền SUID được thiết lập cho người sở hữu của tập tin, và ta có thể dùng nó để leo thang đặc quyền. 
+Trong đó thì -u=s ở đây sẽ tìm kiếm quyền SUID được thiết lập cho người sở hữu của tập tin, và ta có thể dùng nó để leo thang đặc quyền.
+
+> Một số link tools hay: LinPeas: https://github.com/carlospolop/privilege-escalation-awesome-scripts-suite/tree/master/linPEAS
+LinEnum: https://github.com/rebootuser/LinEnum
+LES (Linux Exploit Suggester): https://github.com/mzet-/linux-exploit-suggester
+Linux Smart Enumeration: https://github.com/diego-treitos/linux-smart-enumeration
+Linux Priv Checker: https://github.com/linted/linuxprivchecke
+
+
+<hr> 
+
+Đầu tiên ta sẽ đi vào phần khai thác Privilege Escalation: Kernel Exploits
+Mục đích của bài lab này là leo thang đặc quyền và đọc được file flag1.txt
+
+![image](https://user-images.githubusercontent.com/104350480/236391599-11e835ca-b5d4-4340-afb1-df6b44b4060f.png)
+
+Dùng lệnh find như trên mà tìm kiếm được vị trí, giờ ta cần leo lên root để đọc file này, như gợi ý đề bài thông qua kernel exploits, và ở phần trước nó cũng cho mình một gợi ý khi tìm thông tin về cve của kernel, với kernel là 3.13.0-24-generic thì search mạng ta được cve là : CVE-2015-1328.
+
+Vì vậy ta chỉ cần lên mạng search thêm exploit là xong, 
