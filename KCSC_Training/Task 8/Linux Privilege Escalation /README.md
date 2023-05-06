@@ -170,4 +170,70 @@ Có thể dùng lệnh **find / -type f -perm -04000 -ls 2>/dev/null** để li�
 
 ![image](https://user-images.githubusercontent.com/104350480/236434183-ef4f1808-5284-4eaa-bb1c-99340c5fbde2.png)
 
-Chẳng hạn nếu ở đây nano thuộc sở hữu của người dùng root, ta có 2 option để có thể leo thang đặc quyền một là đọc file /etc/shadow 2 là thêm 1 user vào /etc/passwd. Nhưng ở đây kh có nano, ta sẽ tìm kiếm 1 lệnh khác. 
+Chẳng hạn nếu ở đây nano thuộc sở hữu của người dùng root, ta có 2 option để có thể leo thang đặc quyền một là đọc file /etc/shadow 2 là thêm 1 user vào /etc/passwd. Nhưng ở đây kh có nano, ta sẽ tìm kiếm 1 lệnh khác. Tuy vậy ở đây ta có base64 đang được set ở chế độ SUID:
+
+![image](https://user-images.githubusercontent.com/104350480/236629441-16a7455d-d17d-48eb-8052-b6da6f939956.png)
+
+Ta sẽ thực thi lệnh và phân tích shell: 
+
+Đầu tiên là lệnh: **LFILE=file_to_read** LFILE ở đây dùng để gán thôi nên dùng cái gì cũng được, file ta sẽ đọc ở đây chẳng hạn là /etc/shadow
+Sau đó dùng cmd: **base64 "$LFILE" | base64 --decode** để thực thi mã hóa base64 và giải mã nso rồi hiển thị ra màn hình, ta được:
+
+![image](https://user-images.githubusercontent.com/104350480/236629794-195753aa-8a19-4d51-a0ed-8a651b8e0cb8.png)
+
+Từ đây ta có password của user2 là: 
+
+> $6$m6VmzKTbzCD/.I10$cKOvZZ8/rsYwHd.pE099ZRwM686p/Ep13h7pFMBCG4t7IukRqc/fXlA1gHXh9F2CbwmD4Epi1Wgh.Cl.VV1mb/
+
+Vì ta cần dạng rõ nên ta sẽ dùng 1 tool khá hay dùng là john th ripper để crack khóa này, cái này thì ta ném qua bên terminal của mình để chạy thôi. 
+
+![image](https://user-images.githubusercontent.com/104350480/236630325-4b1ac778-adba-4cb5-80a2-0d56d3787172.png)
+
+Chạy cái ta được password: Password1
+
+Còn giờ muốn đọc flag ta chỉ cần dùng base64 để đọc file flag3.txt là được: 
+
+![image](https://user-images.githubusercontent.com/104350480/236630812-9541a064-f989-474d-bb6d-77df95fe61a4.png)
+
+> THM-3847834
+
+<hr> 
+
+## Privilege Escalation: Capabilities
+
+Ta sẽ tiếp tục với 1 cách thức khác để leo thang đặc quyền,  phương thức ở đây là Capabilities. Capabilities giúp quản lí các đặc quyền một cách chi tiết hơn.
+Nó là một quyền đặc biệt của tiến trình, cho phép thực hiện một số thao tác đặc biệt mà không cần đầy đủ quyền root của hệ thống. 
+
+Các capabilities có 2 loại chính phân chia dựa trên phạm vi là: Effective (hiệu lực) và Inheritable (kế thừa)
+
+- Effective Capabilities: Chỉ định các Capabilities mà một tiến trình đang sử dụng khi thực hiện một hành động cụ thể. Nếu một tiến trình không có Effective Capability để thực hiện một hành động, thì hành động đó sẽ bị từ chối.
+- Inheritable Capabilities: Cho phép các Capabilities được truyền từ tiến trình cha sang tiến trình con. Với Inheritable Capabilities, một tiến trình con có thể được cấp quyền để thực hiện một số hành động đặc biệt, mà không cần đầy đủ quyền đặc quyền của hệ thống.
+
+Trong bài lab này ta sẽ thấy vim và view được cấp 1 giá trị của capabilities là cap_setuid+ep, được sử dụng để cấp quyền đặc biệt cho một chương trình, ta sẽ phân tích chi tiết thành phần này để biết ta leo thang nó dựa trên việc thay đổi gì: 
+- Trước hết thì cap_setuid là một capability cho phép một chương trình thay đổi UID hiện tại của mình (tức là có thể đặt UID mới cho quá trình thực thi). Vì vậy, khi một chương trình được cấp quyền cap_setuid, nó có thể thực thi với đặc quyền của một người dùng khác hoặc thực thi dưới đặc quyền của người dùng root.
+- Tiếp theo ep: là một thuộc tính được gọi là "effective". Khi một chương trình được cấp quyền với thuộc tính ep, nó có quyền thực thi các hành động có sẵn trong capability mà không cần bất kỳ giới hạn nào.
+
+> Ta có thể kết luận ở đây: cap_setuid+ep, chương trình được cấp quyền để thay đổi UID của mình và có thể thực thi mọi hành động được cho phép trong capability đó mà không gặp bất kỳ giới hạn nào. Điều này cho phép chương trình thực thi dưới quyền root và thực hiện các hành động khác đòi hỏi đặc quyền của root, như là đọc, ghi hoặc thay đổi các tập tin không thể truy cập được bởi người dùng thông thường.
+
+Oke giờ vào phân tích bài cũng như thực thi cmd thôi: 
+
+Trước hết ở đây ta dùng tool getcap để hiển thị hoặc gán các capabilities được áp dụng trong các tệp và thư mục trong hệ thống tệp của linux, vì nó sẽ sinh ra khá là nhiều lỗi nên ở đây ta sẽ dùng thêm 2>/dev/null để chuyển hết lỗi sang thiết bị null, còn -r khá quen rồi: recursive để duyệt các thư mục con: 
+cmd: **getcap / -r 2>/dev/null**
+
+![image](https://user-images.githubusercontent.com/104350480/236633253-8dc5703a-6e8d-4261-9b12-88a54c3b3c22.png)
+
+Ở đây dùng link này **https://gtfobins.github.io/** tìm thử xem có capabilities nào không: thì search ta được có vim và view đều có:
+chạy cmd của nó là được, cả 2 cái đều chạy lệnh giống nhau, sửa mỗi py thành py3 vì máy của karen chưa cài thì phải, thế là mình sẽ sang được root: 
+
+> ./vim -c ':py3 import os; os.setuid(0); os.execl("/bin/sh", "sh", "-c", "reset; exec sh")'
+
+> ./view -c ':py3 import os; os.setuid(0); os.execl("/bin/sh", "sh", "-c", "reset; exec sh")'
+
+Lệnh này thì ta có thể phân tích như này để nhớ: lệnh này nó thực thi mã python trên hệ thống và leo thang đặc quyền, :py3 là 1 tiền tố để chỉ rằng :py là một tiền tố để chỉ ra rằng đây là mã Python3 cần thực thi. import os; là lệnh để nhập thư viện os của Python. os.setuid(0); là lệnh để đặt UID hiện tại của tiến trình thành 0, tức là đặt UID thành root. Còn os.execl() để thực thi 1 shell (chương trình /bin/sh) với 2 đối số là "sh" và "-c", -c ở đây sẽ là một chuỗi lệnh được thực thi tiếp theo là ***reset; exec sh*** được sử dụng để xóa bất kỳ nội dung nào hiển thị trên màn hình console, sau đó tiếp tục thực thi shell với quyền đặc quyền, nó gần giống vụ nano được cấp root ấy. Hiểu đơn giản hơn thì sẽ là:  /bin/bash là đường dẫn tới shell được sử dụng để thực thi các lệnh trong hàm, shell ở đây có các command là "reset; exec sh", và thế là ta leo quyền. 
+
+Sau khi leo thang thì ta sẽ hoàn thành bài lab với vai trò là root thôi. 
+
+
+<hr> 
+
+
