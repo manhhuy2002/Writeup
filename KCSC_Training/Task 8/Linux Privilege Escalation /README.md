@@ -204,10 +204,7 @@ Còn giờ muốn đọc flag ta chỉ cần dùng base64 để đọc file flag
 Ta sẽ tiếp tục với 1 cách thức khác để leo thang đặc quyền,  phương thức ở đây là Capabilities. Capabilities giúp quản lí các đặc quyền một cách chi tiết hơn.
 Nó là một quyền đặc biệt của tiến trình, cho phép thực hiện một số thao tác đặc biệt mà không cần đầy đủ quyền root của hệ thống. 
 
-Các capabilities có 2 loại chính phân chia dựa trên phạm vi là: Effective (hiệu lực) và Inheritable (kế thừa)
-
-- Effective Capabilities: Chỉ định các Capabilities mà một tiến trình đang sử dụng khi thực hiện một hành động cụ thể. Nếu một tiến trình không có Effective Capability để thực hiện một hành động, thì hành động đó sẽ bị từ chối.
-- Inheritable Capabilities: Cho phép các Capabilities được truyền từ tiến trình cha sang tiến trình con. Với Inheritable Capabilities, một tiến trình con có thể được cấp quyền để thực hiện một số hành động đặc biệt, mà không cần đầy đủ quyền đặc quyền của hệ thống.
+Các capabilities có 2 loại chính phân chia dựa trên phạm vi là: Effective (hiệu lực) và Inheritable (kế thừa), trong đó thì Inheritable Capabilities được truyền từ tiến trình cha sang tiến trình con, trong khi Effective Capabilities chỉ được sử dụng khi một tiến trình thực hiện một hành động cụ thể.
 
 Trong bài lab này ta sẽ thấy vim và view được cấp 1 giá trị của capabilities là cap_setuid+ep, được sử dụng để cấp quyền đặc biệt cho một chương trình, ta sẽ phân tích chi tiết thành phần này để biết ta leo thang nó dựa trên việc thay đổi gì: 
 - Trước hết thì cap_setuid là một capability cho phép một chương trình thay đổi UID hiện tại của mình (tức là có thể đặt UID mới cho quá trình thực thi). Vì vậy, khi một chương trình được cấp quyền cap_setuid, nó có thể thực thi với đặc quyền của một người dùng khác hoặc thực thi dưới đặc quyền của người dùng root.
@@ -218,7 +215,7 @@ Trong bài lab này ta sẽ thấy vim và view được cấp 1 giá trị củ
 Oke giờ vào phân tích bài cũng như thực thi cmd thôi: 
 
 Trước hết ở đây ta dùng tool getcap để hiển thị hoặc gán các capabilities được áp dụng trong các tệp và thư mục trong hệ thống tệp của linux, vì nó sẽ sinh ra khá là nhiều lỗi nên ở đây ta sẽ dùng thêm 2>/dev/null để chuyển hết lỗi sang thiết bị null, còn -r khá quen rồi: recursive để duyệt các thư mục con: 
-cmd: **getcap / -r 2>/dev/null**
+cmd: **getcap / -r 2>/dev/null**{: style="color: blue"}
 
 ![image](https://user-images.githubusercontent.com/104350480/236633253-8dc5703a-6e8d-4261-9b12-88a54c3b3c22.png)
 
@@ -229,11 +226,35 @@ chạy cmd của nó là được, cả 2 cái đều chạy lệnh giống nhau
 
 > ./view -c ':py3 import os; os.setuid(0); os.execl("/bin/sh", "sh", "-c", "reset; exec sh")'
 
-Lệnh này thì ta có thể phân tích như này để nhớ: lệnh này nó thực thi mã python trên hệ thống và leo thang đặc quyền, :py3 là 1 tiền tố để chỉ rằng :py là một tiền tố để chỉ ra rằng đây là mã Python3 cần thực thi. import os; là lệnh để nhập thư viện os của Python. os.setuid(0); là lệnh để đặt UID hiện tại của tiến trình thành 0, tức là đặt UID thành root. Còn os.execl() để thực thi 1 shell (chương trình /bin/sh) với 2 đối số là "sh" và "-c", -c ở đây sẽ là một chuỗi lệnh được thực thi tiếp theo là ***reset; exec sh*** được sử dụng để xóa bất kỳ nội dung nào hiển thị trên màn hình console, sau đó tiếp tục thực thi shell với quyền đặc quyền, nó gần giống vụ nano được cấp root ấy. Hiểu đơn giản hơn thì sẽ là:  /bin/bash là đường dẫn tới shell được sử dụng để thực thi các lệnh trong hàm, shell ở đây có các command là "reset; exec sh", và thế là ta leo quyền. 
+Lệnh này thì ta có thể phân tích như này để nhớ: lệnh này nó thực thi mã python trên hệ thống và leo thang đặc quyền, :py3 là một tiền tố để chỉ ra rằng đây là mã Python3 cần thực thi. import os; là lệnh để nhập thư viện os của Python. os.setuid(0); là lệnh để đặt UID hiện tại của tiến trình thành 0, tức là đặt UID thành root. Còn os.execl() để thực thi 1 shell (chương trình /bin/sh) với 2 đối số là "sh" và "-c", -c ở đây sẽ là một chuỗi lệnh được thực thi tiếp theo là ***reset; exec sh*** được sử dụng để xóa bất kỳ nội dung nào hiển thị trên màn hình console, sau đó tiếp tục thực thi shell với quyền đặc quyền, nó gần giống vụ nano được cấp root ấy. Hiểu đơn giản hơn thì sẽ là:  /bin/bash là đường dẫn tới shell được sử dụng để thực thi các lệnh trong hàm, shell ở đây có các command là "reset; exec sh", và thế là ta leo quyền. 
 
 Sau khi leo thang thì ta sẽ hoàn thành bài lab với vai trò là root thôi. 
 
 
 <hr> 
 
+Oke tiếp tục thôi: 
+
+## Privilege Escalation: Cron Jobs
+
+Cron jobs được sử dụng để chạy các script hoặc binary vào một thời điểm cụ thể. Mặc định thì nó sẽ chạy với đặc quyền của chủ sở hữu chúng chứ kh phải người dùng hiện tại. Việc cấu hình cron jobs đúng cách sẽ khó có thể bị dính vul, nhưng vẫn có cách để leo thang dưới 1 số điều kiện nhất định. 
+
+Ý tưởng ở đây rát đơn giản, nếu có tác vụ được lên lịch chạy với đặc quyền root và nếu chúng ta có thể thay đổi script được chạy thì chúng ta có thể chạy với đặc quyền root. 
+
+Cấu hình **Cron job**{: style="color: blue"} được lưu trữ trong crontab (crontable) để xem lần tiếp theo và thời gian mà tác vũ sẽ chạy.  
+Mỗi 1 user trong 1 hệ thống sẽ có 1 crontab file và có thể chạy những tác vụ cụ thể dù có đăng nhập hay không. Việc ta sẽ làm là tìm 1 crontab được set bởi root và khiến chúng chạy script mà ta muốn. 
+
+Bất cứ user nào cũng có thể đọc các tệp chứa (các tác vụ) cron tabs trên toàn hệ thống được lưu trữ tại /etc/crontab . Chẳng hạn với server mà ta kết nối:
+
+![image](https://user-images.githubusercontent.com/104350480/236637437-8c41fdfb-5c13-4c7f-a1a6-0c3d2f445c65.png)
+
+Ta thấy nó đang chứa root privilege, bài lab này ta sẽ khai thác fil backup.sh. Ta sẽ dùng reverse shell để thực thi bài này.
+
+Crontab luôn đáng để kiểm tra vì đôi khi nó có thể dẫn đến các vectơ leo thang đặc quyền dễ dàng. Kịch bản sau đây không phải là hiếm gặp trong các công ty không có mức trưởng thành trưởng thành an ninh mạng nhất định:
+- Quản trị viên hệ thống cần chạy một script theo định kỳ.
+- Họ tạo 1 cron job để làm điều này. 
+- Sau 1 thời gian script trở nên kh còn hữu dụng và họ xóa nó đi. 
+- Họ kh clean cron job liên quan. 
+
+Vấn đề quản lý thay đổi này dẫn đến một lỗ hổng khai thác tiềm năng sử dụng cron.
 
