@@ -12,7 +12,7 @@
 
 ![image](https://user-images.githubusercontent.com/104350480/221727974-2fd7cd07-a715-4e41-9cc0-60ffb88322b0.png)
 
-Ctrl U ta được flag:
+Ctrl U ta được flagg:
 
 > flag: FLAG{ddf1ea89-cd89-4da3-98bc-08028ac4dc7e}
 
