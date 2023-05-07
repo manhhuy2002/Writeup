@@ -241,7 +241,7 @@ Cron jobs được sử dụng để chạy các script hoặc binary vào một
 
 Ý tưởng ở đây rát đơn giản, nếu có tác vụ được lên lịch chạy với đặc quyền root và nếu chúng ta có thể thay đổi script được chạy thì chúng ta có thể chạy với đặc quyền root. 
 
-Cấu hình **Cron job**{: style="color: blue"} được lưu trữ trong crontab (crontable) để xem lần tiếp theo và thời gian mà tác vũ sẽ chạy.  
+Cấu hình **Cron job** được lưu trữ trong crontab (crontable) để xem lần tiếp theo và thời gian mà tác vũ sẽ chạy.  
 Mỗi 1 user trong 1 hệ thống sẽ có 1 crontab file và có thể chạy những tác vụ cụ thể dù có đăng nhập hay không. Việc ta sẽ làm là tìm 1 crontab được set bởi root và khiến chúng chạy script mà ta muốn. 
 
 Bất cứ user nào cũng có thể đọc các tệp chứa (các tác vụ) cron tabs trên toàn hệ thống được lưu trữ tại /etc/crontab . Chẳng hạn với server mà ta kết nối:
@@ -257,4 +257,29 @@ Crontab luôn đáng để kiểm tra vì đôi khi nó có thể dẫn đến c
 - Họ kh clean cron job liên quan. 
 
 Vấn đề quản lý thay đổi này dẫn đến một lỗ hổng khai thác tiềm năng sử dụng cron.
+
+
+
+<hr> 
+
+
+
+
+
+## Privilege Escalation: PATH
+
+PATH trong Linux là một biến môi trường (environmental variable) cho biết hệ thống hoạt động nơi tìm kiếm các chương trình thực thi. Với bất kì lệnh nào không được tích hợp vào shell hoặc không được xác định bằng đường dẫn tuyệt đối, Linux sẽ bắt đầu tìm kiếm trong các thư mục được xác định trong PATH (PATH ở đây kh phải là path đường dẫn nhé)
+
+PATH có dạng như sau: 
+
+![image](https://user-images.githubusercontent.com/104350480/236668838-003983ba-6390-4814-9db3-31dcd26f3300.png)
+
+
+Nếu ta nhập bất cứ thứ gì chẳng hạn như "thm" trên cmd chẳng hạn, thì đây sẽ là những vị trí mà linux sẽ tìm kiếm một thực thi gọi là thm. Và ở dưới đây ta sẽ cho ta một cách thức về leo thang đặc quyền dựa trên PATH dựa trên việc trả lời các câu hỏi:
+
+- Những folder nào được đặt trong $PATH
+- Người dùng hiện tại có đặc quyền viết cho bất kỳ thư mục nào trong số này không?
+- Ta có thể điều chỉnh biến $PATH này không. 
+- Có một tập lệnh/ứng dụng nào có thể bắt đầu sẽ bị ảnh hưởng bởi lỗ hổng này không?
+
 
