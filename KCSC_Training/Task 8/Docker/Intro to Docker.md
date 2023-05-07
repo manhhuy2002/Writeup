@@ -26,7 +26,7 @@ Chạy lệnh trên ta sẽ được như sau:
 
 ![image](https://user-images.githubusercontent.com/104350480/236678724-182598ec-02a9-402e-b6e6-342a794465e1.png)
 
-Nó sẽ tự đông down bản mới nhất của nginx, được gọi là latest, nó là 1 tag mặc định trong 1 số biến thể ta có thể chỉ định của image, chẳng hạn là: docker pull ubuntu:latest, Nó sẽ tự đông down bản mới nhất của nginx, được gọi là latest, nó là 1 tag mặc định trong 1 số biến thể ta có thể chỉ định của image, chẳng hạn là: docker pull ubuntu:latest, docker pull ubuntu:22.04, docker pull ubuntu:20.04....
+Nó sẽ tự đông down bản mới nhất của nginx, được gọi là latest, nó là 1 tag mặc định trong 1 số biến thể ta có thể chỉ định của image, chẳng hạn là: docker pull ubuntu:latest, docker pull ubuntu:22.04, docker pull ubuntu:20.04....
 
 Nếu kh phải là latest thì ta có thể chỉ định version của nó và tải xuống, và chúng được phân tách với nhau bởi dấu : nhé. 
 
