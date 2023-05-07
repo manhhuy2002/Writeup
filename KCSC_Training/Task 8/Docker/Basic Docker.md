@@ -11,17 +11,56 @@
 
 
 ## Introduction to Docker<a name="dk1"></a>
-## Trong bài này ta sẽ ôn lại cách tương tác và triển khai đối với docker. 
-Cụ thể trong đó: 
+
+### 1.1. What is Docker?<a name="dk11"></a>
+Docker được giới thiệu năm 2013 nhằm giải quyết quá trình phát trình ứng dụng và vấn đề cung cấp dịch vụ tốn kém cũng như tốn thời gian.
+Docker sử dụng công nghệ containerization để giải quyết vấn đề này. Kĩ thuật công nghệ này cho phép ứng dụng được đóng gói trong các container riêng biệt, trong đó chúng có thể chia sẻ tài nguyên với nhau nhưng hoạt động độc lập với nhau. Việc sử dụng containerization giúp tạo ra các container nhẹ và di động, giúp các nhà phát triển và quản trị viên hệ thống có thể dễ dàng xây dựng, triển khai và quản lý các ứng dụng một cách hiệu quả hơn.
+
+Cụ thể hơn thì: 
+
+```
+Docker là một công nghệ rất di động và có thể đưa container của nó chạy trên bất kỳ máy tính nào có hỗ trợ Docker. Điều này giúp cho việc phát triển và triển khai ứng dụng trở nên dễ dàng hơn, vì chỉ cần viết ứng dụng một lần và triển khai nó trên nhiều thiết bị khác nhau.
+
+Một điểm đáng chú ý khác của Docker là sử dụng tài nguyên ít hơn so với các máy ảo. Điều này là do Docker sử dụng cùng một hạt nhân Linux cho tất cả các container, do đó, mỗi container chỉ cần sử dụng một phần của tài nguyên hệ thống. Điều này giúp tiết kiệm tài nguyên và cho phép chạy nhiều container trên cùng một hệ thống một cách hiệu quả hơn so với việc sử dụng các VMs.
+
+Docker cũng cho phép ta thiết lập môi trường phức tạp trong vài bước đơn giản thông qua các Dockerfiles. Dockerfile là một tập tin dạng văn bản chứa các instruction để xây dựng một image Docker, giúp cho việc triển khai ứng dụng trở nên dễ dàng và có thể tự động hóa.
+
+Với sự phổ biến của containerization trong ngành công nghệ thông tin ngày nay, Docker là một công cụ rất quan trọng cho pentester để thực hiện các kiểm tra bảo mật và phát hiện lỗ hổng trong các ứng dụng chạy trên các container Docker.
+
+Hoặc tóm cái váy lại thì docker nó sẽ có những lọi ích siêu ngắn gọn sau: Free,Compatible, Efficient & Minimal, Easy to Get Started With, Easy to Share With Others, Better security, Cheaper to Run
+```
+
+
+
+### 1.2. What are Docker "containers" & why are they used?<a name="dk12"></a>
+
+Như đã đề cập ở trên thì docker, các container có thể chia sẻ tài nguyên cho nhau nhưng chúng hoạt động 1 cách độc lập, tránh được sự xung đột lẫn nhau thông qua Docker engine. Sơ đồ miêu tả như sau: 
+
+![image](https://user-images.githubusercontent.com/104350480/236696108-5faa77c9-4bc5-447a-aa82-e5021ad56300.png)
+
+Ta có thể thấy ba container chạy các ứng dụng của riêng chúng mà không có virtualization. Ba ứng dụng được phân lập với nhau, nhưng sử dụng tài nguyên của hệ điều hành chính. Trong khi đó, so với việc chạy các ứng dụng này trong các máy ảo:
+
+![image](https://user-images.githubusercontent.com/104350480/236696183-c9468e4a-0125-4d6b-be78-6448704c6889.png)
+
+Cái "Guest operating system" ở đây là nơi sử dụng tài nguyên. Ví dụ: kích thước cài đặt tối thiểu được đề xuất của Ubuntu là 20GB, nếu ta chạy điều này cho ba ứng dụng, ta sẽ yêu cầu lưu trữ 60GB. Trong khi đó, một image Docker Ubuntu có kích thước cơ sở khoảng 180MB ~. Container cũng có thể chia sẻ base images, giúp tối ưu  hiệu quả không gian.
+
+###  1.3. What are Docker Images? <a name="dk13"></a>
+
+Docker Container được tạo ra từ Docker Image. Docker Image là một gói đóng gói chứa toàn bộ các thành phần cần thiết để tạo ra một Docker Container, bao gồm các thư viện, tệp cấu hình, mã nguồn và các công cụ liên quan.
+Trong Docker Image, các tập tin được định nghĩa bằng các lệnh Dockerfile, bao gồm các lệnh RUN, COPY, ADD, CMD, ENTRYPOINT và nhiều lệnh khác. Các lệnh này được sử dụng để định nghĩa cách cài đặt và cấu hình môi trường cho ứng dụng trong Docker Container, ta sẽ nói rõ hơn ở phần sau. 
+
+<hr>
+
+
+## Basic Docker Syntax And Run Container<a name="dk2"></name>
+Phần này ta sẽ tìm hiểu về:
 - các syntax cơ bản trong docker
-- chạy và triển khai container
+- Chạy và triển khai container
 - Hiểu cách phân phối các container Docker sử dụng các images
 - Tạo image của riêng mình bằng Dockerfile 
 - Cách Dockerfile build các container và sử dụng docker compose để kết hợp nhiều container. 
 - Sau đó áp dụng kiến thức và làm bài lab The Great Escape ta sẽ đề cập ở phần sau. 
 
-
-## 1.  Basic Docker Syntax
 
 Trước hết ta sẽ đi tìm hiểu 1 số lệnh thường dùng trong docker, ta sẽ chia thành 4 nhóm syntax chính: 
 - syntax để chạy 1 container
@@ -85,7 +124,7 @@ Ngoài ra sẽ có 1 số option khác thường gặp như:
 <hr> 
 
 
-## Intro giới thiệu về Dockerfiles
+## Intro giới thiệu về Dockerfiles<a name="dk3"></a>
 
 Dockerfile đóng vai trò quan trọng trong docker, nó là một tệp văn bản được định dạng, nóchứa một loạt các chỉ thị (instruction) và lệnh để tạo một image Docker. Nó cho phép người dùng xây dựng các image tùy chỉnh dựa trên các image có sẵn hoặc từ đầu. 
 Một số instruction phổ biến trong Dockerfile: 
