@@ -72,11 +72,12 @@ Ngoài ra sẽ có 1 số option khác thường gặp như:
 <hr> 
 
 
-## Intro giới thiệu về Dckerfiles
+## Intro giới thiệu về Dockerfiles
 
 Dockerfile đóng vai trò quan trọng trong docker, nó là một tệp văn bản được định dạng, nóchứa một loạt các chỉ thị (instruction) và lệnh để tạo một image Docker. Nó cho phép người dùng xây dựng các image tùy chỉnh dựa trên các image có sẵn hoặc từ đầu. 
 Một số instruction phổ biến trong Dockerfile: 
 > FROM <image-base>: instruction này được sử dụng để khai báo một bước xây dựng (build stage) mới và đặt hình ảnh cơ sở (base image) cho bước xây dựng đó.
+ 
 > RUN <command>: được sử dụng để thực thi các lệnh trong container và tạo ra một lớp mới (new layer) trong image Docker
 
  ```
