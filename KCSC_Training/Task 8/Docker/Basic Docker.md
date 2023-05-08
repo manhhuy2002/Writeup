@@ -188,3 +188,21 @@ RUN apt-get install net-tools -y
 RUN apt-get update -y && apt-get upgrade -y && apt-get install apache2 -y && apt-get install net-tools
  
  ```
+## Intro to Docker Compose
+  
+Ta có thể hiểu đơn giản là Docker Compose cho phép các container tương tác với nhau và chạy độc lập với nhau:
+  
+![image](https://user-images.githubusercontent.com/104350480/236837545-cbee1266-5b2e-4bee-a913-1e866d5b1615.png)
+
+Docker compose sẽ được build trong 1 file yaml, tên của nó là docker-compose.yaml hoặc docker-compose.yml, trước hết thì ta sẽ tìm hiểu các câu lệnh thường sử dụng trong docker-compose rồi sau đó sẽ phân tích thành phần bên trong nó. 
+  
+- docker-compose up: cmd này sẽ tạo/build và bắt đầu các container trong file compose. 
+- docker-compose start: lệnh này để chạy các container (nhưng nó phải được build trước rồi) trong file compose. 
+- docker-compose down: lệnh này sẽ dừng và xóa các các container được chỉ định trong file compose. 
+- docker-compose stop: lệnh này sẽ dừng nhưng kh xóa các container được chỉ định trong file compose.
+- docker-compose build: lệnh docker-compose build được sử dụng để xây dựng các container được định nghĩa trong file Compose, nhưng không khởi động chúng.
+  
+ 
+
+
+  
