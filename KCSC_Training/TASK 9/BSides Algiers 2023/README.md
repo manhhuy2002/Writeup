@@ -1,10 +1,12 @@
 # BSides Algiers 2023 web challenges
+* [Website checkers](#wb1)
+* [Jokes Hub 1](#jh1)
 
 ![image](https://user-images.githubusercontent.com/104350480/236913082-1835eb92-bcb5-4250-9ede-e509efa9761e.png)
 
 <hr>
 
-## Website checkers
+## [Website checkers](https://website-checker.bsides.shellmates.club/)<a name="wb1"></a>
 
 ![image](https://user-images.githubusercontent.com/104350480/236922439-e12117cb-5baa-4379-bbcd-102dbb75b78b.png)
 
@@ -32,7 +34,7 @@ Ta kiểm tra đường dẫn và được flag:
 
 > FLag: shellmates{Curl_4nd_1t5_m4g1c4l_0Pt10n$$}
 
-## Jokes Hub 1
+## [Jokes Hub 1](https://jokes-hub-1.bsides.shellmates.club/)<a name="jh1"></a>
 
 ![image](https://user-images.githubusercontent.com/104350480/236913308-6badb50a-f0d2-47c1-9b62-7a6af17fe0dd.png)
 
