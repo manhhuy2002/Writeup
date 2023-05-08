@@ -202,7 +202,27 @@ Docker compose sẽ được build trong 1 file yaml, tên của nó là docker-
 - docker-compose stop: lệnh này sẽ dừng nhưng kh xóa các container được chỉ định trong file compose.
 - docker-compose build: lệnh docker-compose build được sử dụng để xây dựng các container được định nghĩa trong file Compose, nhưng không khởi động chúng.
   
- 
+Ví dụ về việc tại sao nên sử dụng docker-compose thì ở đây ta sẽ có 1 ví dụ về việc sử dụng docker network như trước kia thường làm nếu kh có docker-compose: 1 trang web thương mại điện tử chạy trên server apache, dữ liệu của chúng được lưu trữ ở trong mysql datanbase, ta phải tạo 2 container và kết nối chúng bằng cách tạo network giữa 2 container: docker network create ecommerce. Sau đó chạy 2 container:
+- Run apache2 webserver container:   docker run -p 80:80 --name webserver --net ecommerce webserver
+- Run container mysql database: docker run --name database --net ecommerce webserver
 
+![image](https://user-images.githubusercontent.com/104350480/236842554-62ded1ee-6ae5-4759-9578-95860aca1fee.png)
+
+Tuy vậy thì cách trên sẽ kh ổn vì tính cồng kềnh cũng như không có tính diện rộng, nếu  phải tạo các liên kết bằng tay như này cho mỗi container trong một ứng dụng lớn với nhiều dịch vụ và container, điều này sẽ trở nên rất mệt mỏi và tốn thời gian hơn nữa nếu ta nhân rộng cho nhiều máy chủ web tham gia. 
+Ở đây docker-compose được sinh ra để giải quyết vấn đề này:
+- Chỉ với 1 cmd có thể chạy cả 2, ta sẽ configure nó trong docker-compose.yml ngay dưới đây.
+- Trong đó thì 2 container này được kết nối với nhau, vì vậy ta không cần phải định cấu hình mạng.
+- Vô cùng di động. Ta có thể chia sẻ tệp docker-compose.yml của mình với người khác và họ có thể thiết lập hoạt động chính xác giống nhau mà không hiểu cách các container hoạt động riêng lẻ.
+- Dễ dàng duy trì và thay đổi nếu muốn
+  
+![image](https://user-images.githubusercontent.com/104350480/236844673-c5fd4a1e-8702-44db-8cec-6bb36ff7c600.png)
+
+Ta sẽ đến với các instruction trong docker-compose.yaml file, ngoài ra cần chú ý là định dạng file yaml này yêu cầu thụt lề và phải tương ứng giữa từng vị trí trong file: 
+  
+- version: nó sẽ được khai báo ở trên cùng của file, đại diện cho phiên bản của file docker-compose.yaml được sử dụng. 
+- services: instruction này sẽ đánh dấu sự bắt đầu của các container sẽ được quản lý. 
+- name : instruction đại diện cho tên của service đã khai báo ở trên. 
+- build: build trong tệp docker-compose.yml chỉ định thư mục chứa Dockerfile để xây dựng image cho service hoặc container đó, ex: ./website
+- port: instruction này sẽ 
 
   
