@@ -20,7 +20,7 @@ Nó thực hiện post với 2 tham số ở đây là host và options, mình c
 
 ![image](https://user-images.githubusercontent.com/104350480/236924245-08c170e2-bf32-479d-b960-53b997cecc49.png)
 
-Điều thú vị ở đây là khi ta để ý user agent thì ta biết được nó đến từ curl, tức bên con bot phía máy chủ đang dùng lệnh curl để thực thi, vậy options ở đây chính là option của th curl. Đề bài đã gợi ý flag nằm trong /flag, vậy thì ý tưởng của ta ở đây là nếu ta post được /flag từ phía máy chủ nên host của ta thì ta sẽ đợc được nó đúng chứ. Nhưng hiện tại thì curl đang được dùng với GET, nên ta sẽ thêm vào phần options như sau để chuyển sang POSWST và thực thi: 
+Điều thú vị ở đây là khi ta để ý user agent thì ta biết được nó đến từ curl, tức bên con bot phía máy chủ đang dùng lệnh curl để thực thi, vậy options ở đây chính là option của th curl. Đề bài đã gợi ý flag nằm trong /flag, vậy thì ý tưởng của ta ở đây là nếu ta post được /flag từ phía máy chủ nên host của ta thì ta sẽ đợc được nó đúng chứ. Nhưng hiện tại thì curl đang được dùng với GET, nên ta sẽ thêm vào phần options như sau để chuyển sang POST và thực thi: 
 
 ![image](https://user-images.githubusercontent.com/104350480/236925162-efb7ad34-dd6f-4a4a-9445-ae3cd91594b1.png)
 
