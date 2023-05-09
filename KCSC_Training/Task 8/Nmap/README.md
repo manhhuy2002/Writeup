@@ -161,3 +161,36 @@ Ngoài ra thì trường hợp của SYN scan cũng tương tự như TCP scan, 
 
 Không giống như 2 loại được đề cập ở trên thì UDP nó là stateless (không trạng thái). Điều này có nghĩa là, thay vì khởi tạo một kết nối với một bắt tay "handshake" hai chiều, các kết nối UDP dựa trên việc gửi các gói tin đến một cổng đích và hy vọng rằng chúng sẽ đi đến được. Điều này làm cho UDP rất oke cho các kết nối phụ thuộc vào tốc độ hơn là chất lượng (ví dụ: chia sẻ video), nhưng sự thiếu sự xác nhận khiến việc quét UDP trở nên khó khăn hơn nhiều và chậm hơn rất nhiều. Thực hiện quét UDP với Nmap là (-sU).
 
+Khi gửi gói tin udp đến cổng, sẽ có 3 phản hồi: open|filter và closed, thông thường thì sẽ kh nhận được phản hồi từ port, và sẽ khó để nhận biết là open|filter, còn nếu muốn xác định đóng thì có thể dùng giao thức icmp với thông báo "port unreachable" để có thể xác định là port đóng. 
+
+## Scan Types NULL, FIN and Xmas
+
+Các scan Null, Fin và Xmas TCP thì ít phổ biến hơn, do vậy ta sẽ đi tìm hiểu cách sử dụng căn bản các loại này thôi. 
+Đầu tiên với kiểu NULL, Null Scan: -Sn là kiểu TCP request được gửi đi mà không cần kh có flag nào được set. Theo RFC, máy chủ đích sẽ phản hồi với một gói tin RST nếu cổng đóng:
+
+FIN Scan (-Sf) hoạt động gần giống với quét NULL; tuy nhiên, thay vì gửi một gói tin hoàn toàn trống, một yêu cầu được gửi với cờ FIN (thường được sử dụng để đóng kết nối đang hoạt động). Nếu cổng đóng gói tin RST sẽ được trả về tương tự. 
+
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/bb832fe9-6252-4dc5-a635-5060c3675dac)
+
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/4c623fcf-899d-4bbc-994e-39d9b753865e)
+
+Xmas scan (-sX) gửi một gói tin TCP bị lỗi và mong đợi phản hồi RST cho các cổng đã đóng. Nó được gọi là quét Xmas vì các cờ mà nó đặt (PSH, URG và FIN) tạo ra hình ảnh của một cây thông noel nhấp nháy khi xem dưới dạng bắt gói tin trong Wireshark.
+
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/749f328e-761a-4755-a88b-b74f7e54f247)
+
+PHản hồi của các kiểu này cho các cổng mở thì cũng giống nhau và rất giống với phản hồi của một UDP scan. Nếu cổng mở thì không có phản hồi cho gói tin bị lỗi này. Các loại quét NULL, FIN và Xmas chỉ xác định các cổng là open | filter, close. Nếu một cổng được xác định là bị lọc với một trong những loại quét này thì thông thường đó là vì mục tiêu đã phản hồi với một gói tin không thể đến được ICMP.
+
+Tóm lại, các loại quét NULL, FIN và Xmas của Nmap được sử dụng do có khả năng vượt qua tường lửa để quét các cổng TCP đích. Với các loại quét này, Nmap gửi các gói tin TCP không chứa cờ SYN, điều này giúp tránh được tường lửa có cấu hình để chặn các gói tin TCP đến các cổng bị chặn.
+
+Tuy nhiên, các tường lửa và hệ thống phát hiện xâm nhập (IDS) hiện đại đã được cấu hình để phát hiện và ngăn chặn các loại quét này. Các giải pháp IDS và tường lửa hiện đại có thể phát hiện các loại quét này bằng cách theo dõi lưu lượng mạng và phân tích các mẫu lưu lượng không bình thường.
+
+Do đó, các loại quét NULL, FIN và Xmas không đảm bảo hoạt động 100% hiệu quả với các hệ thống hiện đại. Để bypass các tường lửa và hệ thống IDS hiện đại, Nmap cung cấp các phương pháp quét khác nhau, bao gồm các loại quét khác như TCP SYN, TCP Connect và các phương pháp tấn công khác như tấn công bằng từ điển (Brute Force) và tấn công bằng mã độc (Malware).
+
+
+## Scan Types ICMP Network Scanning
+
+Trong kiểm thử bảo mật black box, mục tiêu đầu tiên của chúng ta là thu thập thông tin về cấu trúc mạng - tức là xem xét địa chỉ IP nào chứa các máy chủ hoạt động và địa chỉ nào không.
+
+Một trong những cách để làm điều này là sử dụng Nmap để thực hiện một "ping sweep". Nmap gửi một gói tin ICMP đến mỗi địa chỉ IP có thể có trên mạng được chỉ định. Khi nó nhận được một phản hồi, nó đánh dấu địa chỉ IP đó là có máy chủ hoạt động. Để thực hiện ping sweep, chúng ta sử dụng tùy chọn -sn kết hợp với các phạm vi địa chỉ IP được chỉ định bằng dấu gạch ngang (-) hoặc ký hiệu CIDR. Ví dụ, chúng ta có thể quét mạng 192.168.0.x bằng cách sử dụng lệnh:
+
+> nmap -sn 192.168.0.1-254 hoặc nmap -sn 192.168.0.1/24 (24 bit được sử dụng để định danh phần mạng của địa chỉ IP).
