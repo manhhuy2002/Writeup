@@ -196,4 +196,11 @@ Một trong những cách để làm điều này là sử dụng Nmap để th�
 > nmap -sn 192.168.0.1-254 hoặc nmap -sn 192.168.0.1/24 (24 bit được sử dụng để định danh phần mạng của địa chỉ IP).
 
 
+<hr> 
+
+
+Ta sẽ thực hành 1 số bài lab để hiểu và thực hành được cách dùng. 
+
+
+## Brooklyn Nine Nine - tryhackme
 
