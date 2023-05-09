@@ -194,3 +194,6 @@ Trong kiểm thử bảo mật black box, mục tiêu đầu tiên của chúng 
 Một trong những cách để làm điều này là sử dụng Nmap để thực hiện một "ping sweep". Nmap gửi một gói tin ICMP đến mỗi địa chỉ IP có thể có trên mạng được chỉ định. Khi nó nhận được một phản hồi, nó đánh dấu địa chỉ IP đó là có máy chủ hoạt động. Để thực hiện ping sweep, chúng ta sử dụng tùy chọn -sn kết hợp với các phạm vi địa chỉ IP được chỉ định bằng dấu gạch ngang (-) hoặc ký hiệu CIDR. Ví dụ, chúng ta có thể quét mạng 192.168.0.x bằng cách sử dụng lệnh:
 
 > nmap -sn 192.168.0.1-254 hoặc nmap -sn 192.168.0.1/24 (24 bit được sử dụng để định danh phần mạng của địa chỉ IP).
+
+
+
