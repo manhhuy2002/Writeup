@@ -303,4 +303,19 @@ To solve the lab, perform a cross-site scripting attack that calls the alert fun
 Giao diện của bài: 
   
 ![image](https://github.com/manhhuy2002/Writeup/assets/104350480/7ba4714e-f8d4-40a8-89c0-8a3061b9cb16)
+  
+
+  
+## [Lab: Reflected XSS with event handlers and href attributes blocked](https://portswigger.net/web-security/cross-site-scripting/contexts/lab-event-handlers-and-href-attributes-blocked)
+  
+```
+This lab contains a reflected XSS vulnerability with some whitelisted tags, but all events and anchor href attributes are blocked..
+
+To solve the lab, perform a cross-site scripting attack that injects a vector that, when clicked, calls the alert function.
+
+Note that you need to label your vector with the word "Click" in order to induce the simulated lab user to click your vector. For example:
+
+<a href="">Click me</a>
+
+```
 
