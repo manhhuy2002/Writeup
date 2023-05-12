@@ -283,6 +283,24 @@ This lab contains a reflected cross-site scripting vulnerability in the search b
 ```
   
 Các kí tự ', ", ~,<> đã bị Unicode-escaped, ý tưởng thì ta vẫn có thể dùng eval() hoặc $ thần chưởng trong js để thực thi ${} mà không hề đụng tới đoạn unicode kia,  nhưng để ý kĩ ở đề bài thì biến message ở đây được tạo ra với giá trị là một template literal, chú ý `` ở 2 đầu, vị vậy ta chỉ thực thi được ${}: 
-> 1%0A${alert(1)}
+> /?search=1%0A${alert(1)}
+  
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/6c0aa62e-d8db-4076-9ba9-a742ebf77b8a)
 
+  
+  
+## [Lab: Reflected XSS in a JavaScript URL with some characters blocked](https://portswigger.net/web-security/cross-site-scripting/contexts/lab-javascript-url-some-characters-blocked)
+  
+```
+This lab reflects your input in a JavaScript URL, but all is not as it seems. This initially seems like a trivial challenge; however, the application is blocking some characters in an attempt to prevent XSS attacks.
+
+To solve the lab, perform a cross-site scripting attack that calls the alert function with the string 1337 contained somewhere in the alert message.
+  
+```
+
+> Referecnce: https://portswigger.net/research/xss-without-parentheses-and-semi-colons
+  
+Giao diện của bài: 
+  
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/7ba4714e-f8d4-40a8-89c0-8a3061b9cb16)
 
