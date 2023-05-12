@@ -12,7 +12,7 @@
 Thực hành: 
 
 
-## [Lab: Reflected XSS into HTML context with nothing encoded](Reflected XSS into HTML context with nothing encoded)
+## [Lab: Reflected XSS into HTML context with nothing encoded](https://portswigger.net/web-security/cross-site-scripting/reflected/lab-html-context-nothing-encoded)
 
 ```
 This lab contains a simple reflected cross-site scripting vulnerability in the search functionality.
@@ -23,7 +23,8 @@ To solve the lab, perform a cross-site scripting attack that calls the alert fun
 
 Giao diện của bài: 
 
-![image](https://portswigger.net/web-security/cross-site-scripting/reflected/lab-html-context-nothing-encoded)
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/bab08d43-21a7-4322-8937-cdea2ed825c1)
+
 
 Nó có chức năng search, và input ta nhập vào được reflect luôn trong response, cũng như tên bài, không có gì được filter hay encoded ở đây cả, ta thực thi script xss:
 
