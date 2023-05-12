@@ -323,6 +323,52 @@ Ta scan các tag không bị block:
   
 ![image](https://github.com/manhhuy2002/Writeup/assets/104350480/1f2df6f6-d212-4d47-a5b6-ab4b6b2988ec)
   
-Về kiến thức thì có 2 blog có thể tham khảo là [SVG animate XSS vector](https://portswigger.net/research/svg-animate-xss-vector) và [XSS fun with animated SVG](https://blog.isec.pl/xss-fun-with-animated-svg/). Mình sẽ phân tích kĩ cách bypass bài này trước kh viết script.
+Ta có thể thấy thẻ tag animate của svg hợp lệ. Về kiến thức thì có 2 blog có thể tham khảo là [SVG animate XSS vector](https://portswigger.net/research/svg-animate-xss-vector) và [XSS fun with animated SVG](https://blog.isec.pl/xss-fun-with-animated-svg/). Mình sẽ phân tích kĩ cách bypass bài này trước kh viết script.
+Nhìn chung thì các nghiên cứu và blog trên chỉ ra lỗ hổng xss của tag animate dựa trên attribute **values** khi mà nó có thể chứa nhiều giá trị, mỗi giá trị được cách nhau bởi dấu ;. Khi sử dụng thẻ <animate>, mỗi giá trị được xử lý riêng lẻ nên ta có thể đánh lừa các tường lửa ứng dụng web (WAFs) bằng cách chèn đoạn mã JavaScript độc hại "javascript:alert(1)" vào giá trị chứa nhiều giá trị, ví dụ như "value1;value2;javascript:alert(1)"
+> <animate values="http://safe-url/?;javascript:alert(1);C">
   
+Tiếp theo ta sẽ phân tích payload thực thi:
+  
+> <svg><animate xlink:href=#xss attributeName=href dur=5s repeatCount=indefinite keytimes=0;0;1 values="https://safe-url?;javascript:alert(1);0" /><a id=xss><text x=20 y=20>XSS</text></a>
+  
+Ở đây có 2 relation cần chú ý là values và keytimes attr. 
+  
+```
+  A semicolon-separated list of time values used to control the pacing of the animation. Each time in the list corresponds to a value in the ‘values’ attribute list, and defines when the value is used in the animation function.
+
+Each time value in the ‘keyTimes’ list is specified as a floating point value between 0 and 1 (inclusive), representing a proportional offset into the simple duration of the animation element.
+
+(…)
+
+For linear and spline animation, the first time value in the list must be 0, and the last time value in the list must be 1. The key time associated with each value defines when the value is set; values are interpolated between the key times.
+To better understand 
+  
+```
+
+Tóm váy đoạn trên lại là, giá trị values ở đây nó như 1 cái tọa độ vậy và keytimes ở đây sẽ setup khoảng thời gian mà nó thực thi, chẳng hạn để 0;0;1 thì ở đây values(0) sẽ được thực thi trong khoảng 5s. Ta có thể thực thi code ở [đây](https://editsvgcode.com/1q5xl9rwchplhksw6mq) để hiểu hơn về cách nó hoạt động.
+  
+Ở đây có dur=5s và repeatCount = indefinite để ám chỉ tiếp tục khoảng dur 5s vô hạn, còn dur 5s là thời gian được setup tổng thời gian chạy tương ứng với keyTimes. Theo chuẩn SVG, nếu không có thuộc tính dur, thì thời gian mặc định sẽ là không giới hạn (indefinite). Vì vậy, thay vì tạo một animation vô hạn lặp lại trong 5 giây, chúng ta có thể tạo một animation vô hạn mà không có lặp lại nào. Bằng cách này, chúng ta có thể loại bỏ thuộc tính dur (vì mặc định nó đã được đặt là giá trị không giới hạn) và sau đó chúng ta có thể loại bỏ thuộc tính repeatCount. 
+  
+Tiếp tục về Freeze the keyTimes, nếu thuộc tính "fill" được đặt là "freeze", thì animation sẽ giữ nguyên trạng thái của khung hình cuối cùng. Trong đoạn code, hình tròn trượt từ 0 đến 80 và nó sẽ giữ vị trí ở 80 khi animation kết thúc. Điều này cho phép chúng ta thêm đoạn mã "javascript:alert(1)" làm phần tử cuối cùng và đảm bảo rằng nó luôn được hiển thị khi animation kết thúc.
+  
+```
+ <svg viewBox="0 0 120 25" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="10" cy="10" r="10">
+    <animate attributeName="cx" dur=5s values="0 ; 80 " fill=freeze />
+  </circle>
+</svg>
+  
+```
+Sâu chuỗi lại có thể thực thi xss với ý tưởng như sau: 
+  
+> <svg><animate xlink:href=#xss attributeName=href fill=freeze dur=1ms values="http://isec.pl;javascript:alert(1)" /><a id=xss><text x=20 y=20>XSS</text></a>
+  
+Để đi sâu hơn vào việc đánh lừa waf thì trong blog còn đưa ra thêm 1 số ví dụ khá hay và chi tiết. Còn để khai thác bài lab xss này thì không cần đi sâu hơn nữa,  ta chỉ việc set attributeName và values javascript:alert(1) để khai thác đúng với yêu cầu bài lab là xong: 
+  
+> payload: <svg><a><animate attributeName=href values="javascript:alert(1)" /><text x=20 y=20>Click me</text></a>  hoặc <svg><animate xlink:href=#xss attributeName=href values="javascript:alert(1)" /><a id=xss><text x=20 y=20>Click me</text></a>
+  
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/a5dca0f9-8254-43b5-8222-13a722e1c468)
+ 
+  
+
 
