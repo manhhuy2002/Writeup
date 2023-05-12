@@ -234,3 +234,55 @@ To solve the lab, perform a cross-site scripting attack that calls the alert() f
 ```
   
   
+## [Lab: Reflected XSS into a JavaScript string with single quote and backslash escaped](https://0aab000203bfdba08116981e007d001e.web-security-academy.net/)
+  
+```
+This lab contains a reflected cross-site scripting vulnerability in the search query tracking functionality. The reflection occurs inside a JavaScript string with single quotes and backslashes escaped.
+
+To solve this lab, perform a cross-site scripting attack that breaks out of the JavaScript string and calls the alert function.
+
+```
+  
+Ở bài này input ta nhập vào sẽ được reflect trong 1 khối script, và kí tự ' sẽ bị chuyển thành **\'**: 
+  
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/ad909fd8-0724-4459-918c-b0c826c4eb6e)
+
+  
+Để thực thi xss ta cần thoát ra khỏi khối script này, vì nó chỉ escape ' và / nên ta có thể thực thi xss bằng cách đóng </script>
+  
+> '</script><script>alert(1)</script>
+  
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/d2a22ca0-e502-4a98-acc0-a87b94ccc227)
+  
+  
+## [Lab: Reflected XSS into a JavaScript string with angle brackets and double quotes HTML-encoded and single quotes escaped](https://portswigger.net/web-security/cross-site-scripting/contexts/lab-javascript-string-angle-brackets-double-quotes-encoded-single-quotes-escaped)
+  
+```
+This lab contains a reflected cross-site scripting vulnerability in the search query tracking functionality where angle brackets and double are HTML encoded and single quotes are escaped.
+
+To solve this lab, perform a cross-site scripting attack that breaks out of the JavaScript string and calls the alert function.
+  
+```
+  
+Bài này thì ngoài việc ' bị escape ra thì dấu " và <> sẽ bị encode, tức ta sẽ kh thể thực thi như bài trên: 
+  
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/37d4063a-291d-4257-bfaa-817df6400ae3)
+
+Để thực thi xss thì ở đây ta sẽ dùng hàm eval để break đoạn mã và thực thi bên trong nó mà không động gì đến các kí tự bị escape và encode: 
+> /?search=';%0Aeval(alert(1));//
+  
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/5bddca7c-18d9-4173-a4ba-a2581f3e204b)
+
+  
+
+## [Lab: Reflected XSS into a template literal with angle brackets, single, double quotes, backslash and backticks Unicode-escaped](https://portswigger.net/web-security/cross-site-scripting/contexts/lab-javascript-template-literal-angle-brackets-single-double-quotes-backslash-backticks-escaped)
+  
+```
+This lab contains a reflected cross-site scripting vulnerability in the search blog functionality. The reflection occurs inside a template string with angle brackets, single, and double quotes HTML encoded, and backticks escaped. To solve this lab, perform a cross-site scripting attack that calls the alert function inside the template string.
+  
+```
+  
+Các kí tự ', ", ~,<> đã bị Unicode-escaped, ý tưởng thì ta vẫn có thể dùng eval() hoặc $ thần chưởng trong js để thực thi ${} mà không hề đụng tới đoạn unicode kia,  nhưng để ý kĩ ở đề bài thì biến message ở đây được tạo ra với giá trị là một template literal, chú ý `` ở 2 đầu, vị vậy ta chỉ thực thi được ${}: 
+> 1%0A${alert(1)}
+
+
