@@ -323,6 +323,6 @@ Ta scan các tag không bị block:
   
 ![image](https://github.com/manhhuy2002/Writeup/assets/104350480/1f2df6f6-d212-4d47-a5b6-ab4b6b2988ec)
   
-Về kiến thức thì có 2 blog có thể tham khảo là [SVG animate XSS vector](https://portswigger.net/research/svg-animate-xss-vector) và [XSS fun with animated SVG]([)](https://blog.isec.pl/xss-fun-with-animated-svg/). Mình sẽ phân tích kĩ cách bypass bài này trước kh viết script.
+Về kiến thức thì có 2 blog có thể tham khảo là [SVG animate XSS vector](https://portswigger.net/research/svg-animate-xss-vector) và [XSS fun with animated SVG](https://blog.isec.pl/xss-fun-with-animated-svg/). Mình sẽ phân tích kĩ cách bypass bài này trước kh viết script.
   
 
