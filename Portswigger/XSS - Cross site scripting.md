@@ -306,6 +306,17 @@ Giao diện của bài:
   
 
   
+## [Reflected XSS with some SVG markup allowed](https://portswigger.net/web-security/cross-site-scripting/contexts/lab-some-svg-markup-allowed)
+  
+```
+This lab has a simple reflected XSS vulnerability. The site is blocking common tags but misses some SVG tags and events.
+
+To solve the lab, perform a cross-site scripting attack that calls the alert() function.
+
+```
+  
+Scan các tag: 
+  
 ## [Lab: Reflected XSS with event handlers and href attributes blocked](https://portswigger.net/web-security/cross-site-scripting/contexts/lab-event-handlers-and-href-attributes-blocked)
   
 ```
@@ -328,8 +339,11 @@ Nhìn chung thì các nghiên cứu và blog trên chỉ ra lỗ hổng xss củ
 > <animate values="http://safe-url/?;javascript:alert(1);C">
   
 Tiếp theo ta sẽ phân tích payload thực thi:
-  
-> <svg><animate xlink:href=#xss attributeName=href dur=5s repeatCount=indefinite keytimes=0;0;1 values="https://safe-url?;javascript:alert(1);0" /><a id=xss><text x=20 y=20>XSS</text></a>
+
+```
+<svg><animate xlink:href=#xss attributeName=href dur=5s repeatCount=indefinite keytimes=0;0;1 values="https://safe-url?;javascript:alert(1);0" /><a id=xss><text x=20 y=20>XSS</text></a>
+
+```
   
 Ở đây có 2 relation cần chú ý là values và keytimes attr. 
   
@@ -377,5 +391,51 @@ or
 ![image](https://github.com/manhhuy2002/Writeup/assets/104350480/a5dca0f9-8254-43b5-8222-13a722e1c468)
  
   
+## [Lab: Stored XSS into HTML context with nothing encoded](https://portswigger.net/web-security/cross-site-scripting/stored/lab-html-context-nothing-encoded)
+ 
+```
+This lab contains a stored cross-site scripting vulnerability in the comment functionality.
 
+To solve this lab, submit a comment that calls the alert function when the blog post is viewed.
 
+```
+  
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/8289038d-3d4c-4686-a62c-4292afd032db)
+  
+Bài dính stored xss ở phần comment: 
+  
+> payload: <script>alert(1)</script>
+ 
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/89270a3d-02a3-4dcb-8ff2-0049fe52a114)
+
+## [Stored XSS into anchor href attribute with double quotes HTML-encoded](https://portswigger.net/web-security/cross-site-scripting/contexts/lab-href-attribute-double-quotes-html-encoded)
+  
+```
+This lab contains a stored cross-site scripting vulnerability in the comment functionality. To solve this lab, submit a comment that calls the alert function when the comment author name is clicked.
+
+```
+  
+Sau khi nộp form check điều kiện ta sẽ thấy input phần name được đưa vào tag a của đường dẫn:
+  
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/c1af54b5-0649-4f03-9504-180dd0b3a727)
+
+Yêu cầu bài lab là ta nhấn vào đường dẫn và xss sẽ được sinh, ở đây dùng javascript:alert(1) để khai thác, giá trị của href ở đây là một chuỗi bắt đầu bằng javascript:, trình duyệt sẽ thực thi đoạn mã JavaScript được cung cấp vì không có trang web nào để chuyển hướng cả.
+  
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/9b8384b6-4937-4cb8-9887-eff826033a0f)
+
+  
+## [Lab: Stored DOM XSS](https://portswigger.net/web-security/cross-site-scripting/dom-based/lab-dom-xss-stored)
+
+```  
+This lab demonstrates a stored DOM vulnerability in the blog comment functionality. To solve this lab, exploit this vulnerability to call the alert() function.
+  
+```  
+  
+  
+  
+  
+  
+  
+  
+  
+  
