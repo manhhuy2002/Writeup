@@ -235,6 +235,23 @@ To solve the lab, perform a cross-site scripting attack that calls the alert() f
 
 ```
   
+Scan các tag còn hoạt động được:
+  
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/c48f3cf5-da40-48c8-9c1b-631df6d1ebd1)
+
+Ta thấy có svg và animatetranform không bị block, tiếp tục scan attribute không bị block thì còn duy nhất onbegin:
+  
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/40d2da41-f174-46ef-8fe6-937ff9f7894c)
+  
+  
+Cấu trúc của svg và phần tử animatetranform với attribute onbegin ta có thể thực thi như sau:
+
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/5098b623-424b-4efb-bb44-f2739216ff14)
+
+Rút ngắn payload lại ta được: <svg><animatetransform onbegin="alert(1)">
+  
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/3f4d4629-3bff-4eca-8a44-80168b58c6bd)
+
   
 ## [Lab: Reflected XSS into a JavaScript string with single quote and backslash escaped](https://0aab000203bfdba08116981e007d001e.web-security-academy.net/)
   
