@@ -98,7 +98,8 @@ Khi quét cổng với nmap, sẽ có 3 loại scan cơ bản:
 - UDP Scans (-sU)
 
 Ngoài ra sẽ còn vài loại scan port ít phổ biến nữa là: 
-- TCP Null Scans (-sN)
+- TCP 
+Scans (-sN)
 - TCP FIN Scans (-sF)
 - TCP Xmas Scans (-sX)
 
@@ -106,7 +107,7 @@ Ngoài ra còn có quét ICMP được sử dụng để kiểm tra tính khả 
 
 Chi tiết hơn ta sẽ bắt đầu đi vào cụ thể từng loại quét cổng. 
 
-## Scan Types TCP Connect Scans<a name="nm5"></a>
+## Scan Types TCP Connect Scans<a name="nm4"></a>
 
 Tóm tắt lại, ba giai đoạn của bắt tay ba bước (three-way handshake) bao gồm:
 
@@ -133,7 +134,7 @@ Nếu kết nối không tồn tại (trạng thái CLOSED) thì một gói tin 
 Tuy vậy còn có 1 khả năng nữa, nếu cổng đó mở nhưng nó nằm sau 1 tường lửa và tưởng lửa này được cấu hình để chặn những gói tin đến thì ta có thể kết luận rằng nếu Nmap gửi một yêu cầu TCP SYN, nhưng không nhận được bất cứ thông tin phản hồi nào thì có thể cổng đó đang được bảo vệ bởi một tường lửa và do đó cổng đó được coi là đã bị chặn (filtered).
 
 
-## Scan Types SYN Scans
+## Scan Types SYN Scans<a name="nm5"></a>
 
 Như các quét TCP, quét SYN (-sS) được sử dụng để quét các cổng TCP của một hoặc nhiều mục tiêu; tuy nhiên, hai loại quét này hoạt động một chút khác nhau. Các quét SYN đôi khi được gọi là các quét "Half-open" hoặc quét "Stealth".
 
@@ -164,13 +165,13 @@ Các dịch vụ không ổn định đôi khi bị đánh sập bởi các scan
 Tổng thể thì các scan SYN là các scan mặc định được sử dụng bởi Nmap nếu được chạy với quyền sudo. Nếu chạy mà không có quyền sudo, Nmap sẽ mặc định sử dụng quét TCP Connect.
 Ngoài ra thì trường hợp của SYN scan cũng tương tự như TCP scan, nếu một cổng bị đóng thì máy chủ sẽ phản hồi với một gói tin TCP RST. Nếu cổng bị chặn bởi tường lửa thì gói tin TCP SYN sẽ bị loại bỏ hoặc giả mạo với một TCP reset.
 
-## Scan Types UDP Scans
+## Scan Types UDP Scans<a name="nm6"></a>
 
 Không giống như 2 loại được đề cập ở trên thì UDP nó là stateless (không trạng thái). Điều này có nghĩa là, thay vì khởi tạo một kết nối với một bắt tay "handshake" hai chiều, các kết nối UDP dựa trên việc gửi các gói tin đến một cổng đích và hy vọng rằng chúng sẽ đi đến được. Điều này làm cho UDP rất oke cho các kết nối phụ thuộc vào tốc độ hơn là chất lượng (ví dụ: chia sẻ video), nhưng sự thiếu sự xác nhận khiến việc quét UDP trở nên khó khăn hơn nhiều và chậm hơn rất nhiều. Thực hiện quét UDP với Nmap là (-sU).
 
 Khi gửi gói tin udp đến cổng, sẽ có 3 phản hồi: open|filter và closed, thông thường thì sẽ kh nhận được phản hồi từ port, và sẽ khó để nhận biết là open|filter, còn nếu muốn xác định đóng thì có thể dùng giao thức icmp với thông báo "port unreachable" để có thể xác định là port đóng. 
 
-## Scan Types NULL, FIN and Xmas
+## Scan Types NULL, FIN and Xmas<a name="nm7"></a>
 
 Các scan Null, Fin và Xmas TCP thì ít phổ biến hơn, do vậy ta sẽ đi tìm hiểu cách sử dụng căn bản các loại này thôi. 
 Đầu tiên với kiểu NULL, Null Scan: -Sn là kiểu TCP request được gửi đi mà không cần kh có flag nào được set. Theo RFC, máy chủ đích sẽ phản hồi với một gói tin RST nếu cổng đóng:
@@ -194,7 +195,7 @@ Tuy nhiên, các tường lửa và hệ thống phát hiện xâm nhập (IDS) 
 Do đó, các loại quét NULL, FIN và Xmas không đảm bảo hoạt động 100% hiệu quả với các hệ thống hiện đại. Để bypass các tường lửa và hệ thống IDS hiện đại, Nmap cung cấp các phương pháp quét khác nhau, bao gồm các loại quét khác như TCP SYN, TCP Connect và các phương pháp tấn công khác như tấn công bằng từ điển (Brute Force) và tấn công bằng mã độc (Malware).
 
 
-## Scan Types ICMP Network Scanning
+## Scan Types ICMP Network Scanning<a name="nm8"></a>
 
 Trong kiểm thử bảo mật black box, mục tiêu đầu tiên của chúng ta là thu thập thông tin về cấu trúc mạng - tức là xem xét địa chỉ IP nào chứa các máy chủ hoạt động và địa chỉ nào không.
 
