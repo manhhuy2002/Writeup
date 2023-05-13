@@ -273,6 +273,36 @@ To solve this lab, perform a cross-site scripting attack that breaks out of the 
   
 ![image](https://github.com/manhhuy2002/Writeup/assets/104350480/d2a22ca0-e502-4a98-acc0-a87b94ccc227)
   
+
+  
+## [Lab: Reflected XSS in canonical link tag](https://portswigger.net/web-security/cross-site-scripting/contexts/lab-canonical-link-tag)
+  
+```
+This lab reflects user input in a canonical link tag and escapes angle brackets.
+
+To solve the lab, perform a cross-site scripting attack on the home page that injects an attribute that calls the alert function.
+
+To assist with your exploit, you can assume that the simulated user will press the following key combinations:
+
+ALT+SHIFT+X
+CTRL+ALT+X
+Alt+X
+Please note that the intended solution to this lab is only possible in Chrome.
+
+```
+
+Ý tưởng khai thác bài này thì ta có thể đọc ở [blog](https://portswigger.net/research/xss-in-hidden-input-fields) này.
+  
+Ở đây trường input sẽ bị ẩn đi, và ta phải thuyết phục người dùng dùng phím tắt và xss sẽ được thực thi:
+
+> Payload: <link rel="canonical" accesskey="X" onclick="alert(1)" />
+
+Để ý phần response đã có <link rel="canonical"> sẵn rồi nên ta sẽ chèn thêm payload để khai thác thôi:
+  
+> 'accesskey='X'onclick='alert(1)'b='
+  
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/c328f0d3-a97a-45c6-9e7b-689098060322)
+
   
 ## [Lab: Reflected XSS into a JavaScript string with angle brackets and double quotes HTML-encoded and single quotes escaped](https://portswigger.net/web-security/cross-site-scripting/contexts/lab-javascript-string-angle-brackets-double-quotes-encoded-single-quotes-escaped)
   
