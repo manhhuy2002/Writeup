@@ -303,11 +303,12 @@ Please note that the intended solution to this lab is only possible in Chrome.
 Để ý phần response đã có <link rel="canonical"> sẵn rồi nên ta sẽ chèn thêm payload để khai thác thôi:
 
 ```  
- 'accesskey='X'onclick='alert(1)'b='
+ 'accesskey='X'onclick='alert(1)''
 
 ```
   
-![image](https://github.com/manhhuy2002/Writeup/assets/104350480/c328f0d3-a97a-45c6-9e7b-689098060322)
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/ef98c41b-2840-4233-8ef4-bd1a68cd52b4)
+
 
   
 ## [Lab: Reflected XSS into a JavaScript string with angle brackets and double quotes HTML-encoded and single quotes escaped](https://portswigger.net/web-security/cross-site-scripting/contexts/lab-javascript-string-angle-brackets-double-quotes-encoded-single-quotes-escaped)
@@ -603,3 +604,24 @@ Bởi vì angle brackets và double quotes HTML-encoded, single quotes and backs
 > payload: https://eo7xxasp6lhfvaj.m.pipedream.net&#x27;&#x29;&#x3b;&#x61;&#x6c;&#x65;&#x72;&#x74;&#x28;&#x31;&#x29;&#x2f;&#x2f;
   
 ![image](https://github.com/manhhuy2002/Writeup/assets/104350480/835b914a-0520-44f3-8b27-f60110bb0bc7)
+  
+  
+## [Lab: DOM XSS in document.write sink using source location.search](https://portswigger.net/web-security/cross-site-scripting/dom-based/lab-document-write-sink)
+  
+```
+This lab contains a DOM-based cross-site scripting vulnerability in the search query tracking functionality. It uses the JavaScript document.write function, which writes data out to the page. The document.write function is called with data from location.search, which you can control using the website URL.
+
+To solve this lab, perform a cross-site scripting attack that calls the alert function.
+  
+```
+
+Đọc source: 
+  
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/f473c11a-58c7-4579-b759-67a89d38cde6)
+
+Ta thấy source là search và sink ở đây là document.write, để xss thì chỉ cần "> để đóng <img lại và ta sẽ truyền script vào để thực thi:
+                                                                                             
+```                                                                                          
+"><script>alert(1)</script>                         
+  
+```
