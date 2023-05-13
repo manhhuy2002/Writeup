@@ -11,7 +11,7 @@
 
 <hr>
 
-##Thực hành: 
+## hực hành: 
 
 
 ## [Lab: Reflected XSS into HTML context with nothing encoded](https://portswigger.net/web-security/cross-site-scripting/reflected/lab-html-context-nothing-encoded)
