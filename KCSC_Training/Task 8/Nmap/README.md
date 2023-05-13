@@ -277,6 +277,47 @@ Khả năng cao đây là md5, ta lên tìm kiếm md5 reverse và được:
 
 ![image](https://github.com/manhhuy2002/Writeup/assets/104350480/344482c0-4f49-4420-81e9-0a48ef8c95e2)
 
+Tiếp tục lục tung trang web ta được 1 thẻ p hidden bị giấu trong trang web cổng 65524:
+
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/12d66331-4617-4e6b-b960-b2ebbbf1c847)
+
+Nó có vẻ được encode với dạng base gì đó, ta thử decode giá trị xem được gì không thì ở base62 ta được:
+
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/fd1668d5-c93e-48ae-a8ea-195ae01237cf)
+
+Vậy đây là đường dẫn bị ẩn cần tìm.
+> /n0th1ng3ls3m4tt3r
+
+Tiếp tục truy cập và khai thác tiếp. Ta được điều hướng sang 1 trang khác:
+
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/87558a00-319d-4506-b4d8-77095a7fdb43)
+
+Ở đây ctrl U nó cho ta 1 hash, ta search thì được 1 trang giải mã là [md5hashing](https://md5hashing.net/hash/gost/940d71e8655ac41efb5f8ab850668505b86dd64186a66e57d1483e7f5fe6fd81):
+
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/af322eb4-84d6-4ce2-8635-a59ba2d42490)
+
+Vậy là giải mã xong ta được pass của tấm ảnh, ta wget về và dùng steghide để phân tích: 
+>steghide extract -sf binarycodepixabay.jpg
+
+Ta được 1 file secrettext.txt trả về, cat ra được:
+
+```
+username:boring
+password:
+01101001 01100011 01101111 01101110 01110110 01100101 01110010 01110100 01100101 01100100 01101101 01111001 01110000 01100001 01110011 01110011 01110111 01101111 01110010 01100100 01110100 01101111 01100010 01101001 01101110 01100001 01110010 01111001
+
+```
+
+Có username và password nên ta có thể nghĩ tới cái này được dùng để kết nối ssh server, giờ việc là cần giải mã được cái mật khẩu này ra. Ngoài ra mật khẩu được để ở dạng binary nên ta có thể dùng cyberchef để lấy mật khẩu:
+
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/efe52982-e387-456d-a4ec-02199e78dfbe)
+
+Thực thi ssh: 
+
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/2d1f0288-a0b8-4c62-a26e-866d5c338886)
+
+
+
 
 ## [Brooklyn Nine Nine](https://tryhackme.com/room/brooklynninenine)<a name='bnn'></a>
 
