@@ -431,11 +431,120 @@ This lab demonstrates a stored DOM vulnerability in the blog comment functionali
   
 ```  
   
+Các thông tin được post lên sẽ được lưu bên phía server, sau đó nó sử dụng 1 file là **/resources/js/loadCommentsWithVulnerableEscapeHtml.js** để load từ server và render ra trang. Nội dung của file: 
   
+```
+function loadComments(postCommentPath) {
+    let xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            let comments = JSON.parse(this.responseText);
+            displayComments(comments);
+        }
+    };
+    xhr.open("GET", postCommentPath + window.location.search);
+    xhr.send();
+
+    function escapeHTML(html) {
+        return html.replace('<', '&lt;').replace('>', '&gt;');
+    }
+
+    function displayComments(comments) {
+        let userComments = document.getElementById("user-comments");
+
+        for (let i = 0; i < comments.length; ++i)
+        {
+            comment = comments[i];
+            let commentSection = document.createElement("section");
+            commentSection.setAttribute("class", "comment");
+
+            let firstPElement = document.createElement("p");
+
+            let avatarImgElement = document.createElement("img");
+            avatarImgElement.setAttribute("class", "avatar");
+            avatarImgElement.setAttribute("src", comment.avatar ? escapeHTML(comment.avatar) : "/resources/images/avatarDefault.svg");
+
+            if (comment.author) {
+                if (comment.website) {
+                    let websiteElement = document.createElement("a");
+                    websiteElement.setAttribute("id", "author");
+                    websiteElement.setAttribute("href", comment.website);
+                    firstPElement.appendChild(websiteElement)
+                }
+
+                let newInnerHtml = firstPElement.innerHTML + escapeHTML(comment.author)
+                firstPElement.innerHTML = newInnerHtml
+            }
+
+            if (comment.date) {
+                let dateObj = new Date(comment.date)
+                let month = '' + (dateObj.getMonth() + 1);
+                let day = '' + dateObj.getDate();
+                let year = dateObj.getFullYear();
+
+                if (month.length < 2)
+                    month = '0' + month;
+                if (day.length < 2)
+                    day = '0' + day;
+
+                dateStr = [day, month, year].join('-');
+
+                let newInnerHtml = firstPElement.innerHTML + " | " + dateStr
+                firstPElement.innerHTML = newInnerHtml
+            }
+
+            firstPElement.appendChild(avatarImgElement);
+
+            commentSection.appendChild(firstPElement);
+
+            if (comment.body) {
+                let commentBodyPElement = document.createElement("p");
+                commentBodyPElement.innerHTML = escapeHTML(comment.body);
+
+                commentSection.appendChild(commentBodyPElement);
+            }
+            commentSection.appendChild(document.createElement("p"));
+
+            userComments.appendChild(commentSection);
+        }
+    }
+};
+                                   
+```
+                                   
+Ta sẽ thấy sink nằm ở:
+                                   
+```
+let newInnerHtml = firstPElement.innerHTML + escapeHTML(comment.author)
+firstPElement.innerHTML = newInnerHtml                                   
   
+```
+với comment.author ở đây chính là giá trị mà ta post lên,  nhưng ở đây nó đã escapeHTML rồi nên ta chưa thể thực thi xss được. Để ý hàm escapeHTML:
+                                   
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/75a296df-3af9-4a6e-a4be-148bc0d441eb)
+                                  
+Ở đây nó dùng cơ chế replace để thay thế > và < thành &gt và &lt. Nhưng html.replace nó sẽ không giống như hàm replace() ở chỗ nó chỉ thay thế giá trị tương ứng đầu tiên gặp phải thôi. Tức ta có thể bypass ở đây bằng cách thêm <> để nó thực thi và đoạn sau ta có thể nhập tùy ý. 
+> Payload: <><img src=x onerror=alert(1)>
   
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/b7e962c6-a7d8-4d2c-bffb-bd44f156d809)
   
+## [Lab: Stored XSS into onclick event with angle brackets and double quotes HTML-encoded and single quotes and backslash escaped](https://portswigger.net/web-security/cross-site-scripting/contexts/lab-onclick-event-angle-brackets-double-quotes-html-encoded-single-quotes-backslash-escaped)
   
+```
+This lab contains a stored cross-site scripting vulnerability in the comment functionality.
+
+To solve this lab, submit a comment that calls the alert function when the comment author name is clicked.
   
+```
   
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/96bbc3c8-6a0e-4116-8931-3e3ac39423ff)
+
+Post  và check source ta thấy phần input nhập vào của website nằm trong tag a:
+
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/3746480b-6ee7-49dc-83df-49db365b08ba)
+
+Bởi vì angle brackets và double quotes HTML-encoded, single quotes and backslash escaped nên ở đây ta không thể nhập payload trực tiếp được, đọc tài liệu thì ta sẽ biết được trình duyện sẽ tự động html-decode giá trị bên trong attr onclick trước khi thực hiện js. Nên ở đây ta sẽ encode trước và truyền payload vào để bypass: 
   
+> payload: https://eo7xxasp6lhfvaj.m.pipedream.net&#x27;&#x29;&#x3b;&#x61;&#x6c;&#x65;&#x72;&#x74;&#x28;&#x31;&#x29;&#x2f;&#x2f;
+  
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/835b914a-0520-44f3-8b27-f60110bb0bc7)
