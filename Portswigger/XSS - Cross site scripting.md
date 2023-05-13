@@ -295,11 +295,17 @@ Please note that the intended solution to this lab is only possible in Chrome.
   
 Ở đây trường input sẽ bị ẩn đi, và ta phải thuyết phục người dùng dùng phím tắt và xss sẽ được thực thi:
 
-> Payload: <link rel="canonical" accesskey="X" onclick="alert(1)" />
+```  
+ Payload: <link rel="canonical" accesskey="X" onclick="alert(1)" />
 
-Để ý phần response đã có <link rel="canonical"> sẵn rồi nên ta sẽ chèn thêm payload để khai thác thôi:
+```
   
-> 'accesskey='X'onclick='alert(1)'b='
+Để ý phần response đã có <link rel="canonical"> sẵn rồi nên ta sẽ chèn thêm payload để khai thác thôi:
+
+```  
+ 'accesskey='X'onclick='alert(1)'b='
+
+```
   
 ![image](https://github.com/manhhuy2002/Writeup/assets/104350480/c328f0d3-a97a-45c6-9e7b-689098060322)
 
