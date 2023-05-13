@@ -14,6 +14,13 @@
 * [Firewall Evasion](#nm12)
 * [Practical](#nm13)
 
+## Practice
+
+* [Easy Peasy](#ep)
+* [Brooklyn Nine Nine](#bnn)
+* [Net Sec Challenge](#nsc)
+* [Anonymous](#a)
+
 
 <hr>
 
@@ -202,5 +209,77 @@ Một trong những cách để làm điều này là sử dụng Nmap để th�
 Ta sẽ thực hành 1 số bài lab để hiểu và thực hành được cách dùng. 
 
 
-## Brooklyn Nine Nine - tryhackme
+## [Easy Peasy](https://tryhackme.com/room/easypeasyctf)<a name='ep'></a>
 
+### 1. Enumeration through Nmap
+
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/2799abeb-b491-4ed1-b52c-d2d12d60a0ef)
+
+Để scan số port đang hoạt động ta dùng: nmap -p- -vv 10.10.234.133
+Nó sẽ mặc định scan 65535 port với kiểu syn Scan, và trả vể cho ta 3 cổng đang hoạt động: 
+
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/49fb8e2b-0271-47b6-b219-e82d1a728270)
+
+Để check version thì ta sẽ thêm -sV vào và muốn xem chi tiết thì ta có thể thêm option -vv
+Được version của nginx: 1.16.1
+
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/a3cfe219-f676-4bb6-badd-3ad97b479ffe)
+
+Scan port ở trên ta được port cao nhất là 65524, ta scan: nmap -sV -p 65524 10.10.234.133
+
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/497f26ce-0bf8-480b-bd21-6824db41fc2e)
+
+> Apache
+
+### 2. Compromising the machine
+
+Ở phần 2 bài cho ta thực hành nhiều tool hơn và cho 1 file easypeasy.txt 
+Đầu tiên là dùng gobuster để tìm flag1
+Scan với list là rockyou.txt ta được /hidden:
+
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/485ac51d-4b5c-4299-a269-2b01a88658a7)
+
+Truy cập vào ta được: 
+
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/176bf480-d0c6-4cca-8fd8-545c4a45d42c)
+
+Nhưng có vẻ cũng không có gì: 
+
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/67b9c9b8-fe04-4ced-b3dd-0748ee6923d8)
+
+Ta tiếp tục gobuster tiếp xem có thư mục con nào nữa không, ta được thư mục whatever: 
+
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/147006b0-010d-4a51-b0e8-1f7d646e89ba)
+
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/4b8e5548-e24e-4862-9ed5-e23e6c0ed283)
+
+Lần này có trả về thông điệp hidden là ZmxhZ3tmMXJzN19mbDRnfQ== . 
+Dễ thấy nó có dạng base64 encode, dùng cmd: **echo -e "ZmxhZ3tmMXJzN19mbDRnfQ==" | base64 -d**  hoặc ném lên cyberchef ta được flag đầu tiên trả về:
+
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/d526224c-6c6e-4dfc-a3bb-35634ceeb901)
+
+Vì không cho dữ kiện gì thêm nên ta sẽ thử khai thác bức ảnh mà ở hidden nó cung cấp cho, có thể nó được giấu thông tin ở trong bức ảnh đó. 
+Ta down ảnh về với wget và để phân tích ảnh bên trong ra thì ta có thể dùng steghide và dùng extract để trích xuất thông tin file ảnh với -sf (hay --stegofile) là tùy chọn để chỉ định tên file ảnh. Tuy vậy ta sẽ cần pass ở đây để truy cập vào, nhưng ta không có hint gì cả, vì vậy ta sẽ chuyển sang nhánh tiếp để khai thác tiếp cái khác xem có gì không rồi quay lại sau. 
+
+Ta để ý khi quét nmap ở cổng 65524 ta được trả về thông tin như sau:
+
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/bc20e910-b88a-4db4-a6b7-0f858572a6ae)
+
+Truy cập vào /robots.txt ta được: 
+
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/5ea754b8-f21b-4879-b0ca-7a1c66e4cb91)
+
+Dùng hash-identifier để check kiểu hash với : a18672860d0510e5ab6699730763b250
+
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/b9207b88-078d-4a1f-bc18-20a087695877)
+
+Khả năng cao đây là md5, ta lên tìm kiếm md5 reverse và được:
+
+![image](https://github.com/manhhuy2002/Writeup/assets/104350480/344482c0-4f49-4420-81e9-0a48ef8c95e2)
+
+
+## [Brooklyn Nine Nine](https://tryhackme.com/room/brooklynninenine)<a name='bnn'></a>
+
+## [Net Sec Challenge](https://tryhackme.com/room/netsecchallenge)<a name='nsc'></a>
+
+## [Anonymous](https://tryhackme.com/room/anonymous)<a name='a'></a>
