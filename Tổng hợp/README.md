@@ -4,7 +4,7 @@
 - Tryhackme: https://tryhackme.com/room/linprivesc
 
 ## Nmap, docker căn bản: 
--Tryhackme: 
+- Tryhackme: 
      - https://tryhackme.com/room/furthernmap
      - https://tryhackme.com/room/easypeasyctf
      - https://tryhackme.com/room/brooklynninenine
