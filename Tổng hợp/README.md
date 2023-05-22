@@ -109,3 +109,16 @@ Em đã làm hết các dạng cơ bản trên rootme và portswigger trừ lab:
      - JWT authentication bypass via unverified signature
      - JWT authentication bypass via flawed signature verification
      - JWT authentication bypass via weak signing key
+
+## PHP object injection
+
+- Rootme: 
+     - PHP - Unserialize Pop Chain
+
+- Portswigger: 
+     - Modifying serialized objects
+     - Modifying serialized data types
+     - Using application functionality to exploit insecure deserialization
+     - Arbitrary object injection in PHP
+     - Exploiting PHP deserialization with a pre-built gadget chain
+     - Developing a custom gadget chain for PHP deserialization
