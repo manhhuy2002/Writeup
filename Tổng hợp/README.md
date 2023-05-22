@@ -97,3 +97,15 @@ Em đã làm hết các dạng cơ bản trên rootme và portswigger trừ lab:
      - CORS vulnerability with basic origin reflection
      - CORS vulnerability with trusted null origin
      - CORS vulnerability with trusted insecure protocols
+
+
+## JWT
+
+- Rootme: 
+     - JWT - Introduction
+     - JWT - Weak Secret
+     - JWT - Public Key
+- Portswigger: 
+     - JWT authentication bypass via unverified signature
+     - JWT authentication bypass via flawed signature verification
+     - JWT authentication bypass via weak signing key
