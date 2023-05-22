@@ -54,6 +54,7 @@
      - CSRF where token is duplicated in cookie
      - CSRF where Referer validation depends on header being present
      - CSRF with broken Referer validation
+     
  (Em chưa làm dạng csrf với Samesite lax ạ)
      
 ## Server-side request forgery (SSRF)
