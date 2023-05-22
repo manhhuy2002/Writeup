@@ -1,5 +1,29 @@
+## Tổng hợp kiến thức
+
+## Leo thang căn bản trên linux
+- Tryhackme: https://tryhackme.com/room/linprivesc
+
+## Nmap, docker căn bản: 
+-Tryhackme: 
+     - https://tryhackme.com/room/furthernmap
+     - https://tryhackme.com/room/easypeasyctf
+     - https://tryhackme.com/room/brooklynninenine
+     - https://tryhackme.com/room/introtodockerk8pdqk
 
 
+## SQL injection
+
+- Rootme: 
+     - SQL injection - Authentification
+     - SQL injection - String
+     - SQL injection - Numerical
+     - SQL injection - Time based
+     - SQL injection - Blind
+ - Portswigger: 
+     Về căn bản là em làm hết lab sql injection trên portswigger rồi mà có out-of-band thì e chưa hiểu cách họ truy vấn lắm ạ.
+
+- Rootme: 
+     - 
 ## XSS - Cross-site scripting
 
 - Rootme: 
@@ -13,6 +37,7 @@
      - XSS - Stored - filter bypass
 
 - Portswigger: 
+     Em còn các lab expert ạ.
 
 
 
@@ -60,4 +85,15 @@
 
 ## Uploadfile - path traversal - lfi - rfi
 
-Em đã làm hết các dạng cơ bản trên rootme và portswigger trừ lab: File upload - Polyglot
+- Tryhackme: dogcat
+
+Em đã làm hết các dạng cơ bản trên rootme và portswigger trừ lab: File upload - Polyglot và Web shell upload via race condition.
+
+
+
+## Cross-origin resource sharing (CORS)
+
+- Portswigger: 
+     - CORS vulnerability with basic origin reflection
+     - CORS vulnerability with trusted null origin
+     - CORS vulnerability with trusted insecure protocols
