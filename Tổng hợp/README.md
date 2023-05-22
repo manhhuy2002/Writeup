@@ -22,8 +22,7 @@
  - Portswigger: 
      Về căn bản là em làm hết lab sql injection trên portswigger rồi mà có out-of-band thì e chưa hiểu cách họ truy vấn lắm ạ.
 
-- Rootme: 
-     - 
+     
 ## XSS - Cross-site scripting
 
 - Rootme: 
@@ -55,7 +54,7 @@
      - CSRF where token is duplicated in cookie
      - CSRF where Referer validation depends on header being present
      - CSRF with broken Referer validation
-     (Em chưa làm dạng csrf với Samesite lax ạ)
+ (Em chưa làm dạng csrf với Samesite lax ạ)
      
 ## Server-side request forgery (SSRF)
     
