@@ -1,4 +1,4 @@
-## Tổng hợp kiến thức
+## Tổng hợp kiến thức em đã tìm hiểu
 
 ## Leo thang căn bản trên linux
 - Tryhackme: https://tryhackme.com/room/linprivesc
